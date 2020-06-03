@@ -24,16 +24,14 @@
 <h2 id="data">{% if (label != 'France'): %}<a href="/#data">France</a> &gt; {% endif %} {{ department }} {{ label }}</h2>
     <div class="row">
 		<div class="col-md-12" id="death_map">
-			<div class="card mb-4 box-shadow">
-				<div class="card-body">
-					<h3>Données hospitalières mises à jour le {{ counters['last_day'] }}</h3>
-					<div class="row">
-						
-						<div class="col-md-4">
-					
+			<div class="row">
+				<div class="col-md-4">
+					<div class="card mb-4 box-shadow">
+						<div class="card-body">
+						<h3>Chiffres clés du {{ counters['last_day'] }}</h3>
 							<div class="row">
 								<div class="col-md-12">
-									<div class="key-indicator-death" background-color="#ff7f00">
+									<div class="key-indicator-death">
 										<span class="key-value">{{ counters['last_dc'] }}</span>
 										<br /> nouveaux décès
 									</div>
@@ -47,16 +45,16 @@
 								</div>
 								
 								<div class="col-md-12">
-									<div class="key-indicator-hospitalized">
-										<span class="key-value">{{ counters['current_hosp'] }}</span>
-										<br /> personnes hospitalisées
+									<div class="key-indicator-resuscitation">
+										<span class="key-value">{{ counters['current_rea']|int }}</span>
+										<br /> patients en réanimation
 									</div>
 								</div>
 								
 								<div class="col-md-12">
-									<div class="key-indicator-resuscitation">
-										<span class="key-value">{{ counters['current_rea']|int }}</span>
-										<br /> patients en réanimation
+									<div class="key-indicator-hospitalized">
+										<span class="key-value">{{ counters['current_hosp'] }}</span>
+										<br /> personnes hospitalisées
 									</div>
 								</div>
 								
@@ -68,30 +66,40 @@
 								</div>
 							</div>
 						</div>
+					</div>
+				</div>
+				
+				<div class="col-md-8">
+					<div class="card mb-4 box-shadow">
+						<div class="card-body">
 						
-						<div class="col-md-1">
-						</div>
-						
-						<div class="col-md-6">
-							<div class="col-md-12">
-								<div class="map"> 
-								</div>
-								<div class="row">
-									<div class="col-md-2"> 
-									</div>
-									<div class="col-md-10"> 
-										<p>Légende</p>
-										<div class="areaLegend"></div>
-										<p></p>
-									</div>
-								</div>
+							<div class="pictos">
+								<a class="picto-item" href="#" aria-label="Cliquez sur un département pour afficher le détail">
+									<h3>Nombre de décés à l'hôpital pour 100 000 habitants et par département</h3>
+								</a>
 							</div>
-						</div>	
+						
+							<div class="row">					
+								<div class="col-md-12">
+									<div class="map"> 
+									</div>
+									<div class="row">
+										<div class="col-md-4"> 
+										</div>
+										<div class="col-md-8"> 
+											<p>Légende</p>
+											<div class="areaLegend"></div>
+											<p></p>
+										</div>
+									</div>
+								</div>	
+							</div>
+						</div>
 					</div>
 				</div>
 			</div>
 		</div>
-	
+		
         <div class="col-md-6">
             <div class="card mb-4 box-shadow">
                 <div class="card-body">
