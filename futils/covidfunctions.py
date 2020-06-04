@@ -3,11 +3,25 @@ import json
 import plotly
 import os
 
+import urllib.request
+from datetime import datetime
+
 
 # Loading covid dataframe
 source_url = 'https://www.data.gouv.fr/fr/datasets/r/63352e38-d353-4b54-bfd1-f1b3ee1cabd7'
 covidata = pd.read_csv(source_url, sep=';')
 
+#####################################"
+
+def last_update():
+    last_update = ""
+    with urllib.request.urlopen("https://www.data.gouv.fr/datasets/5e7e104ace2080d9162b61d8/rdf.json") as url:
+        data = json.loads(url.read().decode())
+        
+        for dataset in data['@graph']:
+            if 'accessURL' in dataset.keys() and dataset['accessURL'] == source_url:
+                last_update = dataset['modified']
+    return last_update
 
 #####################################"
 
@@ -48,8 +62,35 @@ def overall_departments_data_as_json():
         .round(2)
 
     data['dc_par_habitants'] = data['dc_par_habitants'].round(2)
+    
+    
+    #added recently for hospitalisation case map
+    dep_data_j = covidata[(covidata['sexe'] == 0) & (covidata['jour'] == datetime.strptime(last_update(), "%Y-%m-%dT%H:%M:%S.%f").strftime("%Y-%m-%d"))]
+    dep_data_j = dep_data_j \
+        .drop(['jour', 'sexe'], axis=1) \
+        .groupby('dep') \
+        .max()
+    dep_data_j = pd.concat([dep_data_j, department_base_data], axis=1)
 
-    return data.to_json(orient='index'), quantiles.to_json(orient='index')
+    dep_data_j['hosp_par_habitants'] = (dep_data_j['hosp'] / dep_data['population']) * 100000
+
+    overall_data_departments_hosp = dep_data_j
+    
+    data_hosp = overall_data_departments_hosp.copy()
+    
+    data_hosp = data_hosp.set_index("department-" + data_hosp.index)
+    
+    data_hosp = data_hosp.loc[:, ['label', 'hosp', 'hosp_par_habitants', 'insee']]
+
+    quantiles_hosp = data_hosp['hosp_par_habitants'] \
+        .quantile([.25, .5, .75, .949]) \
+        .round(2)
+
+    data_hosp['hosp_par_habitants'] = data_hosp['hosp_par_habitants'].round(2)
+
+    #return data.to_json(orient='index'), quantiles.to_json(orient='index')
+    return data.to_json(orient='index'), quantiles.to_json(orient='index'), data_hosp.to_json(orient='index'), quantiles_hosp.to_json(orient='index')
+    
 #####################################"
 
 def department_label(department):
@@ -232,12 +273,14 @@ def charts(department):
             "Nombre de personnes retournées par jour à domicile",
             ]
     
-    counters = {"last_day": cdata.index[-1].strftime("%d/%m/%Y"),
-            "last_dc": cdata['dc_j'][-1],
-            "all_dc": cdata['dc'][-1],
-            "current_hosp": cdata['hosp'][-1],
-            "current_rea": cdata['rea'][-1], 
-            "current_rad": cdata['rad'][-1]-cdata['rad'][-2],         
-    }
-
+    counters = {"last_update": {"day": datetime.strptime(last_update(), "%Y-%m-%dT%H:%M:%S.%f").strftime("%d/%m/%Y"),  
+                                "day_hour": datetime.strptime(last_update(), "%Y-%m-%dT%H:%M:%S.%f").strftime("%d/%m/%Y à %Hh%M")
+                                },
+                "last_dc": cdata['dc_j'][-1],
+                "all_dc": cdata['dc'][-1],
+                "current_hosp": cdata['hosp'][-1],
+                "current_rea": cdata['rea'][-1], 
+                "current_rad": cdata['rad'][-1]-cdata['rad'][-2],         
+                }
+     
     return graphJSON, ids, counters
