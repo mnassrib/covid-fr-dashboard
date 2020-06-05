@@ -2,7 +2,7 @@
 
 {% block title %} 
 	
-	Synthèse des données COVID-19 dans le milieu hospitalier en France
+	Suivi de l’épidémie COVID-19 en France : Synthèse des données collectées auprès du milieu hospitalier
 	
 {% endblock %}
 
@@ -24,165 +24,200 @@
 	
 <!-- <h2 id="data">{% if (label != 'France'): %}<a href="/#data">France</a> &gt; {% endif %} {{ department }} {{ label }}</h2> -->
 
-<h2 id="data">
-	{% if (label != 'France'): %}
-		<a href="/#page-top">France</a> &gt; 
-	{% endif %} 
-	
-	{% if (label != 'France'): %}
-		Dépt. : {{ label }} (FR-{{ department }})
-	{% else : %}
-		{{ label }}
-	{% endif %} 
-</h2>
-    <div class="row">
-		<div class="col-md-12" id="death_map">
-			<div class="row">
-				<div class="col-md-4">
-					<div class="card mb-4 box-shadow">
-						<div class="card-body">
-						<h3>Chiffres clés du {{ counters['last_update']["day"] }}</h3>
-							<div class="row">
-								<div class="col-md-12">
-									<a href="#Personnes décédées par jour">
-										<div class="key-indicator-death">
-											<span class="key-value">{{ counters['last_dc'] }}</span>
-											<br /> nouveaux décès
-										</div>
-									</a>
-								</div>
-								
-								<div class="col-md-12">
-									<a href="#Cumul personnes décédées">
-										<div class="key-indicator-death">
-											<span class="key-value">{{ counters['all_dc']|int }}</span>
-											<br /> décès au total
-										</div>
-									</a>
-								</div>
-								
-								<div class="col-md-12">
-									<a href="#Personnes en réanimation">
-										<div class="key-indicator-resuscitation">
-											<span class="key-value">{{ counters['current_rea']|int }}</span>
-											<br /> patients en réanimation
-										</div>
-									<a/>
-								</div>
-								
-								<div class="col-md-12">
-									<a href="#Personnes hospitalisées">
-										<div class="key-indicator-hospitalized">
-											<span class="key-value">{{ counters['current_hosp'] }}</span>
-											<br /> personnes hospitalisées
-										</div>
-									<a/>
-								</div>
-								
-								<div class="col-md-12">
-									<a href="#Personnes retournées par jour">
-										<div class="key-indicator-healed">
-											<span class="key-value">{{ counters['current_rad']|int }}</span>
-											<br /> patients guéris / retournés à domicile
-										</div>
-									<a/>
-								</div>
-								
-							</div>
-						</div>
-					</div>
-				</div>
-				
-				<div class="col-md-8">
-					<div class="card mb-4 box-shadow">
-						<div class="card-body">
-						
-							<div class="pictos">
-								<a class="picto-item" href="#" aria-label="Cliquez sur un département pour afficher le détail">
-									<h3>Nombre de décés à l'hôpital pour 100 000 habitants et par département</h3>
-								</a>
-							</div>
-						
-							<div class="row">					
-								<div class="col-md-12">
-									<div class="map"> 
-									</div>
-									<div class="row">
-										<div class="col-md-2"> 
-										</div>
-										<div class="col-md-10"> 
-											<a class="picto-item" href="#" aria-label="Cliquez sur les couleurs de la légende celles que vous souhaitez afficher sur la carte">
-												<p>Légende</p>
-											</a>
-											<div class="areaLegend"></div>
-											<p></p>
-										</div>
-									</div>
-								</div>	
-							</div>
-						</div>
-					</div>
-				</div>
-			</div>
-		</div>
-		
-		
-		
-		
-		
-		
-		
-		
-		
-	
-		<div class="col-md-12" id="hosp_map">
-			<div class="row">
-				<div class="col-md-2"></div>
-				
-				<div class="col-md-7">
-					<div class="card mb-4 box-shadow">
-						<div class="card-body">
-						
-							<div class="pictos">
-								<a class="picto-item" href="#" aria-label="Survolez un département pour afficher le détail">
-									<h3>Nombre de personnes hospitalisées pour 100 000 habitants et par département le {{ counters['last_update']["day"] }}</h3>
-								</a>
-							</div>
-						
-							<div class="row">					
-								<div class="col-md-12">
-									<div class="map"> 
-									</div>
-									<div class="row">
-										<div class="col-md-0"> 
-										</div>
-										<div class="col-md-12"> 
-											<a class="picto-item" href="#" aria-label="Cliquez sur les couleurs de la légende celles que vous souhaitez afficher sur la carte">
-												<p>Légende</p>
-											</a>
-											<div class="areaLegend"></div>
-											<p></p>
-										</div>
-									</div>
-								</div>	
-							</div>
-							
-						</div>
-					</div>
-				</div>
-				
-				<div class="col-md-2"></div>
-				
-			</div>
-		</div>
-		
-		
-		
-		
-		
-		
-		
 
+
+	<h2>
+		{% if (label != 'France'): %}
+			<a href="/#">France</a> &gt; 
+		{% endif %} 
+		
+		{% if (label != 'France'): %}
+			Dépt. : {{ label }} (FR-{{ department }})
+		{% else : %}
+			{{ label }}
+		{% endif %} 
+	</h2>
+
+    <div class="row">
+	
+		<div class="col-md-12">
+			
+			<div class="card mb-4 box-shadow">
+				<div class="card-body">
+					<h3>Chiffres clés du {{ counters['last_update']["day"] }}</h3>
+					<div class="row">
+					
+						<div class="col-md-3">
+							<div class="card mb-4 box-shadow">
+								<div class="card-body">
+									<div class="row">
+										<div class="col-md-12">
+											<a href="#Personnes décédées par jour">
+												<div class="key-indicator-death">
+													<span class="key-value">{{ counters['last_dc'] }}</span>
+													<br /> nouveaux décès
+												</div>
+											</a>
+										</div>
+										
+										<div class="col-md-12">
+											<a href="#Cumul personnes décédées">
+												<div class="key-indicator-death">
+													<span class="key-value">{{ counters['all_dc']|int }}</span>
+													<br /> décès au total
+												</div>
+											</a>
+										</div>
+									</div>
+								</div>
+							</div>
+						</div>
+						
+						<div class="col-md-6">
+							<div class="card mb-4 box-shadow">
+								<div class="card-body">
+									<p align="center">
+									Les états de santé ainsi que les possibles transitions entre elles pour un patient ayant le virus COVID-19
+									</p>
+								
+									<center> <img src="{{ url_for('static', filename='images/transition.png') }}" height="260" /> </center>
+								</div>
+								<div class="row">
+									<div class="col-md-6">
+										<a href="#Personnes en réanimation">
+											<div class="key-indicator-resuscitation">
+												<span class="key-value">{{ counters['current_rea']|int }}</span>
+												<br /> réanimations
+											</div>
+										<a/>
+									</div>
+									
+									<div class="col-md-6">
+										<a href="#Personnes hospitalisées">
+											<div class="key-indicator-hospitalized">
+												<span class="key-value">{{ counters['current_hosp'] }}</span>
+												<br /> hospitalisations
+											</div>
+										<a/>
+									</div>
+								</div>
+							</div>
+						</div>
+						
+						<div class="col-md-3">
+							<div class="card mb-4 box-shadow">
+								<div class="card-body">
+									<div class="row">
+										<div class="col-md-12">
+											<a href="#Personnes retournées par jour">
+												<div class="key-indicator-healed">
+													<span class="key-value">{{ counters['last_rad'] }}</span>
+													<br /> nouvelles guérisons
+												</div>
+											</a>
+										</div>
+										
+										<div class="col-md-12">
+											<a href="#Cumul personnes retournées">
+												<div class="key-indicator-healed">
+													<span class="key-value">{{ counters['all_rad']|int }}</span>
+													<br /> guérisons au total
+												</div>
+											</a>
+										</div>
+									</div>
+								</div>
+							</div>
+						</div>	
+					</div>
+				</div>
+			</div>
+		</div>
+
+		<div class="col-md-12" id="death_map">
+			<div class="card mb-4 box-shadow">
+				<div class="card-body">
+					<div class="pictos">
+						<a class="picto-item" aria-label="Cliquez sur un département pour afficher le détail">
+							<h3>Nombre de décés à l'hôpital pour 100 000 habitants et par département</h3>
+						</a>
+					</div>
+					<div class="row">
+						<div class="col-md-6">
+							<div class="map"></div>
+						</div>
+						<div class="col-md-6">
+							<div class="card mb-4 box-shadow">
+								<div class="card-body">
+									<a class="picto-item" aria-label="Sélectionnez les couleurs que vous souhaitez afficher sur la carte">
+										<p>Légende</p>
+									</a>
+									<div class="areaLegend"></div>
+								</div>
+							</div>
+						</div>
+					</div>
+				</div>
+			</div>
+		</div>
+		
+		
+		<div class="col-md-12" id="rad_map">
+			<div class="card mb-4 box-shadow">
+				<div class="card-body">
+					<div class="pictos">
+						<a class="picto-item" aria-label="Cliquez sur un département pour afficher le détail">
+							<h3>Nombre de guérisons à l'hôpital pour 100 000 habitants et par département</h3>
+						</a>
+					</div>
+					<div class="row">
+						<div class="col-md-6">
+							<div class="map"></div>
+						</div>
+						<div class="col-md-6">
+							<div class="card mb-4 box-shadow">
+								<div class="card-body">
+									<a class="picto-item" aria-label="Sélectionnez les couleurs que vous souhaitez afficher sur la carte">
+										<p>Légende</p>
+									</a>
+									<div class="areaLegend"></div>
+								</div>
+							</div>
+						</div>
+					</div>
+				</div>
+			</div>
+		</div>
+		
+		
+		<div class="col-md-12" id="hosp_map">
+			<div class="card mb-4 box-shadow">
+				<div class="card-body">
+					<div class="pictos">
+						<a class="picto-item" aria-label="Cliquez sur un département pour afficher le détail">
+							<h3>Nombre d'hospitalisations pour 100 000 habitants et par département le {{ counters['last_update']["day"] }}
+						</a>
+					</div>
+					<div class="row">
+						<div class="col-md-6">
+							<div class="map"></div>
+						</div>
+						<div class="col-md-6">
+							<div class="card mb-4 box-shadow">
+								<div class="card-body">
+									<a class="picto-item" aria-label="Sélectionnez les couleurs que vous souhaitez afficher sur la carte">
+										<p>Légende</p>
+									</a>
+									<div class="areaLegend"></div>
+								</div>
+							</div>
+						</div>
+					</div>
+				</div>
+			</div>
+		</div>
+		
+		
         <div class="col-md-6">
             <div class="card mb-4 box-shadow">
                 <div class="card-body">
@@ -288,7 +323,7 @@
         }
     </script>
 	
-	<!-- map -->
+	<!-- death map -->
 	<script type="text/javascript">
         $(function() {
             // Init map
@@ -324,7 +359,7 @@
                     "content": departments[id]['label'] + " : <b>" + departments[id]['dc'] + "</b> décès (<b>" + departments[id]['dc_par_habitants'] + "</b> pour 100 000 habitants)"
                 };
                 <!-- departments[id]['href'] = "/departement/" + departments[id]['insee'] + "#data"; -->
-				departments[id]['href'] = "/departement/" + departments[id]['insee'] + "#page-top";
+				departments[id]['href'] = "/departement/" + departments[id]['insee'] + "#";
 
                 if (departments[id]['insee'] === '{{ department }}') {
                     departments[id]['href'] = "/";
@@ -375,10 +410,7 @@
     </script>
 	
 	
-	
-	
-	
-	
+	<!-- hosp map -->
 	<script type="text/javascript">
         $(function() {
             // Init map
@@ -414,7 +446,7 @@
                     "content": departments[id]['label'] + " : <b>" + departments[id]['hosp'] + "</b> hospitalisations (<b>" + departments[id]['hosp_par_habitants'] + "</b> pour 100 000 habitants)"
                 };
                 <!-- departments[id]['href'] = "/departement/" + departments[id]['insee'] + "#data"; -->
-				departments[id]['href'] = "/departement/" + departments[id]['insee'] + "#page-top"; 
+				departments[id]['href'] = "/departement/" + departments[id]['insee'] + "#"; 
 
 				if (departments[id]['insee'] === '{{ department }}') {
                     departments[id]['href'] = "/";
@@ -426,6 +458,93 @@
             }
             
             $("#hosp_map").mapael({
+                "map": {
+                    "name": "france_departments_domtom",
+                    zoom: {
+                        enabled: true,
+                        maxLevel: 10
+                    },
+					
+					"defaultArea": {
+						"attrs": {
+							"fill": "#f4f4e8",
+							"stroke": "#ced8d0",
+						},
+						"attrsHover": {
+							 "fill": "#004a9b",
+						},
+						"text": {
+							"attrs": {
+								"fill": "#505444"
+							},
+							"attrsHover": {
+								"fill": "#000",
+							}
+						}
+					}	
+                },
+				
+                "legend": {
+                    "area": {
+                        "marginBottom": 20,
+                        "slices": slices
+                    }
+                },
+                "areas": departments
+            });
+        });
+	
+    </script>
+	
+	
+	<!-- rad map -->
+	<script type="text/javascript">
+        $(function() {
+            // Init map
+            var departments = {{ overall_departments_data_rad|safe }};
+            var quantiles = {{ overall_departments_quantiles_rad|safe }};
+            quantiles = Object.values(quantiles);
+            var slices = [
+                {"max": quantiles[0], "label": "Moins de " + quantiles[0] + " guérisons pour 100 000 habitants", attrs: {fill: "#FAF0B2"}}
+            ];
+
+            colors = ['#F5F50A', '#A4F905', '#06BF06', '#146806']  
+            for (var i = 0; i < quantiles.length; i++) {
+                var slice = {
+                    attrs: {
+                        fill: colors[i]
+                    }
+                };
+
+                slice.min = quantiles[i];
+
+                if (i < quantiles.length -1) {
+                    slice.max = quantiles[i + 1];
+                    slice.label = "Entre " + slice.min + " et " + slice.max + " guérisons pour 100 000 habitants";
+                } else {
+                    slice.label = "Plus de " + slice.min + " guérisons pour 100 000 habitants";
+                }
+                slices.push(slice);
+            }
+
+            for (var id in departments) {
+                departments[id]['value'] = departments[id]['rad_par_habitants'];
+                departments[id]['tooltip'] = {
+                    "content": departments[id]['label'] + " : <b>" + departments[id]['rad'] + "</b> guérisons (<b>" + departments[id]['rad_par_habitants'] + "</b> pour 100 000 habitants)"
+                };
+                <!-- departments[id]['href'] = "/departement/" + departments[id]['insee'] + "#data"; -->
+				departments[id]['href'] = "/departement/" + departments[id]['insee'] + "#"; 
+
+				if (departments[id]['insee'] === '{{ department }}') {
+                    departments[id]['href'] = "/";
+                    delete departments[id]['value'];
+                    departments[id]['attrs'] = {
+                        "fill": "#004a9b", 
+                    };
+                }
+            }
+            
+            $("#rad_map").mapael({
                 "map": {
                     "name": "france_departments_domtom",
                     zoom: {
