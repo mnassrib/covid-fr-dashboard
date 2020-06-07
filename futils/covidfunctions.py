@@ -7,6 +7,19 @@ import urllib.request
 from datetime import datetime
 
 
+# Loading dataframes
+def load_df():
+    source_url = 'https://www.data.gouv.fr/fr/datasets/r/63352e38-d353-4b54-bfd1-f1b3ee1cabd7'
+        
+    covidata = pd.read_csv(source_url, sep=';')
+        
+    data_dir = os.path.realpath(os.path.dirname(__file__) + "/../data/")
+        
+    department_base_data = pd.read_csv(data_dir + "/departments.csv")
+        
+    return covidata, department_base_data
+        
+
 # Loading covid dataframe
 source_url = 'https://www.data.gouv.fr/fr/datasets/r/63352e38-d353-4b54-bfd1-f1b3ee1cabd7'
 covidata = pd.read_csv(source_url, sep=';')
@@ -105,9 +118,35 @@ def overall_departments_data_as_json():
         .round(2)
 
     data_rad['rad_par_habitants'] = data_rad['rad_par_habitants'].round(2)
+    
+    ###########################
+    # Rate dc
+    dep_data_r_dc_rad = covidata[(covidata['sexe'] == 0)]
+    dep_data_r_dc_rad = dep_data_r_dc_rad \
+        .drop(['jour', 'sexe'], axis=1) \
+        .groupby('dep') \
+        .max()
+
+    dep_data_r_dc_rad = pd.concat([dep_data_r_dc_rad, department_base_data], axis=1)
+    dep_data_r_dc_rad['r_dc_rad'] = (dep_data_r_dc_rad['dc'] / (dep_data_r_dc_rad['dc'] + dep_data_r_dc_rad['rad']))
+    overall_data_departments_r_dc_rad = dep_data_r_dc_rad
+
+    data_r_dc_rad = overall_data_departments_r_dc_rad.copy()
+
+    data_r_dc_rad = data_r_dc_rad.set_index("department-" + data_r_dc_rad.index)
+
+    data_r_dc_rad = data_r_dc_rad.loc[:, ['label', 'dc', 'rad', 'r_dc_rad', 'insee']]
+
+    nat_r_dc_rad = data_r_dc_rad['dc'].sum() / (data_r_dc_rad['dc'].sum() + data_r_dc_rad['rad'].sum())
+
+    quantiles_r_dc_rad = data_r_dc_rad['r_dc_rad'] \
+        .quantile([0.1, 0.3, .63, .8, .949]) \
+        .round(2)
+
+    data_r_dc_rad['r_dc_rad'] = data_r_dc_rad['r_dc_rad'].round(2)
 
     #return data.to_json(orient='index'), quantiles.to_json(orient='index')
-    return data.to_json(orient='index'), quantiles.to_json(orient='index'), data_hosp.to_json(orient='index'), quantiles_hosp.to_json(orient='index'), data_rad.to_json(orient='index'), quantiles_rad.to_json(orient='index')
+    return data.to_json(orient='index'), quantiles.to_json(orient='index'), data_hosp.to_json(orient='index'), quantiles_hosp.to_json(orient='index'), data_rad.to_json(orient='index'), quantiles_rad.to_json(orient='index'), data_r_dc_rad.to_json(orient='index'), quantiles_r_dc_rad.to_json(orient='index')
     
 #####################################"
 
@@ -301,7 +340,9 @@ def charts(department):
                 "all_rad": cdata['rad'][-1],
                                 
                 "current_hosp": cdata['hosp'][-1],
-                "current_rea": cdata['rea'][-1],          
+                "current_rea": cdata['rea'][-1], 
+                
+                "nat_r_dc_rad": (cdata['dc'][-1] / (cdata['dc'][-1] + cdata['rad'][-1])).round(2)
                 }
      
     return graphJSON, ids, counters

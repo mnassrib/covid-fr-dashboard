@@ -80,7 +80,7 @@
 									Les états de santé ainsi que les possibles transitions entre elles pour un patient ayant le virus COVID-19
 									</p>
 								
-									<center> <img src="{{ url_for('static', filename='images/transition.png') }}" height="260" /> </center>
+									<center> <img src="{{ url_for('static', filename='images/transition.png') }}" height="220" /> </center>
 								</div>
 								<div class="row">
 									<div class="col-md-6">
@@ -151,6 +151,35 @@
 								<div class="card-body">
 									<a class="picto-item" aria-label="Sélectionnez les couleurs que vous souhaitez afficher sur la carte">
 										<p>Légende</p>
+									</a>
+									<div class="areaLegend"></div>
+								</div>
+							</div>
+						</div>
+					</div>
+				</div>
+			</div>
+		</div>
+		
+		
+		<div class="col-md-12" id="rate_death_map">
+			<div class="card mb-4 box-shadow">
+				<div class="card-body">
+					<div class="pictos">
+						<a class="picto-item" aria-label="Cliquez sur un département pour afficher le détail">
+							<h3>Taux décès / (décès + guérisons) par département</h3>
+						</a>
+					</div>
+					<div class="row">
+						<div class="col-md-6">
+							<div class="map"></div>
+						</div>
+						<div class="col-md-6">
+							<div class="card mb-4 box-shadow">
+								<div class="card-body">
+									<a class="picto-item" aria-label="Sélectionnez les couleurs que vous souhaitez afficher sur la carte">
+										<p>Légende (Taux national : {{ counters['nat_r_dc_rad'] }})</p>
+
 									</a>
 									<div class="areaLegend"></div>
 								</div>
@@ -545,6 +574,93 @@
             }
             
             $("#rad_map").mapael({
+                "map": {
+                    "name": "france_departments_domtom",
+                    zoom: {
+                        enabled: true,
+                        maxLevel: 10
+                    },
+					
+					"defaultArea": {
+						"attrs": {
+							"fill": "#f4f4e8",
+							"stroke": "#ced8d0",
+						},
+						"attrsHover": {
+							 "fill": "#004a9b",
+						},
+						"text": {
+							"attrs": {
+								"fill": "#505444"
+							},
+							"attrsHover": {
+								"fill": "#000",
+							}
+						}
+					}	
+                },
+				
+                "legend": {
+                    "area": {
+                        "marginBottom": 20,
+                        "slices": slices
+                    }
+                },
+                "areas": departments
+            });
+        });
+	
+    </script>
+	
+	
+	<!-- rate dc map -->
+	<script type="text/javascript">
+        $(function() {
+            // Init map
+            var departments = {{ overall_departments_data_r_dc_rad|safe }};
+            var quantiles = {{ overall_departments_quantiles_r_dc_rad|safe }};
+            quantiles = Object.values(quantiles);
+            var slices = [
+                {"max": quantiles[0], "label": "Taux inférieur à " + quantiles[0], attrs: {fill: '#D6F77F'}}
+            ];
+
+            colors = ["#f2f53a", '#df891a', '#e61919', '#680000', '#1d0303'] 
+            for (var i = 0; i < quantiles.length; i++) {
+                var slice = {
+                    attrs: {
+                        fill: colors[i]
+                    }
+                };
+
+                slice.min = quantiles[i];
+
+                if (i < quantiles.length -1) {
+                    slice.max = quantiles[i + 1];
+                    slice.label = "Taux entre " + slice.min + " et " + slice.max;
+                } else {
+                    slice.label = "Taux supérieur à " + slice.min;
+                }
+                slices.push(slice);
+            }
+
+            for (var id in departments) {
+                departments[id]['value'] = departments[id]['r_dc_rad'];
+                departments[id]['tooltip'] = {
+					"content": departments[id]['label'] + " : <b>" + departments[id]['dc'] + "</b> décès, <b>" + departments[id]['rad'] + "</b> guérisons (Taux départemental : <b>" + departments[id]['r_dc_rad'] + "</b>)"
+                };
+                <!-- departments[id]['href'] = "/departement/" + departments[id]['insee'] + "#data"; -->
+				departments[id]['href'] = "/departement/" + departments[id]['insee'] + "#"; 
+
+				if (departments[id]['insee'] === '{{ department }}') {
+                    departments[id]['href'] = "/";
+                    delete departments[id]['value'];
+                    departments[id]['attrs'] = {
+                        "fill": "#004a9b", 
+                    };
+                }
+            }
+            
+            $("#rate_death_map").mapael({
                 "map": {
                     "name": "france_departments_domtom",
                     zoom: {
