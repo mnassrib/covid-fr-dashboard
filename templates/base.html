@@ -60,7 +60,7 @@
 				border-radius: 8px;
 			}
 			.key-value {
-				font-size: 1.8rem;
+				font-size: 1.6rem;
 				font-weight: bold;
 			}
 			
@@ -195,7 +195,7 @@
             <div class="container-fluid">
 					
 				<p class="ombres_multiples_diffuses" align="center">	
-				Les données utilsées dans cette application concernent l'épidemie de COVID-19 en France. Elles sont fournies par <a href="https://www.data.gouv.fr/fr/datasets/donnees-hospitalieres-relatives-a-lepidemie-de-covid-19/" target="_blank"><B>Santé Publique France</B></a> et collectées auprès du milieu uniquement Hospitalier sans compter les EHPAD et EMS. 
+					Les données utilsées dans cette application concernent l'épidemie de COVID-19 en France. Elles sont fournies par <a href="https://www.data.gouv.fr/fr/datasets/donnees-hospitalieres-relatives-a-lepidemie-de-covid-19/" target="_blank"><B>Santé Publique France</B></a> et collectées auprès du milieu uniquement Hospitalier sans compter les EHPAD et EMS. 
 				<p>
 					
 					
@@ -210,12 +210,11 @@
 
         <footer class="sticky-footer">
             <div class="container">
-			
-				<p class="float-right">
-					<!-- <small> <a href="#">Remonter</a></small> -->
-					<!-- <small> <a href="#">Dernière mise à jour des données : {{ counters['last_day'] }}</a></small> -->
-					<small> <a href="#">Dernière mise à jour des données : {{ counters['last_update']["day_hour"] }}</a></small>
-				</p>
+				<div>
+					<p class="float-right">
+						<small> <a href="#">Dernière mise à jour des données : {{ counters['last_update']["day_hour"] }}</a></small>
+					</p>
+				</div>
 				<div class="text-center">
 					<small>&copy; <script>document.write(new Date().getFullYear())</script> <a href="https://www.linkedin.com/in/baligh-mnassri/?locale=en_US" target="_blank">Baligh Mnassri</a></small>
 				</div>

@@ -2,7 +2,7 @@
 
 {% block title %} 
 	
-	Suivi de l’épidémie COVID-19 en France : Synthèse des données collectées auprès du milieu hospitalier
+	Suivi de l'épidémie COVID-19 en France : Synthèse des données collectées auprès du milieu hospitalier
 	
 {% endblock %}
 
@@ -23,7 +23,6 @@
     </div> -->
 	
 <!-- <h2 id="data">{% if (label != 'France'): %}<a href="/#data">France</a> &gt; {% endif %} {{ department }} {{ label }}</h2> -->
-
 
 
 	<h2>
@@ -77,10 +76,10 @@
 							<div class="card mb-4 box-shadow">
 								<div class="card-body">
 									<p align="center">
-									Les états de santé ainsi que les possibles transitions entre elles pour un patient ayant le virus COVID-19
+										Les états de santé et les possibles transitions entre elles pour un patient ayant le virus COVID-19
 									</p>
 								
-									<center> <img src="{{ url_for('static', filename='images/transition.png') }}" height="220" /> </center>
+									<center> <img src="{{ url_for('static', filename='images/transition.png') }}" height="200" /> </center>
 								</div>
 								<div class="row">
 									<div class="col-md-6">
@@ -153,6 +152,7 @@
 										<p>Légende</p>
 									</a>
 									<div class="areaLegend"></div>
+									<p style="color:blue"><small>(* : pour 100 000 habitants)</small></p>
 								</div>
 							</div>
 						</div>
@@ -178,10 +178,10 @@
 							<div class="card mb-4 box-shadow">
 								<div class="card-body">
 									<a class="picto-item" aria-label="Sélectionnez les couleurs que vous souhaitez afficher sur la carte">
-										<p>Légende (Taux national : {{ counters['nat_r_dc_rad'] }})</p>
-
+										<p>Légende</p>
 									</a>
 									<div class="areaLegend"></div>
+									<p style="color:red">&#x26A0 Taux national : {{ counters['nat_r_dc_rad'] }}</p>
 								</div>
 							</div>
 						</div>
@@ -210,6 +210,7 @@
 										<p>Légende</p>
 									</a>
 									<div class="areaLegend"></div>
+									<p style="color:blue"><small>(* : pour 100 000 habitants)</small></p>
 								</div>
 							</div>
 						</div>
@@ -238,6 +239,7 @@
 										<p>Légende</p>
 									</a>
 									<div class="areaLegend"></div>
+									<p style="color:blue"><small>(* : pour 100 000 habitants)</small></p>
 								</div>
 							</div>
 						</div>
@@ -246,6 +248,33 @@
 			</div>
 		</div>
 		
+		<div class="col-md-12" id="rea_map">
+			<div class="card mb-4 box-shadow">
+				<div class="card-body">
+					<div class="pictos">
+						<a class="picto-item" aria-label="Cliquez sur un département pour afficher le détail">
+							<h3>Nombre de réanimations pour 100 000 habitants et par département le {{ counters['last_update']["day"] }}
+						</a>
+					</div>
+					<div class="row">
+						<div class="col-md-6">
+							<div class="map"></div>
+						</div>
+						<div class="col-md-6">
+							<div class="card mb-4 box-shadow">
+								<div class="card-body">
+									<a class="picto-item" aria-label="Sélectionnez les couleurs que vous souhaitez afficher sur la carte">
+										<p>Légende</p>
+									</a>
+									<div class="areaLegend"></div>
+									<p style="color:blue"><small>(* : pour 100 000 habitants)</small></p>
+								</div>
+							</div>
+						</div>
+					</div>
+				</div>
+			</div>
+		</div>
 		
         <div class="col-md-6">
             <div class="card mb-4 box-shadow">
@@ -360,10 +389,10 @@
             var quantiles = {{ overall_departments_quantiles|safe }};
             quantiles = Object.values(quantiles);
             var slices = [
-                {"max": quantiles[0], "label": "Moins de " + quantiles[0] + " décès pour 100 000 habitants", attrs: {fill: "#f2f53a"}}
+                {"max": quantiles[0], "label": "Moins de " + quantiles[0] + " décès *", attrs: {fill: "#D6F77F"}}
             ];
 
-            colors = ['#df891a', '#e61919', '#680000', '#1d0303']
+            colors = ["#f2f53a", '#df891a', '#e61919', '#680000', '#1d0303']
             for (var i = 0; i < quantiles.length; i++) {
                 var slice = {
                     attrs: {
@@ -375,9 +404,9 @@
 
                 if (i < quantiles.length -1) {
                     slice.max = quantiles[i + 1];
-                    slice.label = "Entre " + slice.min + " et " + slice.max + " décès pour 100 000 habitants";
+                    slice.label = "Entre " + slice.min + " et " + slice.max + " décès *";
                 } else {
-                    slice.label = "Plus de " + slice.min + " décès pour 100 000 habitants";
+                    slice.label = "Plus de " + slice.min + " décès *";
                 }
                 slices.push(slice);
             }
@@ -438,181 +467,7 @@
 	
     </script>
 	
-	
-	<!-- hosp map -->
-	<script type="text/javascript">
-        $(function() {
-            // Init map
-            var departments = {{ overall_departments_data_hosp|safe }};
-            var quantiles = {{ overall_departments_quantiles_hosp|safe }};
-            quantiles = Object.values(quantiles);
-            var slices = [
-                {"max": quantiles[0], "label": "Moins de " + quantiles[0] + " hospitalisations pour 100 000 habitants", attrs: {fill: "#f2f53a"}}
-            ];
 
-            colors = ['#df891a', '#e61919', '#680000', '#1d0303']
-            for (var i = 0; i < quantiles.length; i++) {
-                var slice = {
-                    attrs: {
-                        fill: colors[i]
-                    }
-                };
-
-                slice.min = quantiles[i];
-
-                if (i < quantiles.length -1) {
-                    slice.max = quantiles[i + 1];
-                    slice.label = "Entre " + slice.min + " et " + slice.max + " hospitalisations pour 100 000 habitants";
-                } else {
-                    slice.label = "Plus de " + slice.min + " hospitalisations pour 100 000 habitants";
-                }
-                slices.push(slice);
-            }
-
-            for (var id in departments) {
-                departments[id]['value'] = departments[id]['hosp_par_habitants'];
-                departments[id]['tooltip'] = {
-                    "content": departments[id]['label'] + " : <b>" + departments[id]['hosp'] + "</b> hospitalisations (<b>" + departments[id]['hosp_par_habitants'] + "</b> pour 100 000 habitants)"
-                };
-                <!-- departments[id]['href'] = "/departement/" + departments[id]['insee'] + "#data"; -->
-				departments[id]['href'] = "/departement/" + departments[id]['insee'] + "#"; 
-
-				if (departments[id]['insee'] === '{{ department }}') {
-                    departments[id]['href'] = "/";
-                    delete departments[id]['value'];
-                    departments[id]['attrs'] = {
-                        "fill": "#004a9b", 
-                    };
-                }
-            }
-            
-            $("#hosp_map").mapael({
-                "map": {
-                    "name": "france_departments_domtom",
-                    zoom: {
-                        enabled: true,
-                        maxLevel: 10
-                    },
-					
-					"defaultArea": {
-						"attrs": {
-							"fill": "#f4f4e8",
-							"stroke": "#ced8d0",
-						},
-						"attrsHover": {
-							 "fill": "#004a9b",
-						},
-						"text": {
-							"attrs": {
-								"fill": "#505444"
-							},
-							"attrsHover": {
-								"fill": "#000",
-							}
-						}
-					}	
-                },
-				
-                "legend": {
-                    "area": {
-                        "marginBottom": 20,
-                        "slices": slices
-                    }
-                },
-                "areas": departments
-            });
-        });
-	
-    </script>
-	
-	
-	<!-- rad map -->
-	<script type="text/javascript">
-        $(function() {
-            // Init map
-            var departments = {{ overall_departments_data_rad|safe }};
-            var quantiles = {{ overall_departments_quantiles_rad|safe }};
-            quantiles = Object.values(quantiles);
-            var slices = [
-                {"max": quantiles[0], "label": "Moins de " + quantiles[0] + " guérisons pour 100 000 habitants", attrs: {fill: "#FAF0B2"}}
-            ];
-
-            colors = ['#F5F50A', '#A4F905', '#06BF06', '#146806']  
-            for (var i = 0; i < quantiles.length; i++) {
-                var slice = {
-                    attrs: {
-                        fill: colors[i]
-                    }
-                };
-
-                slice.min = quantiles[i];
-
-                if (i < quantiles.length -1) {
-                    slice.max = quantiles[i + 1];
-                    slice.label = "Entre " + slice.min + " et " + slice.max + " guérisons pour 100 000 habitants";
-                } else {
-                    slice.label = "Plus de " + slice.min + " guérisons pour 100 000 habitants";
-                }
-                slices.push(slice);
-            }
-
-            for (var id in departments) {
-                departments[id]['value'] = departments[id]['rad_par_habitants'];
-                departments[id]['tooltip'] = {
-                    "content": departments[id]['label'] + " : <b>" + departments[id]['rad'] + "</b> guérisons (<b>" + departments[id]['rad_par_habitants'] + "</b> pour 100 000 habitants)"
-                };
-                <!-- departments[id]['href'] = "/departement/" + departments[id]['insee'] + "#data"; -->
-				departments[id]['href'] = "/departement/" + departments[id]['insee'] + "#"; 
-
-				if (departments[id]['insee'] === '{{ department }}') {
-                    departments[id]['href'] = "/";
-                    delete departments[id]['value'];
-                    departments[id]['attrs'] = {
-                        "fill": "#004a9b", 
-                    };
-                }
-            }
-            
-            $("#rad_map").mapael({
-                "map": {
-                    "name": "france_departments_domtom",
-                    zoom: {
-                        enabled: true,
-                        maxLevel: 10
-                    },
-					
-					"defaultArea": {
-						"attrs": {
-							"fill": "#f4f4e8",
-							"stroke": "#ced8d0",
-						},
-						"attrsHover": {
-							 "fill": "#004a9b",
-						},
-						"text": {
-							"attrs": {
-								"fill": "#505444"
-							},
-							"attrsHover": {
-								"fill": "#000",
-							}
-						}
-					}	
-                },
-				
-                "legend": {
-                    "area": {
-                        "marginBottom": 20,
-                        "slices": slices
-                    }
-                },
-                "areas": departments
-            });
-        });
-	
-    </script>
-	
-	
 	<!-- rate dc map -->
 	<script type="text/javascript">
         $(function() {
@@ -698,5 +553,272 @@
         });
 	
     </script>
+
+
+	<!-- rad map -->
+	<script type="text/javascript">
+        $(function() {
+            // Init map
+            var departments = {{ overall_departments_data_rad|safe }};
+            var quantiles = {{ overall_departments_quantiles_rad|safe }};
+            quantiles = Object.values(quantiles);
+            var slices = [
+                {"max": quantiles[0], "label": "Moins de " + quantiles[0] + " guérisons *", attrs: {fill: "#FEB653"}}
+            ];
+
+            colors = ["#FED674", '#F5F50A', '#A4F905', '#06BF06', '#146806']  
+            for (var i = 0; i < quantiles.length; i++) {
+                var slice = {
+                    attrs: {
+                        fill: colors[i]
+                    }
+                };
+
+                slice.min = quantiles[i];
+
+                if (i < quantiles.length -1) {
+                    slice.max = quantiles[i + 1];
+                    slice.label = "Entre " + slice.min + " et " + slice.max + " guérisons *";
+                } else {
+                    slice.label = "Plus de " + slice.min + " guérisons *";
+                }
+                slices.push(slice);
+            }
+
+            for (var id in departments) {
+                departments[id]['value'] = departments[id]['rad_par_habitants'];
+                departments[id]['tooltip'] = {
+                    "content": departments[id]['label'] + " : <b>" + departments[id]['rad'] + "</b> guérisons (<b>" + departments[id]['rad_par_habitants'] + "</b> pour 100 000 habitants)"
+                };
+                <!-- departments[id]['href'] = "/departement/" + departments[id]['insee'] + "#data"; -->
+				departments[id]['href'] = "/departement/" + departments[id]['insee'] + "#"; 
+
+				if (departments[id]['insee'] === '{{ department }}') {
+                    departments[id]['href'] = "/";
+                    delete departments[id]['value'];
+                    departments[id]['attrs'] = {
+                        "fill": "#004a9b", 
+                    };
+                }
+            }
+            
+            $("#rad_map").mapael({
+                "map": {
+                    "name": "france_departments_domtom",
+                    zoom: {
+                        enabled: true,
+                        maxLevel: 10
+                    },
+					
+					"defaultArea": {
+						"attrs": {
+							"fill": "#f4f4e8",
+							"stroke": "#ced8d0",
+						},
+						"attrsHover": {
+							 "fill": "#004a9b",
+						},
+						"text": {
+							"attrs": {
+								"fill": "#505444"
+							},
+							"attrsHover": {
+								"fill": "#000",
+							}
+						}
+					}	
+                },
+				
+                "legend": {
+                    "area": {
+                        "marginBottom": 20,
+                        "slices": slices
+                    }
+                },
+                "areas": departments
+            });
+        });
 	
+    </script>
+	
+	
+	<!-- hosp map -->
+	<script type="text/javascript">
+        $(function() {
+            // Init map
+            var departments = {{ overall_departments_data_hosp|safe }};
+            var quantiles = {{ overall_departments_quantiles_hosp|safe }};
+            quantiles = Object.values(quantiles);
+            var slices = [
+                {"max": quantiles[0], "label": "Moins de " + quantiles[0] + " hospitalisations *", attrs: {fill: "#D6F77F"}}
+            ];
+
+            colors = ["#f2f53a", '#df891a', '#e61919', '#680000', '#1d0303']
+            for (var i = 0; i < quantiles.length; i++) {
+                var slice = {
+                    attrs: {
+                        fill: colors[i]
+                    }
+                };
+
+                slice.min = quantiles[i];
+
+                if (i < quantiles.length -1) {
+                    slice.max = quantiles[i + 1];
+                    slice.label = "Entre " + slice.min + " et " + slice.max + " hospitalisations *";
+                } else {
+                    slice.label = "Plus de " + slice.min + " hospitalisations *";
+                }
+                slices.push(slice);
+            }
+
+            for (var id in departments) {
+                departments[id]['value'] = departments[id]['hosp_par_habitants'];
+                departments[id]['tooltip'] = {
+                    "content": departments[id]['label'] + " : <b>" + departments[id]['hosp'] + "</b> hospitalisations (<b>" + departments[id]['hosp_par_habitants'] + "</b> pour 100 000 habitants)"
+                };
+                <!-- departments[id]['href'] = "/departement/" + departments[id]['insee'] + "#data"; -->
+				departments[id]['href'] = "/departement/" + departments[id]['insee'] + "#"; 
+
+				if (departments[id]['insee'] === '{{ department }}') {
+                    departments[id]['href'] = "/";
+                    delete departments[id]['value'];
+                    departments[id]['attrs'] = {
+                        "fill": "#004a9b", 
+                    };
+                }
+            }
+            
+            $("#hosp_map").mapael({
+                "map": {
+                    "name": "france_departments_domtom",
+                    zoom: {
+                        enabled: true,
+                        maxLevel: 10
+                    },
+					
+					"defaultArea": {
+						"attrs": {
+							"fill": "#f4f4e8",
+							"stroke": "#ced8d0",
+						},
+						"attrsHover": {
+							 "fill": "#004a9b",
+						},
+						"text": {
+							"attrs": {
+								"fill": "#505444"
+							},
+							"attrsHover": {
+								"fill": "#000",
+							}
+						}
+					}	
+                },
+				
+                "legend": {
+                    "area": {
+                        "marginBottom": 20,
+                        "slices": slices
+                    }
+                },
+                "areas": departments
+            });
+        });
+	
+    </script>
+	
+	
+	<!-- rea map -->
+	<script type="text/javascript">
+        $(function() {
+            // Init map
+            var departments = {{ overall_departments_data_rea|safe }};
+            var quantiles = {{ overall_departments_quantiles_rea|safe }};
+            quantiles = Object.values(quantiles);
+            var slices = [
+                {"max": quantiles[0], "label": quantiles[0] + " réanimations *", attrs: {fill: "#D6F77F"}}
+            ];
+
+            colors = ["#f2f53a", '#df891a', '#e61919', '#680000', '#1d0303']
+            for (var i = 0; i < quantiles.length; i++) {
+                var slice = {
+                    attrs: {
+                        fill: colors[i]
+                    }
+                };
+
+                slice.min = quantiles[i];
+
+                if (i < quantiles.length -1) {
+                    slice.max = quantiles[i + 1];
+                    slice.label = "Entre " + slice.min + " et " + slice.max + " réanimations *";
+                } else {
+                    slice.label = "Plus de " + slice.min + " réanimations *";
+                }
+                if (i == 0) {
+                    slice.max = quantiles[i + 1];
+                    slice.label = "Moins de " + slice.max + " réanimations *";
+                }
+                
+                slices.push(slice);
+            }
+
+            for (var id in departments) {
+                departments[id]['value'] = departments[id]['rea_par_habitants'];
+                departments[id]['tooltip'] = {
+                    "content": departments[id]['label'] + " : <b>" + departments[id]['rea'] + "</b> réanimations (<b>" + departments[id]['rea_par_habitants'] + "</b> pour 100 000 habitants)"
+                };
+                <!-- departments[id]['href'] = "/departement/" + departments[id]['insee'] + "#data"; -->
+				departments[id]['href'] = "/departement/" + departments[id]['insee'] + "#"; 
+
+				if (departments[id]['insee'] === '{{ department }}') {
+                    departments[id]['href'] = "/";
+                    delete departments[id]['value'];
+                    departments[id]['attrs'] = {
+                        "fill": "#004a9b", 
+                    };
+                }
+            }
+            
+            $("#rea_map").mapael({
+                "map": {
+                    "name": "france_departments_domtom",
+                    zoom: {
+                        enabled: true,
+                        maxLevel: 10
+                    },
+					
+					"defaultArea": {
+						"attrs": {
+							"fill": "#f4f4e8",
+							"stroke": "#ced8d0",
+						},
+						"attrsHover": {
+							 "fill": "#004a9b",
+						},
+						"text": {
+							"attrs": {
+								"fill": "#505444"
+							},
+							"attrsHover": {
+								"fill": "#000",
+							}
+						}
+					}	
+                },
+				
+                "legend": {
+                    "area": {
+                        "marginBottom": 20,
+                        "slices": slices
+                    }
+                },
+                "areas": departments
+            });
+        });
+	
+    </script>
+
+
 {% endblock %}

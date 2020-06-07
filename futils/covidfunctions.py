@@ -71,7 +71,7 @@ def overall_departments_data_as_json():
     data = data.loc[:, ['label', 'dc', 'dc_par_habitants', 'insee']]
 
     quantiles = data['dc_par_habitants'] \
-        .quantile([.25, .5, .75, .949]) \
+        .quantile([0.1, 0.35, .63, .8, .949]) \
         .round(2)
 
     data['dc_par_habitants'] = data['dc_par_habitants'].round(2)
@@ -96,11 +96,36 @@ def overall_departments_data_as_json():
     data_hosp = data_hosp.loc[:, ['label', 'hosp', 'hosp_par_habitants', 'insee']]
 
     quantiles_hosp = data_hosp['hosp_par_habitants'] \
-        .quantile([.25, .5, .75, .949]) \
+        .quantile([0.1, 0.35, .63, .8, .949]) \
         .round(2)
 
     data_hosp['hosp_par_habitants'] = data_hosp['hosp_par_habitants'].round(2)
     
+
+    ####added recently for reanimation case map
+    dep_data_j = covidata[(covidata['sexe'] == 0) & (covidata['jour'] == datetime.strptime(last_update(), "%Y-%m-%dT%H:%M:%S.%f").strftime("%Y-%m-%d"))]
+    dep_data_j = dep_data_j \
+        .drop(['jour', 'sexe'], axis=1) \
+        .groupby('dep') \
+        .max()
+    dep_data_j = pd.concat([dep_data_j, department_base_data], axis=1)
+
+    dep_data_j['rea_par_habitants'] = (dep_data_j['rea'] / dep_data['population']) * 100000
+
+    overall_data_departments_rea = dep_data_j
+    
+    data_rea = overall_data_departments_rea.copy()
+    
+    data_rea = data_rea.set_index("department-" + data_rea.index)
+    
+    data_rea = data_rea.loc[:, ['label', 'rea', 'rea_par_habitants', 'insee']]
+
+    quantiles_rea = data_rea['rea_par_habitants'] \
+        .quantile([0.1, 0.35, .63, .8, .949]) \
+        .round(2)
+
+    data_rea['rea_par_habitants'] = data_rea['rea_par_habitants'].round(2)
+
     #################
     
     dep_data['rad_par_habitants'] = (dep_data['rad'] / dep_data['population']) * 100000
@@ -114,7 +139,7 @@ def overall_departments_data_as_json():
     data_rad = data_rad.loc[:, ['label', 'rad', 'rad_par_habitants', 'insee']]
 
     quantiles_rad = data_rad['rad_par_habitants'] \
-        .quantile([.25, .5, .75, .949]) \
+        .quantile([0.1, 0.35, .63, .8, .949]) \
         .round(2)
 
     data_rad['rad_par_habitants'] = data_rad['rad_par_habitants'].round(2)
@@ -140,13 +165,13 @@ def overall_departments_data_as_json():
     nat_r_dc_rad = data_r_dc_rad['dc'].sum() / (data_r_dc_rad['dc'].sum() + data_r_dc_rad['rad'].sum())
 
     quantiles_r_dc_rad = data_r_dc_rad['r_dc_rad'] \
-        .quantile([0.1, 0.3, .63, .8, .949]) \
+        .quantile([0.1, 0.35, .63, .8, .949]) \
         .round(2)
 
     data_r_dc_rad['r_dc_rad'] = data_r_dc_rad['r_dc_rad'].round(2)
 
     #return data.to_json(orient='index'), quantiles.to_json(orient='index')
-    return data.to_json(orient='index'), quantiles.to_json(orient='index'), data_hosp.to_json(orient='index'), quantiles_hosp.to_json(orient='index'), data_rad.to_json(orient='index'), quantiles_rad.to_json(orient='index'), data_r_dc_rad.to_json(orient='index'), quantiles_r_dc_rad.to_json(orient='index')
+    return data.to_json(orient='index'), quantiles.to_json(orient='index'), data_hosp.to_json(orient='index'), quantiles_hosp.to_json(orient='index'), data_rad.to_json(orient='index'), quantiles_rad.to_json(orient='index'), data_r_dc_rad.to_json(orient='index'), quantiles_r_dc_rad.to_json(orient='index'), data_rea.to_json(orient='index'), quantiles_rea.to_json(orient='index')
     
 #####################################"
 
