@@ -138,7 +138,7 @@
 				<div class="card-body">
 					<div class="pictos">
 						<a class="picto-item" aria-label="Cliquez sur un département pour afficher le détail">
-							<h3>Nombre de décés à l'hôpital pour 100 000 habitants et par département</h3>
+							<h3>Nombre de décès à l'hôpital pour 100 000 habitants et par département</h3>
 						</a>
 					</div>
 					<div class="row">
@@ -315,7 +315,7 @@
         <div class="col-md-12">
             <div class="card mb-4 box-shadow">
                 <div class="card-body">
-                    <h3 id="Personnes décédées par jour">Nombre de personnes décédées par jour à l'hôpital</h3>
+                    <h3 id="Personnes décédées par jour">Nombre quotidien de personnes décédées à l'hôpital</h3>
                     <div id="Nombre de personnes décédées par jour à l'hôpital"></div>
                 </div>
             </div>
@@ -324,7 +324,7 @@
         <div class="col-md-12">
             <div class="card mb-4 box-shadow">
                 <div class="card-body">
-                    <h3 id="Personnes retournées par jour">Nombre de personnes retournées par jour à domicile</h3>
+                    <h3 id="Personnes retournées par jour">Nombre quotidien de personnes retournées à domicile</h3>
                     <div id="Nombre de personnes retournées par jour à domicile"></div>
                 </div>
             </div>
@@ -385,8 +385,8 @@
 	<script type="text/javascript">
         $(function() {
             // Init map
-            var departments = {{ overall_departments_data|safe }};
-            var quantiles = {{ overall_departments_quantiles|safe }};
+            var departments = {{ overall_departments_data_dc|safe }};
+            var quantiles = {{ overall_departments_quantiles_dc|safe }};
             quantiles = Object.values(quantiles);
             var slices = [
                 {"max": quantiles[0], "label": "Moins de " + quantiles[0] + " décès *", attrs: {fill: "#D6F77F"}}

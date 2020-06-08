@@ -7,9 +7,12 @@ import urllib.request
 from datetime import datetime
 
 
-# Loading dataframes
+### URL source for loading covid data
+source_url = 'https://www.data.gouv.fr/fr/datasets/r/63352e38-d353-4b54-bfd1-f1b3ee1cabd7'
+
+
+### Loading dataframe function
 def load_df():
-    source_url = 'https://www.data.gouv.fr/fr/datasets/r/63352e38-d353-4b54-bfd1-f1b3ee1cabd7'
         
     covidata = pd.read_csv(source_url, sep=';')
         
@@ -17,14 +20,15 @@ def load_df():
         
     department_base_data = pd.read_csv(data_dir + "/departments.csv")
         
-    return covidata, department_base_data
+    return {"covidata": covidata, "department_base_data": department_base_data}
         
 
-# Loading covid dataframe
-source_url = 'https://www.data.gouv.fr/fr/datasets/r/63352e38-d353-4b54-bfd1-f1b3ee1cabd7'
-covidata = pd.read_csv(source_url, sep=';')
+### Loading covid and france department dataframes
+#covidata = load_df()["covidata"]
+#department_base_data = load_df()["department_base_data"]
 
-#####################################"
+
+#####################################
 
 def last_update():
     last_update = ""
@@ -36,7 +40,8 @@ def last_update():
                 last_update = dataset['modified']
     return last_update
 
-#####################################"
+
+#####################################
 
 def overall_departments_data_as_json():
     """Get data from departments as a JSON string along with quantiles
@@ -44,13 +49,16 @@ def overall_departments_data_as_json():
     Returns:
         JSON string of departments overall data
     """
-    
-    data_dir = os.path.realpath(os.path.dirname(__file__) + "/../data/")
 
-    department_base_data = pd.read_csv(data_dir + "/departments.csv")
+    qlist = [0.1, 0.35, .63, .8, .949]
+
+    department_base_data = load_df()["department_base_data"]
     department_base_data.index = department_base_data['insee']
     department_base_data = department_base_data.sort_index()
+    
 
+    ### death case map
+    covidata = load_df()["covidata"]
 
     dep_data = covidata[(covidata['sexe'] == 0)]
     dep_data = dep_data \
@@ -60,103 +68,42 @@ def overall_departments_data_as_json():
 
     dep_data = pd.concat([dep_data, department_base_data], axis=1)
 
+
     dep_data['dc_par_habitants'] = (dep_data['dc'] / dep_data['population']) * 100000
 
-    overall_data_departments = dep_data
+    data_dc = dep_data.copy()
     
-    data = overall_data_departments.copy()
+    data_dc = data_dc.set_index("department-" + data_dc.index)
     
-    data = data.set_index("department-" + data.index)
-    
-    data = data.loc[:, ['label', 'dc', 'dc_par_habitants', 'insee']]
+    data_dc = data_dc.loc[:, ['label', 'dc', 'dc_par_habitants', 'insee']]
 
-    quantiles = data['dc_par_habitants'] \
-        .quantile([0.1, 0.35, .63, .8, .949]) \
+    quantiles_dc = data_dc['dc_par_habitants'] \
+        .quantile(qlist) \
         .round(2)
 
-    data['dc_par_habitants'] = data['dc_par_habitants'].round(2)
+    data_dc['dc_par_habitants'] = data_dc['dc_par_habitants'].round(2)
     
     
-    #added recently for hospitalisation case map
-    dep_data_j = covidata[(covidata['sexe'] == 0) & (covidata['jour'] == datetime.strptime(last_update(), "%Y-%m-%dT%H:%M:%S.%f").strftime("%Y-%m-%d"))]
-    dep_data_j = dep_data_j \
-        .drop(['jour', 'sexe'], axis=1) \
-        .groupby('dep') \
-        .max()
-    dep_data_j = pd.concat([dep_data_j, department_base_data], axis=1)
-
-    dep_data_j['hosp_par_habitants'] = (dep_data_j['hosp'] / dep_data['population']) * 100000
-
-    overall_data_departments_hosp = dep_data_j
-    
-    data_hosp = overall_data_departments_hosp.copy()
-    
-    data_hosp = data_hosp.set_index("department-" + data_hosp.index)
-    
-    data_hosp = data_hosp.loc[:, ['label', 'hosp', 'hosp_par_habitants', 'insee']]
-
-    quantiles_hosp = data_hosp['hosp_par_habitants'] \
-        .quantile([0.1, 0.35, .63, .8, .949]) \
-        .round(2)
-
-    data_hosp['hosp_par_habitants'] = data_hosp['hosp_par_habitants'].round(2)
-    
-
-    ####added recently for reanimation case map
-    dep_data_j = covidata[(covidata['sexe'] == 0) & (covidata['jour'] == datetime.strptime(last_update(), "%Y-%m-%dT%H:%M:%S.%f").strftime("%Y-%m-%d"))]
-    dep_data_j = dep_data_j \
-        .drop(['jour', 'sexe'], axis=1) \
-        .groupby('dep') \
-        .max()
-    dep_data_j = pd.concat([dep_data_j, department_base_data], axis=1)
-
-    dep_data_j['rea_par_habitants'] = (dep_data_j['rea'] / dep_data['population']) * 100000
-
-    overall_data_departments_rea = dep_data_j
-    
-    data_rea = overall_data_departments_rea.copy()
-    
-    data_rea = data_rea.set_index("department-" + data_rea.index)
-    
-    data_rea = data_rea.loc[:, ['label', 'rea', 'rea_par_habitants', 'insee']]
-
-    quantiles_rea = data_rea['rea_par_habitants'] \
-        .quantile([0.1, 0.35, .63, .8, .949]) \
-        .round(2)
-
-    data_rea['rea_par_habitants'] = data_rea['rea_par_habitants'].round(2)
-
-    #################
-    
+    ### added recently for rad case map
     dep_data['rad_par_habitants'] = (dep_data['rad'] / dep_data['population']) * 100000
-
-    overall_data_departments_rad = dep_data
-    
-    data_rad = overall_data_departments_rad.copy()
+  
+    data_rad = dep_data.copy()
     
     data_rad = data_rad.set_index("department-" + data_rad.index)
     
     data_rad = data_rad.loc[:, ['label', 'rad', 'rad_par_habitants', 'insee']]
 
     quantiles_rad = data_rad['rad_par_habitants'] \
-        .quantile([0.1, 0.35, .63, .8, .949]) \
+        .quantile(qlist) \
         .round(2)
 
     data_rad['rad_par_habitants'] = data_rad['rad_par_habitants'].round(2)
     
-    ###########################
-    # Rate dc
-    dep_data_r_dc_rad = covidata[(covidata['sexe'] == 0)]
-    dep_data_r_dc_rad = dep_data_r_dc_rad \
-        .drop(['jour', 'sexe'], axis=1) \
-        .groupby('dep') \
-        .max()
 
-    dep_data_r_dc_rad = pd.concat([dep_data_r_dc_rad, department_base_data], axis=1)
-    dep_data_r_dc_rad['r_dc_rad'] = (dep_data_r_dc_rad['dc'] / (dep_data_r_dc_rad['dc'] + dep_data_r_dc_rad['rad']))
-    overall_data_departments_r_dc_rad = dep_data_r_dc_rad
-
-    data_r_dc_rad = overall_data_departments_r_dc_rad.copy()
+    ### added recently for rate death case map
+    dep_data['r_dc_rad'] = (dep_data['dc'] / (dep_data['dc'] + dep_data['rad']))
+   
+    data_r_dc_rad = dep_data.copy()
 
     data_r_dc_rad = data_r_dc_rad.set_index("department-" + data_r_dc_rad.index)
 
@@ -165,15 +112,58 @@ def overall_departments_data_as_json():
     nat_r_dc_rad = data_r_dc_rad['dc'].sum() / (data_r_dc_rad['dc'].sum() + data_r_dc_rad['rad'].sum())
 
     quantiles_r_dc_rad = data_r_dc_rad['r_dc_rad'] \
-        .quantile([0.1, 0.35, .63, .8, .949]) \
+        .quantile(qlist) \
         .round(2)
 
     data_r_dc_rad['r_dc_rad'] = data_r_dc_rad['r_dc_rad'].round(2)
-
-    #return data.to_json(orient='index'), quantiles.to_json(orient='index')
-    return data.to_json(orient='index'), quantiles.to_json(orient='index'), data_hosp.to_json(orient='index'), quantiles_hosp.to_json(orient='index'), data_rad.to_json(orient='index'), quantiles_rad.to_json(orient='index'), data_r_dc_rad.to_json(orient='index'), quantiles_r_dc_rad.to_json(orient='index'), data_rea.to_json(orient='index'), quantiles_rea.to_json(orient='index')
     
-#####################################"
+    
+
+    ### added recently for last day hospitalisation case map
+    covidata = load_df()["covidata"]
+
+    dep_data_j = covidata[(covidata['sexe'] == 0) & (covidata['jour'] == datetime.strptime(last_update(), "%Y-%m-%dT%H:%M:%S.%f").strftime("%Y-%m-%d"))]
+    dep_data_j = dep_data_j \
+        .drop(['jour', 'sexe'], axis=1) \
+        .groupby('dep') \
+        .max()
+    dep_data_j = pd.concat([dep_data_j, department_base_data], axis=1)
+
+
+    dep_data_j['hosp_par_habitants'] = (dep_data_j['hosp'] / dep_data_j['population']) * 100000
+    
+    data_hosp = dep_data_j.copy()
+    
+    data_hosp = data_hosp.set_index("department-" + data_hosp.index)
+    
+    data_hosp = data_hosp.loc[:, ['label', 'hosp', 'hosp_par_habitants', 'insee']]
+
+    quantiles_hosp = data_hosp['hosp_par_habitants'] \
+        .quantile(qlist) \
+        .round(2)
+
+    data_hosp['hosp_par_habitants'] = data_hosp['hosp_par_habitants'].round(2)
+    
+
+    ### added recently for last day reanimation case map
+    dep_data_j['rea_par_habitants'] = (dep_data_j['rea'] / dep_data_j['population']) * 100000
+  
+    data_rea = dep_data_j.copy()
+    
+    data_rea = data_rea.set_index("department-" + data_rea.index)
+    
+    data_rea = data_rea.loc[:, ['label', 'rea', 'rea_par_habitants', 'insee']]
+
+    quantiles_rea = data_rea['rea_par_habitants'] \
+        .quantile(qlist) \
+        .round(2)
+
+    data_rea['rea_par_habitants'] = data_rea['rea_par_habitants'].round(2)
+
+    
+    return data_dc.to_json(orient='index'), quantiles_dc.to_json(orient='index'), data_rad.to_json(orient='index'), quantiles_rad.to_json(orient='index'), data_r_dc_rad.to_json(orient='index'), quantiles_r_dc_rad.to_json(orient='index'), data_hosp.to_json(orient='index'), quantiles_hosp.to_json(orient='index'), data_rea.to_json(orient='index'), quantiles_rea.to_json(orient='index')
+    
+#####################################
 
 def department_label(department):
     """Get a department label from its insee code
@@ -181,9 +171,7 @@ def department_label(department):
     Returns:
         Department label
     """
-    data_dir = os.path.realpath(os.path.dirname(__file__) + "/../data/")
-
-    department_base_data = pd.read_csv(data_dir + "/departments.csv")
+    department_base_data = load_df()["department_base_data"]
     department_base_data.index = department_base_data['insee']
     department_base_data = department_base_data.sort_index()
      
@@ -194,7 +182,8 @@ def department_label(department):
 #####################################"
 
 def charts(department):
-    
+    covidata = load_df()["covidata"]
+
     if department == 'ALL':
         cdata = covidata[covidata.sexe == 0].groupby(['jour']).sum().copy()
     else: 
@@ -354,6 +343,9 @@ def charts(department):
            "Nombre de personnes décédées par jour à l'hôpital",
            "Nombre de personnes retournées par jour à domicile",
            ]
+
+    fdata = covidata[covidata.sexe == 0].groupby(['jour']).sum().copy()
+    nat_r_dc_rad = (fdata['dc'][-1] / (fdata['dc'][-1] + fdata['rad'][-1])).round(2)
     
     counters = {"last_update": {"day": datetime.strptime(last_update(), "%Y-%m-%dT%H:%M:%S.%f").strftime("%d/%m/%Y"),  
                                 "day_hour": datetime.strptime(last_update(), "%Y-%m-%dT%H:%M:%S.%f").strftime("%d/%m/%Y à %Hh%M")
@@ -367,7 +359,8 @@ def charts(department):
                 "current_hosp": cdata['hosp'][-1],
                 "current_rea": cdata['rea'][-1], 
                 
-                "nat_r_dc_rad": (cdata['dc'][-1] / (cdata['dc'][-1] + cdata['rad'][-1])).round(2)
+                #"dep_r_dc_rad": (cdata['dc'][-1] / (cdata['dc'][-1] + cdata['rad'][-1])).round(2),
+                "nat_r_dc_rad": nat_r_dc_rad,
                 }
      
     return graphJSON, ids, counters
