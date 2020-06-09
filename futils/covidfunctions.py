@@ -1,4 +1,5 @@
 import pandas as pd
+import numpy as np
 import json
 import plotly
 import os
@@ -10,6 +11,8 @@ from datetime import datetime
 ### URL source for loading covid data
 source_url = 'https://www.data.gouv.fr/fr/datasets/r/63352e38-d353-4b54-bfd1-f1b3ee1cabd7'
 
+source_url2 = "https://www.data.gouv.fr/fr/datasets/r/6fadff46-9efd-4c53-942a-54aca783c30c"
+
 
 ### Loading dataframe function
 def load_df():
@@ -20,7 +23,9 @@ def load_df():
         
     department_base_data = pd.read_csv(data_dir + "/departments.csv")
         
-    return {"covidata": covidata, "department_base_data": department_base_data}
+    return {"covidata": covidata, 
+            "department_base_data": department_base_data, 
+            "daily_data": pd.read_csv(source_url2, sep=';')}
         
 
 ### Loading covid and france department dataframes
@@ -50,8 +55,6 @@ def overall_departments_data_as_json():
         JSON string of departments overall data
     """
 
-    qlist = [0.1, 0.35, .63, .8, .949]
-
     department_base_data = load_df()["department_base_data"]
     department_base_data.index = department_base_data['insee']
     department_base_data = department_base_data.sort_index()
@@ -61,6 +64,10 @@ def overall_departments_data_as_json():
     covidata = load_df()["covidata"]
 
     dep_data = covidata[(covidata['sexe'] == 0)]
+
+    nat_data = dep_data.copy()
+    nat_data = nat_data.groupby("jour").sum()
+
     dep_data = dep_data \
         .drop(['jour', 'sexe'], axis=1) \
         .groupby('dep') \
@@ -77,8 +84,12 @@ def overall_departments_data_as_json():
     
     data_dc = data_dc.loc[:, ['label', 'dc', 'dc_par_habitants', 'insee']]
 
+    q_dc = np.mean(data_dc['dc_par_habitants'].to_numpy() \
+        <= ((nat_data['dc'][-1] / department_base_data["population"].sum()) * 100000))
+    q_dc_list = [0.1, 0.1+(q_dc-0.1)/2, q_dc, q_dc+(.949-q_dc)/2, .949]
+ 
     quantiles_dc = data_dc['dc_par_habitants'] \
-        .quantile(qlist) \
+        .quantile(q_dc_list) \
         .round(2)
 
     data_dc['dc_par_habitants'] = data_dc['dc_par_habitants'].round(2)
@@ -93,8 +104,12 @@ def overall_departments_data_as_json():
     
     data_rad = data_rad.loc[:, ['label', 'rad', 'rad_par_habitants', 'insee']]
 
+    q_rad = np.mean(data_rad['rad_par_habitants'].to_numpy() \
+        <= ((nat_data['rad'][-1] / department_base_data["population"].sum()) * 100000))
+    q_rad_list = [0.1, 0.1+(q_rad-0.1)/2, q_rad, q_rad+(.949-q_rad)/2, .949]
+
     quantiles_rad = data_rad['rad_par_habitants'] \
-        .quantile(qlist) \
+        .quantile(q_rad_list) \
         .round(2)
 
     data_rad['rad_par_habitants'] = data_rad['rad_par_habitants'].round(2)
@@ -109,7 +124,8 @@ def overall_departments_data_as_json():
 
     data_r_dc_rad = data_r_dc_rad.loc[:, ['label', 'dc', 'rad', 'r_dc_rad', 'insee']]
 
-    nat_r_dc_rad = data_r_dc_rad['dc'].sum() / (data_r_dc_rad['dc'].sum() + data_r_dc_rad['rad'].sum())
+    q_r_dc_rad = np.mean(dep_data['r_dc_rad'].to_numpy() <= (data_r_dc_rad['dc'].sum() / (data_r_dc_rad['dc'].sum() + data_r_dc_rad['rad'].sum())))
+    q_r_dc_rad_list = [0.1, 0.1+(q_r_dc_rad-0.1)/2, q_r_dc_rad, q_r_dc_rad+(.949-q_r_dc_rad)/2, .949]
 
     quantiles_r_dc_rad = data_r_dc_rad['r_dc_rad'] \
         .quantile(qlist) \
@@ -118,7 +134,6 @@ def overall_departments_data_as_json():
     data_r_dc_rad['r_dc_rad'] = data_r_dc_rad['r_dc_rad'].round(2)
     
     
-
     ### added recently for last day hospitalisation case map
     covidata = load_df()["covidata"]
 
@@ -138,8 +153,12 @@ def overall_departments_data_as_json():
     
     data_hosp = data_hosp.loc[:, ['label', 'hosp', 'hosp_par_habitants', 'insee']]
 
+    q_hosp = np.mean(data_hosp['hosp_par_habitants'].to_numpy() \
+        <= ((nat_data['hosp'][-1] / department_base_data["population"].sum()) * 100000))
+    q_hosp_list = [0.1, 0.1+(q_hosp-0.1)/2, q_hosp, q_hosp+(.949-q_hosp)/2, .949]
+
     quantiles_hosp = data_hosp['hosp_par_habitants'] \
-        .quantile(qlist) \
+        .quantile(q_hosp_list) \
         .round(2)
 
     data_hosp['hosp_par_habitants'] = data_hosp['hosp_par_habitants'].round(2)
@@ -154,8 +173,12 @@ def overall_departments_data_as_json():
     
     data_rea = data_rea.loc[:, ['label', 'rea', 'rea_par_habitants', 'insee']]
 
+    q_rea = np.mean(data_rea['rea_par_habitants'].to_numpy() \
+        <= ((nat_data['rea'][-1] / department_base_data["population"].sum()) * 100000))
+    q_rea_list = [0.1, 0.1+(q_rea-0.1)/2, q_rea, q_rea+(.949-q_rea)/2, .949]
+
     quantiles_rea = data_rea['rea_par_habitants'] \
-        .quantile(qlist) \
+        .quantile(q_rea_list) \
         .round(2)
 
     data_rea['rea_par_habitants'] = data_rea['rea_par_habitants'].round(2)
@@ -345,7 +368,7 @@ def charts(department):
            ]
 
     fdata = covidata[covidata.sexe == 0].groupby(['jour']).sum().copy()
-    nat_r_dc_rad = (fdata['dc'][-1] / (fdata['dc'][-1] + fdata['rad'][-1])).round(2)
+    popfr = load_df()["department_base_data"]["population"].sum()
     
     counters = {"last_update": {"day": datetime.strptime(last_update(), "%Y-%m-%dT%H:%M:%S.%f").strftime("%d/%m/%Y"),  
                                 "day_hour": datetime.strptime(last_update(), "%Y-%m-%dT%H:%M:%S.%f").strftime("%d/%m/%Y à %Hh%M")
@@ -360,7 +383,12 @@ def charts(department):
                 "current_rea": cdata['rea'][-1], 
                 
                 #"dep_r_dc_rad": (cdata['dc'][-1] / (cdata['dc'][-1] + cdata['rad'][-1])).round(2),
-                "nat_r_dc_rad": nat_r_dc_rad,
+                "nat_refs": {"nat_dc": ((fdata.dc[-1] / popfr) * 100000).round(2),
+                            "nat_r_dc_rad": (fdata['dc'][-1] / (fdata['dc'][-1] + fdata['rad'][-1])).round(2),
+                            "nat_rad": ((fdata.rad[-1] / popfr) * 100000).round(2),
+                            "nat_hosp": ((fdata.hosp[-1] / popfr) * 100000).round(2),
+                            "nat_rea": ((fdata.rea[-1] / popfr) * 100000).round(2),
+                            },
                 }
      
     return graphJSON, ids, counters
