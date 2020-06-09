@@ -128,7 +128,7 @@ def overall_departments_data_as_json():
     q_r_dc_rad_list = [0.1, 0.1+(q_r_dc_rad-0.1)/2, q_r_dc_rad, q_r_dc_rad+(.949-q_r_dc_rad)/2, .949]
 
     quantiles_r_dc_rad = data_r_dc_rad['r_dc_rad'] \
-        .quantile(qlist) \
+        .quantile(q_r_dc_rad_list) \
         .round(2)
 
     data_r_dc_rad['r_dc_rad'] = data_r_dc_rad['r_dc_rad'].round(2)
