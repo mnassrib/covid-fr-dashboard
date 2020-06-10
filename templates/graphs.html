@@ -31,7 +31,7 @@
 		{% endif %} 
 		
 		{% if (label != 'France'): %}
-			Dépt. : {{ label }} (FR-{{ department }})
+			dépt. : {{ label }} (FR-{{ department }})
 		{% else : %}
 			{{ label }}
 		{% endif %} 
@@ -43,7 +43,14 @@
 			
 			<div class="card mb-4 box-shadow">
 				<div class="card-body">
-					<h3>Chiffres clés du {{ counters['last_update']["day"] }}</h3>
+
+					{% if (label != 'France'): %}
+						<h3>Chiffres clés du {{ counters['last_update']["day"] }} au dépt. {{ label }} (FR-{{ department }})</h3>
+						
+					{% else : %}
+						<h3>Chiffres clés du {{ counters['last_update']["day"] }} en {{ label }}</h3> 
+					{% endif %}
+
 					<div class="row">
 					
 						<div class="col-md-3">
@@ -76,7 +83,7 @@
 							<div class="card mb-4 box-shadow">
 								<div class="card-body">
 									<p align="center">
-										Les états de santé et les possibles transitions entre elles pour un patient ayant le virus COVID-19
+										Les états de santé et les possibles transitions entre elles pour un patient atteint du virus COVID-19
 									</p>
 								
 									<center> <img src="{{ url_for('static', filename='images/transition.png') }}" height="200" /> </center>
@@ -153,7 +160,7 @@
 									</a>
 									<div class="areaLegend"></div>
 									<p style="color:red">&#x26A0 Niveau national : {{ counters['nat_refs']['nat_dc'] }} décès *</p>
-									<p style="color:blue"><small>(* : pour 100 000 habitants)</small></p>
+									<p style="color:black"><small>(* : pour 100 000 habitants)</small></p>
 								</div>
 							</div>
 						</div>
@@ -212,7 +219,7 @@
 									</a>
 									<div class="areaLegend"></div>
 									<p style="color:green">&#x26A0 Niveau national : {{ counters['nat_refs']['nat_rad'] }} guérisons *</p>
-									<p style="color:blue"><small>(* : pour 100 000 habitants)</small></p>
+									<p style="color:black"><small>(* : pour 100 000 habitants)</small></p>
 								</div>
 							</div>
 						</div>
@@ -242,7 +249,7 @@
 									</a>
 									<div class="areaLegend"></div>
 									<p style="color:red">&#x26A0 Niveau national : {{ counters['nat_refs']['nat_hosp'] }} hospitalisations *</p>
-									<p style="color:blue"><small>(* : pour 100 000 habitants)</small></p>
+									<p style="color:black"><small>(* : pour 100 000 habitants)</small></p>
 								</div>
 							</div>
 						</div>
@@ -271,7 +278,7 @@
 									</a>
 									<div class="areaLegend"></div>
 									<p style="color:red">&#x26A0 Niveau national : {{ counters['nat_refs']['nat_rea'] }} réanimations *</p>
-									<p style="color:blue"><small>(* : pour 100 000 habitants)</small></p>
+									<p style="color:black"><small>(* : pour 100 000 habitants)</small></p>
 								</div>
 							</div>
 						</div>
@@ -279,11 +286,18 @@
 				</div>
 			</div>
 		</div>
-		
+	
         <div class="col-md-6">
             <div class="card mb-4 box-shadow">
                 <div class="card-body">
-                    <h3 id="Personnes hospitalisées">Nombre de patients actuellement hospitalisés</h3>
+                    
+                    {% if (label != 'France'): %}
+						<h3 id="Personnes hospitalisées">Nombre de patients actuellement hospitalisés au dépt. {{ label }} (FR-{{ department }})</h3>
+						
+					{% else : %}
+						<h3 id="Personnes hospitalisées">Nombre de patients actuellement hospitalisés en {{ label }}</h3> 
+					{% endif %} 
+
                     <div id="Nombre de personnes actuellement hospitalisées"></div>
                 </div>
             </div>
@@ -292,7 +306,14 @@
         <div class="col-md-6">
             <div class="card mb-4 box-shadow">
                 <div class="card-body">
-                    <h3 id="Personnes en réanimation">Nombre de patients en réanimation ou soins intensifs</h3>
+                    
+                    {% if (label != 'France'): %}
+						<h3 id="Personnes en réanimation">Nombre de patients en réanimation ou soins intensifs au dépt. {{ label }} (FR-{{ department }})</h3>
+						
+					{% else : %}
+						<h3 id="Personnes en réanimation">Nombre de patients en réanimation ou soins intensifs en {{ label }}</h3> 
+					{% endif %} 
+
                     <div id="Nombre de personnes actuellement en réanimation ou soins intensifs"></div>
                 </div>
             </div>
@@ -301,7 +322,14 @@
         <div class="col-md-6">
             <div class="card mb-4 box-shadow">
                 <div class="card-body">
-                    <h3 id="Cumul personnes décédées">Nombre cumulé de patients décédés à l'hôpital</h3>
+
+                    {% if (label != 'France'): %}
+						<h3 id="Cumul personnes décédées">Nombre cumulé de patients décédés à l'hôpital au dépt. {{ label }} (FR-{{ department }})</h3>
+						
+					{% else : %}
+						<h3 id="Cumul personnes décédées">Nombre cumulé de patients décédés à l'hôpital en {{ label }}</h3> 
+					{% endif %}
+
                     <div id="Nombre cumulé de personnes décédées à l'hôpital"></div>
                 </div>
             </div>
@@ -310,7 +338,14 @@
         <div class="col-md-6">
             <div class="card mb-4 box-shadow">
                 <div class="card-body">
-                    <h3 id="Cumul personnes retournées">Nombre cumulé de patients retournés à domicile</h3>
+                    
+                    {% if (label != 'France'): %}
+						<h3 id="Cumul personnes retournées">Nombre cumulé de patients retournés à domicile au dépt. {{ label }} (FR-{{ department }})</h3>
+						
+					{% else : %}
+						<h3 id="Cumul personnes retournées">Nombre cumulé de patients retournés à domicile en {{ label }}</h3> 
+					{% endif %}
+
                     <div id="Nombre cumulé de personnes retournées à domicile"></div>
                 </div>
             </div>
@@ -319,7 +354,14 @@
         <div class="col-md-12">
             <div class="card mb-4 box-shadow">
                 <div class="card-body">
-                    <h3 id="Personnes décédées par jour">Nombre quotidien de patients décédés à l'hôpital</h3>
+                    
+                    {% if (label != 'France'): %}
+						<h3 id="Personnes décédées par jour">Nombre quotidien de patients décédés à l'hôpital au dépt. {{ label }} (FR-{{ department }})</h3>
+						
+					{% else : %}
+						<h3 id="Personnes décédées par jour">Nombre quotidien de patients décédés à l'hôpital en {{ label }}</h3> 
+					{% endif %}
+
                     <div id="Nombre de personnes décédées par jour à l'hôpital"></div>
                 </div>
             </div>
@@ -328,7 +370,14 @@
         <div class="col-md-12">
             <div class="card mb-4 box-shadow">
                 <div class="card-body">
-                    <h3 id="Personnes retournées par jour">Nombre quotidien de patients retournés à domicile</h3>
+                    
+                    {% if (label != 'France'): %}
+						<h3 id="Personnes retournées par jour">Nombre quotidien de patients retournés à domicile au dépt. {{ label }} (FR-{{ department }})</h3>
+						
+					{% else : %}
+						<h3 id="Personnes retournées par jour">Nombre quotidien de patients retournés à domicile en {{ label }}</h3> 
+					{% endif %}
+
                     <div id="Nombre de personnes retournées par jour à domicile"></div>
                 </div>
             </div>
