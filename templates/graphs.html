@@ -308,13 +308,13 @@
                 <div class="card-body">
                     
                     {% if (label != 'France'): %}
-						<h3 id="Personnes en réanimation">Nombre de patients en réanimation ou soins intensifs au dépt. {{ label }} (FR-{{ department }})</h3>
+						<h3 id="Personnes en réanimation">Nombre de patients actuellement en réanimation au dépt. {{ label }} (FR-{{ department }})</h3>
 						
 					{% else : %}
-						<h3 id="Personnes en réanimation">Nombre de patients en réanimation ou soins intensifs en {{ label }}</h3> 
+						<h3 id="Personnes en réanimation">Nombre de patients actuellement en réanimation en {{ label }}</h3> 
 					{% endif %} 
 
-                    <div id="Nombre de personnes actuellement en réanimation ou soins intensifs"></div>
+                    <div id="Nombre de personnes actuellement en réanimation"></div>
                 </div>
             </div>
         </div>
