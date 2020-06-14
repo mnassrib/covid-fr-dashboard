@@ -31,16 +31,18 @@ class CovidFr():
         self.features = ["dc", "r_dc_rad", "rad", "hosp", "rea"]
    
 
-    ### Loading dataframe function
     def load_df(self):
+        """
+        Loading dataframes
+        """
         self.covid = pd.read_csv(CovidFr.source_url, sep=';')
         self.daily_covid = pd.read_csv(CovidFr.source_url_daily_covid, sep=';')
     
  
     def overall_departments_data_as_json(self):
 
-        """Get data from departments as a JSON string along with quantiles
-
+        """
+        Get data from departments as a JSON string along with quantiles
         Returns:
             JSON string of departments overall data
         """
@@ -59,7 +61,7 @@ class CovidFr():
         for feature in self.features:
              
             if feature == "dc" or feature == "rad":
-                ### added recently for death and or hosp case maps
+                ### For death and or rad case maps
                 dep_data[feature+'_par_habitants'] = (dep_data[feature] / dep_data['population']) * 100000
 
                 data_feature = dep_data.copy()
@@ -69,7 +71,8 @@ class CovidFr():
                 data_feature = data_feature.loc[:, ['label', feature, feature+'_par_habitants', 'insee']]
 
                 q_feature = np.mean(data_feature[feature+'_par_habitants'].to_numpy() \
-                    <= ((nat_data[feature][-1] / self.department_base_data["population"].sum()) * 100000))
+                    <= ((nat_data.at[datetime.strptime(self.last_update, "%Y-%m-%dT%H:%M:%S.%f").strftime("%Y-%m-%d"), feature] / self.department_base_data["population"].sum()) * 100000))
+
                 q_feature_list = [0.1, 0.1+(q_feature-0.1)/2, q_feature, q_feature+(.949-q_feature)/2, .949]
              
                 quantiles_feature = data_feature[feature+'_par_habitants'] \
@@ -81,7 +84,7 @@ class CovidFr():
                 setattr(self, 'overall_departments_{}'.format(feature)+"_as_json", {"data_"+feature: data_feature.to_json(orient='index'), "quantiles_"+feature: quantiles_feature.to_json(orient='index')})
 
             elif feature == "r_dc_rad":
-                ### added recently for rate death case map
+                ### For rate death case map
                 dep_data[feature] = (dep_data['dc'] / (dep_data['dc'] + dep_data['rad']))
                
                 data_feature = dep_data.copy()
@@ -91,7 +94,8 @@ class CovidFr():
                 data_feature = data_feature.loc[:, ['label', 'dc', 'rad', feature, 'insee']]
 
                 q_feature = np.mean(dep_data[feature].to_numpy() <= (data_feature['dc'].sum() / (data_feature['dc'].sum() + data_feature['rad'].sum())))
-                q_feature_list = [0.1, 0.1+(q_feature-0.1)/2, q_feature, q_feature+(.949-q_feature)/2, .949]
+
+                q_feature_list = [0.1, 0.1+(q_feature-0.1)/2, q_feature, q_feature+2*(.979-q_feature)/3, .979]
 
                 quantiles_feature = data_feature[feature] \
                     .quantile(q_feature_list) \
@@ -102,14 +106,13 @@ class CovidFr():
                 setattr(self, 'overall_departments_{}'.format(feature)+"_as_json", {"data_"+feature: data_feature.to_json(orient='index'), "quantiles_"+feature: quantiles_feature.to_json(orient='index')})
 
             elif feature == "hosp" or feature == "rea":
-
+                ### For hosp and or rea case map
                 dep_data_j = self.covid[(self.covid['sexe'] == 0) & (self.covid['jour'] == datetime.strptime(self.last_update, "%Y-%m-%dT%H:%M:%S.%f").strftime("%Y-%m-%d"))]
                 dep_data_j = dep_data_j \
                     .drop(['jour', 'sexe'], axis=1) \
                     .groupby('dep') \
                     .max()
                 dep_data_j = pd.concat([dep_data_j, self.department_base_data], axis=1)
-
 
                 dep_data_j[feature+'_par_habitants'] = (dep_data_j[feature] / dep_data_j['population']) * 100000
                 
@@ -120,7 +123,8 @@ class CovidFr():
                 data_feature = data_feature.loc[:, ['label', feature, feature+'_par_habitants', 'insee']]
 
                 q_feature = np.mean(data_feature[feature+'_par_habitants'].to_numpy() \
-                    <= ((nat_data[feature][-1] / self.department_base_data["population"].sum()) * 100000))
+                    <= ((nat_data.at[datetime.strptime(self.last_update, "%Y-%m-%dT%H:%M:%S.%f").strftime("%Y-%m-%d"), feature] / self.department_base_data["population"].sum()) * 100000))
+
                 q_feature_list = [0.1, 0.1+(q_feature-0.1)/2, q_feature, q_feature+(.949-q_feature)/2, .949]
 
                 quantiles_feature = data_feature[feature+'_par_habitants'] \
@@ -155,19 +159,15 @@ class CovidFr():
                 rad_j.append(cdata.rad[i])
                 
             else:   
-                #dc_j.append(max(cdata.dc[i]-cdata.dc[i-1], 0))
-                #rad_j.append(max(cdata.rad[i]-cdata.rad[i-1], 0))
                 dc_j.append(max(cdata.dc[0:i+1]) - max(cdata.dc[0:i]))
                 rad_j.append(max(cdata.rad[0:i+1]) - max(cdata.rad[0:i]))
-        
-        
+
         cdata["dc_rectif"] = dc_rectif
         cdata["rad_rectif"] = rad_rectif
         cdata["dc_j"] = dc_j
         cdata["rad_j"] = rad_j
         
         graphs = [
-
             dict(
                 data=[
                     dict(
@@ -175,16 +175,16 @@ class CovidFr():
                         y=cdata['hosp'],
                         type='line',
                         marker=dict(
-                        color='#ff7f00',
-                        line=dict(color='#ff7f00', width=3)
-                        )
-                    ),
-                ],
+                                    color='#ff7f00',
+                                    line=dict(color='#ff7f00', width=3)
+                                    )
+                        ),
+                    ],
                 layout=dict(
-                    #title="Nombre de personnes actuellement hospitalisées",
-                    margin=dict(l=30, r=30, b=30, t=30),
-                )
-            ),
+                            #title="Nombre de personnes actuellement hospitalisées",
+                            margin=dict(l=30, r=30, b=30, t=30),
+                            )
+                ),
             
             dict(
                 data=[
@@ -193,16 +193,16 @@ class CovidFr():
                         y=cdata['rea'],
                         type='line',
                         marker=dict(
-                        color='#ff0000',
-                        line=dict(color='#ff0000', width=3)
-                        )
-                    ),
-                ],
+                                    color='#ff0000',
+                                    line=dict(color='#ff0000', width=3)
+                                    )
+                        ),
+                    ],
                 layout=dict(
-                    #title="Nombre de personnes actuellement en réanimation ou soins intensifs",
-                    margin=dict(l=30, r=30, b=30, t=30),
-                )
-            ),
+                            #title="Nombre de personnes actuellement en réanimation ou soins intensifs",
+                            margin=dict(l=30, r=30, b=30, t=30),
+                            )
+                ),
             
             dict(
                 data=[
@@ -211,16 +211,16 @@ class CovidFr():
                         y=cdata['dc_rectif'],#cdata['dc'],
                         type='line',
                         marker=dict(
-                        color='#730800',
-                        line=dict(color='#730800', width=3)
-                        )
-                    ),
-                ],
+                                    color='#730800',
+                                    line=dict(color='#730800', width=3)
+                                    )
+                        ),
+                    ],
                 layout=dict(
-                    #title="Nombre cumulé de personnes décédées à l'hôpital",
-                    margin=dict(l=30, r=30, b=30, t=30),
-                )
-            ),
+                            #title="Nombre cumulé de personnes décédées à l'hôpital",
+                            margin=dict(l=30, r=30, b=30, t=30),
+                            )
+                ),
 
             dict(
                 data=[
@@ -229,19 +229,19 @@ class CovidFr():
                         y=cdata['rad_rectif'],#cdata['rad'],
                         type='line',
                         marker=dict(
-                        color='#57d53b',
-                        line=dict(color='#57d53b', width=3)
-                        )
-                    ),
-                ],
+                                    color='#57d53b',
+                                    line=dict(color='#57d53b', width=3)
+                                    )
+                        ),
+                    ],
                 layout=dict(
-                    #title="Nombre cumulé de personnes retournées à domicile",
-                    #autosize=False,
-                    #width=600,
-                    #height=600,
-                    margin=dict(l=30, r=30, b=30, t=30),
-                )
-            ),
+                            #title="Nombre cumulé de personnes retournées à domicile",
+                            #autosize=False,
+                            #width=600,
+                            #height=600,
+                            margin=dict(l=30, r=30, b=30, t=30),
+                            )
+                ),
 
             dict(
                 data=[
@@ -250,19 +250,19 @@ class CovidFr():
                         y=cdata['dc_j'],
                         type='bar',
                         marker=dict(
-                        color='#730800',
-                        line=dict(color='#730800', width=1)
-                        )
-                    ),
-                ],
+                                    color='#730800',
+                                    line=dict(color='#730800', width=1)
+                                    )
+                        ),
+                    ],
                 layout=dict(
-                    #title="Nombre de personnes décédées par jour à l'hôpital",
-                    margin=dict(l=30, r=10, b=30, t=30),
-                    barmode='overlay',
-                    linemode='overlay',
-                    legend_orientation="h",
-                )
-            ),
+                            #title="Nombre de personnes décédées par jour à l'hôpital",
+                            margin=dict(l=30, r=10, b=30, t=30),
+                            barmode='overlay',
+                            linemode='overlay',
+                            legend_orientation="h",
+                            )
+                ),
 
             dict(
                 data=[
@@ -271,20 +271,20 @@ class CovidFr():
                         y=cdata['rad_j'],
                         type='bar',
                         marker=dict(
-                        color='#57d53b',
-                        line=dict(color='#57d53b', width=1),
-                        opacity=0.8,
-                        )
-                    ),
-                ],
+                                    color='#57d53b',
+                                    line=dict(color='#57d53b', width=1),
+                                    opacity=0.8,
+                                    )
+                        ),
+                    ],
                 layout=dict(
-                    #title="Nombre de personnes retournées par jour à domicile",
-                    margin=dict(l=30, r=10, b=30, t=30),
-                    barmode='overlay',
-                    linemode='overlay',
-                    legend_orientation="h",
-                )
-            ),
+                            #title="Nombre de personnes retournées par jour à domicile",
+                            margin=dict(l=30, r=10, b=30, t=30),
+                            barmode='overlay',
+                            linemode='overlay',
+                            legend_orientation="h",
+                            )
+                ),
         ]
         
         # Convert the figures to JSON
@@ -312,20 +312,20 @@ class CovidFr():
                                         "day_hour": datetime.strptime(self.last_update, "%Y-%m-%dT%H:%M:%S.%f").strftime("%d/%m/%Y à %Hh%M")
                                         },
                                     
-                        "last_dc": cdata['dc_j'][-1],
-                        "all_dc": cdata['dc_rectif'][-1],#cdata['dc'][-1],
-                        "last_rad": cdata['rad_j'][-1],
-                        "all_rad": cdata['rad_rectif'][-1],#cdata['rad'][-1],
-                                    
-                        "current_hosp": cdata['hosp'][-1],
-                        "current_rea": cdata['rea'][-1], 
+                        "last_dc": cdata.at[datetime.strptime(self.last_update, "%Y-%m-%dT%H:%M:%S.%f").strftime("%Y-%m-%d"), 'dc_j'],
+                        "all_dc": cdata.at[datetime.strptime(self.last_update, "%Y-%m-%dT%H:%M:%S.%f").strftime("%Y-%m-%d"), 'dc_rectif'],
+                        "last_rad": cdata.at[datetime.strptime(self.last_update, "%Y-%m-%dT%H:%M:%S.%f").strftime("%Y-%m-%d"), 'rad_j'],
+                        "all_rad": cdata.at[datetime.strptime(self.last_update, "%Y-%m-%dT%H:%M:%S.%f").strftime("%Y-%m-%d"), 'rad_rectif'],          
+                        "current_hosp": cdata.at[datetime.strptime(self.last_update, "%Y-%m-%dT%H:%M:%S.%f").strftime("%Y-%m-%d"), 'hosp'],
+                        "current_rea": cdata.at[datetime.strptime(self.last_update, "%Y-%m-%dT%H:%M:%S.%f").strftime("%Y-%m-%d"), 'rea'], 
                     
-                        "nat_refs": {"nat_dc": ((fdata.dc[-1] / popfr) * 100000).round(2),
-                                     "nat_r_dc_rad": (fdata['dc'][-1] / (fdata['dc'][-1] + fdata['rad'][-1])).round(2),
-                                     "nat_rad": ((fdata.rad[-1] / popfr) * 100000).round(2),
-                                     "nat_hosp": ((fdata.hosp[-1] / popfr) * 100000).round(2),
-                                     "nat_rea": ((fdata.rea[-1] / popfr) * 100000).round(2),
-                                     },
+                        "nat_refs": {
+                                    "nat_dc": ((fdata.at[datetime.strptime(self.last_update, "%Y-%m-%dT%H:%M:%S.%f").strftime("%Y-%m-%d"), 'dc'] / popfr) * 100000).round(2),
+                                    "nat_r_dc_rad": (fdata.at[datetime.strptime(self.last_update, "%Y-%m-%dT%H:%M:%S.%f").strftime("%Y-%m-%d"), 'dc'] / (fdata.at[datetime.strptime(self.last_update, "%Y-%m-%dT%H:%M:%S.%f").strftime("%Y-%m-%d"), 'dc'] + fdata.at[datetime.strptime(self.last_update, "%Y-%m-%dT%H:%M:%S.%f").strftime("%Y-%m-%d"), 'rad'])).round(2),
+                                    "nat_rad": ((fdata.at[datetime.strptime(self.last_update, "%Y-%m-%dT%H:%M:%S.%f").strftime("%Y-%m-%d"), 'rad'] / popfr) * 100000).round(2),
+                                    "nat_hosp": ((fdata.at[datetime.strptime(self.last_update, "%Y-%m-%dT%H:%M:%S.%f").strftime("%Y-%m-%d"), 'hosp'] / popfr) * 100000).round(2),
+                                    "nat_rea": ((fdata.at[datetime.strptime(self.last_update, "%Y-%m-%dT%H:%M:%S.%f").strftime("%Y-%m-%d"), 'rea'] / popfr) * 100000).round(2),
+                                    },
                         }
 
     def department_label(self, department):
