@@ -1,11 +1,8 @@
 from flask import Flask, render_template, request
 
-
 from cutils.covidclass import CovidFr
 
-
 app = Flask(__name__)
-
 
 @app.route('/')
 def graphs():
@@ -18,7 +15,6 @@ def graphs():
     return render_template(
         "graphs.html", 
         graphJSON = covfr.graphJSON, 
-        ids = covfr.ids, 
         counters = covfr.counters,
         label = "France",
         department = '',
@@ -39,7 +35,6 @@ def graphs():
         overall_departments_quantiles_rea = covfr.overall_departments_rea_as_json['quantiles_rea'],
     )
 
-
 @app.route('/departement/<string:department>')
 def view_department(department):
     """Department page of the app"""
@@ -57,7 +52,6 @@ def view_department(department):
     return render_template(
         "graphs.html", 
         graphJSON = covfr.graphJSON, 
-        ids = covfr.ids, 
         counters = covfr.counters,
         label = label,
         department = department,
@@ -77,7 +71,6 @@ def view_department(department):
         overall_departments_data_rea = covfr.overall_departments_rea_as_json['data_rea'],
         overall_departments_quantiles_rea = covfr.overall_departments_rea_as_json['quantiles_rea'],
     )
-
 
 if __name__ == '__main__':
     app.run(debug=True)

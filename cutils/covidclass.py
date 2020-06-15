@@ -16,9 +16,6 @@ class CovidFr():
     source_url_daily_covid = "https://www.data.gouv.fr/fr/datasets/r/6fadff46-9efd-4c53-942a-54aca783c30c"
 
     def __init__(self):
-        self.covid = pd.DataFrame()
-        self.daily_covid = pd.DataFrame()
-
         # Init basic departments data
         data_dir = os.path.realpath(os.path.dirname(__file__) + "/../data/")
 
@@ -165,6 +162,7 @@ class CovidFr():
         
         graphs = [
             dict(
+                id= "Nombre de personnes actuellement hospitalisées",
                 data=[
                     dict(
                         x=cdata.index,
@@ -183,6 +181,7 @@ class CovidFr():
                 ),
             
             dict(
+                id="Nombre de personnes actuellement en réanimation",
                 data=[
                     dict(
                         x=cdata.index,
@@ -201,6 +200,7 @@ class CovidFr():
                 ),
             
             dict(
+                id="Nombre cumulé de personnes décédées à l'hôpital",
                 data=[
                     dict(
                         x=cdata.index,
@@ -219,6 +219,7 @@ class CovidFr():
                 ),
 
             dict(
+                id="Nombre cumulé de personnes retournées à domicile",
                 data=[
                     dict(
                         x=cdata.index,
@@ -240,6 +241,7 @@ class CovidFr():
                 ),
 
             dict(
+                id="Nombre de personnes décédées par jour à l'hôpital",
                 data=[
                     dict(
                         x=cdata.index,
@@ -261,6 +263,7 @@ class CovidFr():
                 ),
 
             dict(
+                id="Nombre de personnes retournées par jour à domicile",
                 data=[
                     dict(
                         x=cdata.index,
@@ -286,17 +289,6 @@ class CovidFr():
         # PlotlyJSONEncoder appropriately converts pandas, datetime, etc
         # objects to their JSON equivalents
         self.graphJSON = json.dumps(graphs, cls=plotly.utils.PlotlyJSONEncoder)
-
-        # Add "ids" to each of the graphs to pass up to the client
-        # for templating
-        #ids = ['graph-{}'.format(i) for i, _ in enumerate(graphs)]
-        self.ids = ["Nombre de personnes actuellement hospitalisées",
-                    "Nombre de personnes actuellement en réanimation",
-                    "Nombre cumulé de personnes décédées à l'hôpital",
-                    "Nombre cumulé de personnes retournées à domicile",
-                    "Nombre de personnes décédées par jour à l'hôpital",
-                    "Nombre de personnes retournées par jour à domicile",
-                    ]
 
         fdata = self.covid[self.covid.sexe == 0].groupby(['jour']).sum().copy()
         popfr = self.department_base_data["population"].sum()
