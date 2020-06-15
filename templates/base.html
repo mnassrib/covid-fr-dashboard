@@ -1,247 +1,247 @@
 <!DOCTYPE html>
 <html lang="en">
-	<head>
-		<meta charset="utf-8">
-		<meta name="viewport" content="width=device-width, initial-scale=1">
-		<meta name="description" content="Visualisation des données hospitalières relatives à l'épidémie COVID-19 en France">
+    <head>
+        <meta charset="utf-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <meta name="description" content="Visualisation des données hospitalières relatives à l'épidémie COVID-19 en France">
 
-		<link rel="shortcut icon" type="image/png" href="{{ url_for('static', filename='images/favicon.png') }}" type="image/png" />
-				
-		<title>
-			{% block title %} 
-				
-			{% endblock %}
-		</title>
-		    
-		<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css" integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" crossorigin="anonymous">
-		<link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css" rel="stylesheet" type="text/css">
-		<link href="https://cdn.datatables.net/1.10.16/css/dataTables.bootstrap4.min.css" rel="stylesheet">
-		<link href="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/4.4.0/css/bootstrap.min.css" rel="stylesheet">
-		<link href="{{ url_for('static', filename='css/style.css') }}" rel="stylesheet">
+        <link rel="shortcut icon" type="image/png" href="{{ url_for('static', filename='images/favicon.png') }}" type="image/png" />
+                
+        <title>
+            {% block title %} 
+                
+            {% endblock %}
+        </title>
+            
+        <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css" integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" crossorigin="anonymous">
+        <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css" rel="stylesheet" type="text/css">
+        <link href="https://cdn.datatables.net/1.10.16/css/dataTables.bootstrap4.min.css" rel="stylesheet">
+        <link href="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/4.4.0/css/bootstrap.min.css" rel="stylesheet">
+        <link href="{{ url_for('static', filename='css/style.css') }}" rel="stylesheet">
 
-		<style>
-			.key-indicator-death {
-				margin-top:30px;
-				background-color: #730800;
-				color:#fff;
-				text-align:center;
-				padding:10px;
-				border-radius: 8px;
-			}
-			.key-indicator-hospitalized {
-				margin-top:30px;
-				background-color: #ff7f00;
-				color:#fff;
-				text-align:center;
-				padding:10px;
-				border-radius: 8px;
-			}
-			.key-indicator-resuscitation {
-				margin-top:30px;
-				background-color: #ff0000;
-				color:#fff;
-				text-align:center;
-				padding:10px;
-				border-radius: 8px;
-			}
-			.key-indicator-healed {
-				margin-top:30px;
-				background-color: #57d53b;
-				color:#fff;
-				text-align:center;
-				padding:10px;
-				border-radius: 8px;
-			}
-			.key-value {
-				font-size: 1.6rem;
-				font-weight: bold;
-			}
-			.mapael .mapTooltip {
-				position: absolute;
-				background-color: #fff;
-				opacity: 0.80;
-				filter: alpha(opacity=70);
-				border-radius: 10px;
-				padding: 10px;
-				z-index: 1000;
-				max-width: 200px;
-				display: none;
-				color: #343434;
-			}
-			.picto-item {
-				position: relative;  /*les .picto-item deviennent référents*/
-				cursor: help;
-				border-radius: 50%;
-			}
-			/* on génère un élément :after lors du survol et du focus :*/
-			.picto-item:hover:after,
-			.picto-item:focus:after {
-				content: attr(aria-label);  /* on affiche aria-label */
-				position: absolute;
-				top: -2.4em;
-				left: 50%;
-				transform: translateX(-0%); /* on centre horizontalement  */
-				z-index: 1; /* pour s'afficher au dessus des éléments en position relative */
-				white-space: nowrap;  /* on interdit le retour à la ligne*/
-				padding: 5px 14px;
-				background: #413219;
-				color: #fff;
-				border-radius: 4px;
-				font-size: 1.0rem;
-			}
-			.ombres_multiples_diffuses {
-				box-shadow: inset 0 0 0.3em red, 0 0 0.3em gold;
-				/* deux ombres dans la liste et des rayons de flou pour chacune */
-			}
-		</style>
-	</head>
-	<!-- <body> -->
-	<body class="fixed-nav sticky-footer bg-dark" id="page-top">
-		<header>
-		  	<!-- Fixed navbar -->
-			<nav class="navbar navbar-expand-lg navbar-dark bg-dark fixed-top" id="mainNav">		
-				<a class="navbar-brand" href="#" > 
-					<img src="{{ url_for('static', filename='images/logo.png') }}" height="32x32"> 
-					Suivi COVID-19 - France
-				</a>
-						
-				<button class="navbar-toggler navbar-toggler-right" type="button" data-toggle="collapse" data-target="#navbarResponsive" aria-controls="navbarResponsive" aria-expanded="false" aria-label="Toggle navigation">
-					<span class="navbar-toggler-icon"></span>
-				</button>
-				
-				<div class="collapse navbar-collapse" id="navbarResponsive">
-					<ul class="navbar-nav navbar-sidenav" id="exampleAccordion">
-						<li class="nav-item" data-toggle="tooltip" data-placement="right" title="Dashboard">
-							<a class="nav-link" href="/">
-								<i class="fa fa-fw fa-dashboard"></i>
-								<span class="nav-link-text">
-									Dashboard 									
-									{% if (label != 'France'): %}
-										{{ label }} (FR-{{ department }})
-									{% else : %}
-										{{ label }}
-									{% endif %} 
-								</span>
-							</a>
-						</li>
-						<li class="nav-item" data-toggle="tooltip" data-placement="right" title="Contact">
-							<a class="nav-link disabled" href="#">
-								<i class="fa fa-fw fa-envelope"></i>
-								<span class="nav-link-text">Contact :  
-									<a class="nav-link" href="https://www.linkedin.com/in/baligh-mnassri/" target="_blank">
-										<i class="fa fa-linkedin"></i>
-									</a>
-									<a class="nav-link" href="https://github.com/mnassrib" target="_blank">
-										<i class="fa fa-github"></i>
-									</a>
-										<a class="nav-link" href="https://twitter.com/balighmnassri" target="_blank">
-										<i class="fa fa-twitter"></i>
-									</a>
-								</span>
-							</a>
-						</li>
-					</ul>	  
-				</div>
-				
-				<div class="collapse navbar-collapse" id="navbarCollapse">
-					<ul class="navbar-nav mr-auto">
-						<li class="nav-item active">
-							<a class="nav-link" href="/">
-								Dashboard 									
-								{% if (label != 'France'): %}
-									{{ label }} (FR-{{ department }})
-								{% else : %}
-									{{ label }}
-								{% endif %} 
-								<span class="sr-only">(current)</span>
-							</a>
-						</li>
-					</ul>
+        <style>
+            .key-indicator-death {
+                margin-top:30px;
+                background-color: #730800;
+                color:#fff;
+                text-align:center;
+                padding:10px;
+                border-radius: 8px;
+            }
+            .key-indicator-hospitalized {
+                margin-top:30px;
+                background-color: #ff7f00;
+                color:#fff;
+                text-align:center;
+                padding:10px;
+                border-radius: 8px;
+            }
+            .key-indicator-resuscitation {
+                margin-top:30px;
+                background-color: #ff0000;
+                color:#fff;
+                text-align:center;
+                padding:10px;
+                border-radius: 8px;
+            }
+            .key-indicator-healed {
+                margin-top:30px;
+                background-color: #57d53b;
+                color:#fff;
+                text-align:center;
+                padding:10px;
+                border-radius: 8px;
+            }
+            .key-value {
+                font-size: 1.6rem;
+                font-weight: bold;
+            }
+            .mapael .mapTooltip {
+                position: absolute;
+                background-color: #fff;
+                opacity: 0.80;
+                filter: alpha(opacity=70);
+                border-radius: 10px;
+                padding: 10px;
+                z-index: 1000;
+                max-width: 200px;
+                display: none;
+                color: #343434;
+            }
+            .picto-item {
+                position: relative;  /*les .picto-item deviennent référents*/
+                cursor: help;
+                border-radius: 50%;
+            }
+            /* on génère un élément :after lors du survol et du focus :*/
+            .picto-item:hover:after,
+            .picto-item:focus:after {
+                content: attr(aria-label);  /* on affiche aria-label */
+                position: absolute;
+                top: -2.4em;
+                left: 50%;
+                transform: translateX(-0%); /* on centre horizontalement  */
+                z-index: 1; /* pour s'afficher au dessus des éléments en position relative */
+                white-space: nowrap;  /* on interdit le retour à la ligne*/
+                padding: 5px 14px;
+                background: #413219;
+                color: #fff;
+                border-radius: 4px;
+                font-size: 1.0rem;
+            }
+            .ombres_multiples_diffuses {
+                box-shadow: inset 0 0 0.3em red, 0 0 0.3em gold;
+                /* deux ombres dans la liste et des rayons de flou pour chacune */
+            }
+        </style>
+    </head>
+    <!-- <body> -->
+    <body class="fixed-nav sticky-footer bg-dark" id="page-top">
+        <header>
+              <!-- Fixed navbar -->
+            <nav class="navbar navbar-expand-lg navbar-dark bg-dark fixed-top" id="mainNav">		
+                <a class="navbar-brand" href="#" > 
+                    <img src="{{ url_for('static', filename='images/logo.png') }}" height="32x32"> 
+                    Suivi COVID-19 - France
+                </a>
+                        
+                <button class="navbar-toggler navbar-toggler-right" type="button" data-toggle="collapse" data-target="#navbarResponsive" aria-controls="navbarResponsive" aria-expanded="false" aria-label="Toggle navigation">
+                    <span class="navbar-toggler-icon"></span>
+                </button>
+                
+                <div class="collapse navbar-collapse" id="navbarResponsive">
+                    <ul class="navbar-nav navbar-sidenav" id="exampleAccordion">
+                        <li class="nav-item" data-toggle="tooltip" data-placement="right" title="Dashboard">
+                            <a class="nav-link" href="/">
+                                <i class="fa fa-fw fa-dashboard"></i>
+                                <span class="nav-link-text">
+                                    Dashboard 									
+                                    {% if (label != 'France'): %}
+                                        {{ label }} (FR-{{ department }})
+                                    {% else : %}
+                                        {{ label }}
+                                    {% endif %} 
+                                </span>
+                            </a>
+                        </li>
+                        <li class="nav-item" data-toggle="tooltip" data-placement="right" title="Contact">
+                            <a class="nav-link disabled" href="#">
+                                <i class="fa fa-fw fa-envelope"></i>
+                                <span class="nav-link-text">Contact :  
+                                    <a class="nav-link" href="https://www.linkedin.com/in/baligh-mnassri/" target="_blank">
+                                        <i class="fa fa-linkedin"></i>
+                                    </a>
+                                    <a class="nav-link" href="https://github.com/mnassrib" target="_blank">
+                                        <i class="fa fa-github"></i>
+                                    </a>
+                                        <a class="nav-link" href="https://twitter.com/balighmnassri" target="_blank">
+                                        <i class="fa fa-twitter"></i>
+                                    </a>
+                                </span>
+                            </a>
+                        </li>
+                    </ul>	  
+                </div>
+                
+                <div class="collapse navbar-collapse" id="navbarCollapse">
+                    <ul class="navbar-nav mr-auto">
+                        <li class="nav-item active">
+                            <a class="nav-link" href="/">
+                                Dashboard 									
+                                {% if (label != 'France'): %}
+                                    {{ label }} (FR-{{ department }})
+                                {% else : %}
+                                    {{ label }}
+                                {% endif %} 
+                                <span class="sr-only">(current)</span>
+                            </a>
+                        </li>
+                    </ul>
 
-					<a class="nav-link disabled" href="#">Contact :</a>
-					
-					<nav class="my-2 my-md-0 mr-md-3">
-						<a class="p-6 text-white" class="nav-link" href="https://www.linkedin.com/in/baligh-mnassri/" target="_blank"><i class="fa fa-linkedin"></i></i></a>
-					</nav>
-					<nav class="my-2 my-md-0 mr-md-3">
-						<a class="p-6 text-white" class="nav-link" href="https://github.com/mnassrib" target="_blank"><i class="fa fa-github"></i></i></a>
-					</nav>
-					<nav class="my-2 my-md-0 mr-md-9">
-						<a class="p-6 text-white" class="nav-link" href="https://twitter.com/balighmnassri" target="_blank"><i class="fa fa-twitter"></i></i></a>
-					</nav>
-				</div>
-			</nav>
-		</header>
-	
-		<div class="content-wrapper">
-			<div class="container-fluid">	
-				<p class="ombres_multiples_diffuses" align="center">	
-					Les données utilsées dans cette application concernent l'épidemie de COVID-19 en France. Elles sont fournies par <a href="https://www.data.gouv.fr/fr/datasets/donnees-hospitalieres-relatives-a-lepidemie-de-covid-19/" target="_blank"><B>Santé publique France</B></a> et collectées auprès du milieu uniquement hospitalier sans compter les EHPAD et EMS. 
-				<p>
-						
-				{% block content %}
-			    
-				{% endblock %}
+                    <a class="nav-link disabled" href="#">Contact :</a>
+                    
+                    <nav class="my-2 my-md-0 mr-md-3">
+                        <a class="p-6 text-white" class="nav-link" href="https://www.linkedin.com/in/baligh-mnassri/" target="_blank"><i class="fa fa-linkedin"></i></i></a>
+                    </nav>
+                    <nav class="my-2 my-md-0 mr-md-3">
+                        <a class="p-6 text-white" class="nav-link" href="https://github.com/mnassrib" target="_blank"><i class="fa fa-github"></i></i></a>
+                    </nav>
+                    <nav class="my-2 my-md-0 mr-md-9">
+                        <a class="p-6 text-white" class="nav-link" href="https://twitter.com/balighmnassri" target="_blank"><i class="fa fa-twitter"></i></i></a>
+                    </nav>
+                </div>
+            </nav>
+        </header>
+    
+        <div class="content-wrapper">
+            <div class="container-fluid">	
+                <p class="ombres_multiples_diffuses" align="center">	
+                    Les données utilsées dans cette application concernent l'épidemie de COVID-19 en France. Elles sont fournies par <a href="https://www.data.gouv.fr/fr/datasets/donnees-hospitalieres-relatives-a-lepidemie-de-covid-19/" target="_blank"><B>Santé publique France</B></a> et collectées auprès du milieu uniquement hospitalier sans compter les EHPAD et EMS. 
+                <p>
+                        
+                {% block content %}
+                
+                {% endblock %}
 
-			</div>
-		</div>
+            </div>
+        </div>
 
-		<footer class="sticky-footer">
-			<div class="container">
-				<div>
-					<p class="float-right">
-						<small> <a href="#">Dernière mise à jour des données : {{ counters['last_update']["day_hour"] }}</a></small>
-					</p>
-				</div>
-				<div class="text-center">
-					<small>&copy; <script>document.write(new Date().getFullYear())</script> <a href="https://www.linkedin.com/in/baligh-mnassri/?locale=en_US" target="_blank">Baligh Mnassri</a></small>
-				</div>
-			</div>
-		</footer>
+        <footer class="sticky-footer">
+            <div class="container">
+                <div>
+                    <p class="float-right">
+                        <small> <a href="#">Dernière mise à jour des données : {{ counters['last_update']["day_hour"] }}</a></small>
+                    </p>
+                </div>
+                <div class="text-center">
+                    <small>&copy; <script>document.write(new Date().getFullYear())</script> <a href="https://www.linkedin.com/in/baligh-mnassri/?locale=en_US" target="_blank">Baligh Mnassri</a></small>
+                </div>
+            </div>
+        </footer>
       
-		<script src="https://code.jquery.com/jquery-3.3.1.min.js" integrity="sha256-FgpCb/KJQlLNfOu91ta32o/NMZxltwRo8QtmkMRdAu8=" crossorigin="anonymous"></script>
-		<script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.9/umd/popper.min.js" integrity="sha384-ApNbgh9B+Y1QKtv3Rn7W3mgPxhU9K/ScQsAP7hUibX39j7fakFPskvXusvfa0b4Q" crossorigin="anonymous"></script>
-		<script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js" integrity="sha384-JZR6Spejh4U02d8jOt6vLEHfe/JQGiRRSQQxSfFWpi1MquVdAyjUar5+76PVCmYl" crossorigin="anonymous"></script>
-		<!-- Page level plugin JavaScript-->
-		<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.7.1/Chart.min.js"></script>
-		<script src="https://cdn.datatables.net/1.10.16/js/jquery.dataTables.min.js"></script>
-		<script src="https://cdn.datatables.net/1.10.16/js/dataTables.bootstrap4.min.js"></script>
-		<script src="https://js.pusher.com/4.0/pusher.min.js"></script>
+        <script src="https://code.jquery.com/jquery-3.3.1.min.js" integrity="sha256-FgpCb/KJQlLNfOu91ta32o/NMZxltwRo8QtmkMRdAu8=" crossorigin="anonymous"></script>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.9/umd/popper.min.js" integrity="sha384-ApNbgh9B+Y1QKtv3Rn7W3mgPxhU9K/ScQsAP7hUibX39j7fakFPskvXusvfa0b4Q" crossorigin="anonymous"></script>
+        <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js" integrity="sha384-JZR6Spejh4U02d8jOt6vLEHfe/JQGiRRSQQxSfFWpi1MquVdAyjUar5+76PVCmYl" crossorigin="anonymous"></script>
+        <!-- Page level plugin JavaScript-->
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.7.1/Chart.min.js"></script>
+        <script src="https://cdn.datatables.net/1.10.16/js/jquery.dataTables.min.js"></script>
+        <script src="https://cdn.datatables.net/1.10.16/js/dataTables.bootstrap4.min.js"></script>
+        <script src="https://js.pusher.com/4.0/pusher.min.js"></script>
 
-		<script src="https://code.jquery.com/jquery-3.2.1.slim.min.js" integrity="sha384-KJ3o2DKtIkvYIK3UENzmM7KCkRr/rE9/Qpg6aAZGJwFDMVNA/GpGFF93hXpG5KkN" crossorigin="anonymous"></script>
-		<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery-mousewheel/3.1.13/jquery.mousewheel.min.js" charset="utf-8"></script>
-		<script src="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/4.4.0/js/bootstrap.min.js"></script>
-		<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery-mousewheel/3.1.13/jquery.mousewheel.min.js" charset="utf-8"></script>
-		<script src="https://cdnjs.cloudflare.com/ajax/libs/raphael/2.2.7/raphael.min.js" charset="utf-8"></script>
-		<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery-mapael/2.2.0/js/jquery.mapael.min.js" charset="utf-8"></script>
-		<script src="https://cdn.jsdelivr.net/gh/neveldo/mapael-maps@master/france/france_departments_domtom.min.js" charset="utf-8"></script>
-		<script src="https://cdnjs.cloudflare.com/ajax/libs/d3/3.5.6/d3.min.js"></script>
-		<script src="https://cdnjs.cloudflare.com/ajax/libs/plotly.js/1.51.1/plotly.min.js"></script>
+        <script src="https://code.jquery.com/jquery-3.2.1.slim.min.js" integrity="sha384-KJ3o2DKtIkvYIK3UENzmM7KCkRr/rE9/Qpg6aAZGJwFDMVNA/GpGFF93hXpG5KkN" crossorigin="anonymous"></script>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery-mousewheel/3.1.13/jquery.mousewheel.min.js" charset="utf-8"></script>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/4.4.0/js/bootstrap.min.js"></script>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery-mousewheel/3.1.13/jquery.mousewheel.min.js" charset="utf-8"></script>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/raphael/2.2.7/raphael.min.js" charset="utf-8"></script>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery-mapael/2.2.0/js/jquery.mapael.min.js" charset="utf-8"></script>
+        <script src="https://cdn.jsdelivr.net/gh/neveldo/mapael-maps@master/france/france_departments_domtom.min.js" charset="utf-8"></script>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/d3/3.5.6/d3.min.js"></script>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/plotly.js/1.51.1/plotly.min.js"></script>
 
-		<script type="text/javascript">
-			Plotly.register({moduleType:"locale",name:"fr",dictionary:{Autoscale:"\xc9chelle automatique","Box Select":"S\xe9lection rectangulaire","Click to enter Colorscale title":"Ajouter un titre \xe0 l'\xe9chelle de couleurs","Click to enter Component A title":"Ajouter un titre \xe0 la composante A","Click to enter Component B title":"Ajouter un titre \xe0 la composante B","Click to enter Component C title":"Ajouter un titre \xe0 la composante C","Click to enter Plot title":"Ajouter un titre au graphique","Click to enter X axis title":"Ajouter un titre \xe0 l'axe des x","Click to enter Y axis title":"Ajouter un titre \xe0 l'axe des y","Click to enter radial axis title":"Ajouter un titre \xe0 l'axe radial","Compare data on hover":"Comparaison entre donn\xe9es en survol","Double-click on legend to isolate one trace":"Double-cliquer sur la l\xe9gende pour isoler une s\xe9rie","Double-click to zoom back out":"Double-cliquer pour d\xe9zoomer","Download plot as a png":"T\xe9l\xe9charger le graphique en fichier PNG","Download plot":"T\xe9l\xe9charger le graphique","Edit in Chart Studio":"\xc9diter le graphique sur plot.ly","IE only supports svg.  Changing format to svg.":"IE ne permet que les conversions en SVG. Conversion en SVG en cours.","Lasso Select":"S\xe9lection lasso","Orbital rotation":"Rotation orbitale",Pan:"Translation","Produced with Plotly":"G\xe9n\xe9r\xe9 avec Plotly",Reset:"R\xe9initialiser","Reset axes":"R\xe9initialiser les axes","Reset camera to default":"R\xe9gler la cam\xe9ra \xe0 sa valeur d\xe9faut","Reset camera to last save":"R\xe9gler la cam\xe9ra \xe0 sa valeur sauvegard\xe9e","Reset view":"R\xe9initialiser","Reset views":"R\xe9initialiser","Show closest data on hover":"Donn\xe9es les plus proches en survol","Snapshot succeeded":"Conversion r\xe9ussie","Sorry, there was a problem downloading your snapshot!":"D\xe9sol\xe9, un probl\xe8me est survenu lors du t\xe9l\xe9chargement de votre graphique","Taking snapshot - this may take a few seconds":"Conversion en cours, ceci peut prendre quelques secondes",Zoom:"Zoom","Zoom in":"Zoom int\xe9rieur","Zoom out":"Zoom ext\xe9rieur","close:":"fermeture :",trace:"s\xe9rie","lat:":"lat. :","lon:":"lon. :","q1:":"q1 :","q3:":"q3 :","source:":"source :","target:":"embouchure :","lower fence:":"cl\xf4ture sup\xe9rieure :","upper fence:":"cl\xf4ture inf\xe9rieure :","max:":"max. :","mean \xb1 \u03c3:":"moyenne \xb1 \u03c3 :","mean:":"moyenne :","median:":"m\xe9diane :","min:":"min. :","new text":"nouveau texte","Turntable rotation":"Rotation planaire","Toggle Spike Lines":"Activer/d\xe9sactiver les pics","open:":"ouverture :","high:":"haut :","low:":"bas :","Toggle show closest data on hover":"Activer/d\xe9sactiver le survol","incoming flow count:":"flux entrant :","outgoing flow count:":"flux sortant :","kde:":"est. par noyau :"},format:{days:["Dimanche","Lundi","Mardi","Mercredi","Jeudi","Vendredi","Samedi"],shortDays:["Dim","Lun","Mar","Mer","Jeu","Ven","Sam"],months:["Janvier","F\xe9vrier","Mars","Avril","Mai","Juin","Juillet","Ao\xfbt","Septembre","Octobre","Novembre","D\xe9cembre"],shortMonths:["Jan","F\xe9v","Mar","Avr","Mai","Jun","Jul","Ao\xfb","Sep","Oct","Nov","D\xe9c"],date:"%d/%m/%Y",decimal:",",thousands:" ",year:"%Y",month:"%b %Y",dayMonth:"%-d %b",dayMonthYear:"%-d %b %Y"}});
-		</script>
+        <script type="text/javascript">
+            Plotly.register({moduleType:"locale",name:"fr",dictionary:{Autoscale:"\xc9chelle automatique","Box Select":"S\xe9lection rectangulaire","Click to enter Colorscale title":"Ajouter un titre \xe0 l'\xe9chelle de couleurs","Click to enter Component A title":"Ajouter un titre \xe0 la composante A","Click to enter Component B title":"Ajouter un titre \xe0 la composante B","Click to enter Component C title":"Ajouter un titre \xe0 la composante C","Click to enter Plot title":"Ajouter un titre au graphique","Click to enter X axis title":"Ajouter un titre \xe0 l'axe des x","Click to enter Y axis title":"Ajouter un titre \xe0 l'axe des y","Click to enter radial axis title":"Ajouter un titre \xe0 l'axe radial","Compare data on hover":"Comparaison entre donn\xe9es en survol","Double-click on legend to isolate one trace":"Double-cliquer sur la l\xe9gende pour isoler une s\xe9rie","Double-click to zoom back out":"Double-cliquer pour d\xe9zoomer","Download plot as a png":"T\xe9l\xe9charger le graphique en fichier PNG","Download plot":"T\xe9l\xe9charger le graphique","Edit in Chart Studio":"\xc9diter le graphique sur plot.ly","IE only supports svg.  Changing format to svg.":"IE ne permet que les conversions en SVG. Conversion en SVG en cours.","Lasso Select":"S\xe9lection lasso","Orbital rotation":"Rotation orbitale",Pan:"Translation","Produced with Plotly":"G\xe9n\xe9r\xe9 avec Plotly",Reset:"R\xe9initialiser","Reset axes":"R\xe9initialiser les axes","Reset camera to default":"R\xe9gler la cam\xe9ra \xe0 sa valeur d\xe9faut","Reset camera to last save":"R\xe9gler la cam\xe9ra \xe0 sa valeur sauvegard\xe9e","Reset view":"R\xe9initialiser","Reset views":"R\xe9initialiser","Show closest data on hover":"Donn\xe9es les plus proches en survol","Snapshot succeeded":"Conversion r\xe9ussie","Sorry, there was a problem downloading your snapshot!":"D\xe9sol\xe9, un probl\xe8me est survenu lors du t\xe9l\xe9chargement de votre graphique","Taking snapshot - this may take a few seconds":"Conversion en cours, ceci peut prendre quelques secondes",Zoom:"Zoom","Zoom in":"Zoom int\xe9rieur","Zoom out":"Zoom ext\xe9rieur","close:":"fermeture :",trace:"s\xe9rie","lat:":"lat. :","lon:":"lon. :","q1:":"q1 :","q3:":"q3 :","source:":"source :","target:":"embouchure :","lower fence:":"cl\xf4ture sup\xe9rieure :","upper fence:":"cl\xf4ture inf\xe9rieure :","max:":"max. :","mean \xb1 \u03c3:":"moyenne \xb1 \u03c3 :","mean:":"moyenne :","median:":"m\xe9diane :","min:":"min. :","new text":"nouveau texte","Turntable rotation":"Rotation planaire","Toggle Spike Lines":"Activer/d\xe9sactiver les pics","open:":"ouverture :","high:":"haut :","low:":"bas :","Toggle show closest data on hover":"Activer/d\xe9sactiver le survol","incoming flow count:":"flux entrant :","outgoing flow count:":"flux sortant :","kde:":"est. par noyau :"},format:{days:["Dimanche","Lundi","Mardi","Mercredi","Jeudi","Vendredi","Samedi"],shortDays:["Dim","Lun","Mar","Mer","Jeu","Ven","Sam"],months:["Janvier","F\xe9vrier","Mars","Avril","Mai","Juin","Juillet","Ao\xfbt","Septembre","Octobre","Novembre","D\xe9cembre"],shortMonths:["Jan","F\xe9v","Mar","Avr","Mai","Jun","Jul","Ao\xfb","Sep","Oct","Nov","D\xe9c"],date:"%d/%m/%Y",decimal:",",thousands:" ",year:"%Y",month:"%b %Y",dayMonth:"%-d %b",dayMonthYear:"%-d %b %Y"}});
+        </script>
 
-		<script type="text/javascript">
-			window.twttr = (function (d, s, id) {
-				var js, fjs = d.getElementsByTagName(s)[0],
-					t = window.twttr || {};
-				if (d.getElementById(id)) return t;
-				js = d.createElement(s);
-				js.id = id;
-				js.src = "https://platform.twitter.com/widgets.js";
-				fjs.parentNode.insertBefore(js, fjs);
-				t._e = [];
-				t.ready = function (f) {
-					t._e.push(f);
-				};
-				return t;
-			}(document, "script", "twitter-wjs"));
-		</script>
-	
-		{% block js %}
+        <script type="text/javascript">
+            window.twttr = (function (d, s, id) {
+                var js, fjs = d.getElementsByTagName(s)[0],
+                    t = window.twttr || {};
+                if (d.getElementById(id)) return t;
+                js = d.createElement(s);
+                js.id = id;
+                js.src = "https://platform.twitter.com/widgets.js";
+                fjs.parentNode.insertBefore(js, fjs);
+                t._e = [];
+                t.ready = function (f) {
+                    t._e.push(f);
+                };
+                return t;
+            }(document, "script", "twitter-wjs"));
+        </script>
+    
+        {% block js %}
 
-		{% endblock %}
+        {% endblock %}
 
-	</body>
+    </body>
 </html>
