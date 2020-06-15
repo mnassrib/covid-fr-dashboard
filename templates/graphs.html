@@ -356,9 +356,10 @@
         var graphs = {{graphJSON | safe}};
 
         for(var i in graphs) {
-            Plotly.plot(graphs[i].id, // the ID of the div, created above
-            graphs[i].data,
-            graphs[i].layout || {}, plotlyConfig);
+            Plotly.plot(
+                graphs[i].id, // the ID of the div, created above
+                graphs[i].data,
+                graphs[i].layout || {}, plotlyConfig);
         }
     </script>
     
