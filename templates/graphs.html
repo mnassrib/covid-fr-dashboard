@@ -380,14 +380,14 @@
                             fill: colors[i]
                         }
                     };
-                    slice.min = quantiles[i];
-                    if (i < quantiles.length -1) {
-                        slice.max = quantiles[i + 1];
-                        slice.label = "Entre " + slice.min + " et " + slice.max + " décès *";
-                    } else {
-                        slice.label = "Plus de " + slice.min + " décès *";
-                    }
-                    slices.push(slice);
+                slice.min = quantiles[i];
+                if (i < quantiles.length -1) {
+                    slice.max = quantiles[i + 1];
+                    slice.label = "Entre " + slice.min + " et " + slice.max + " décès *";
+                } else {
+                    slice.label = "Plus de " + slice.min + " décès *";
+                }
+                slices.push(slice);
             }
             for (var id in departments) {
                 departments[id]['value'] = departments[id]['dc_par_habitants'];
