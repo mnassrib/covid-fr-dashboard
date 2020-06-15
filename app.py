@@ -38,7 +38,6 @@ def graphs():
 @app.route('/departement/<string:department>')
 def view_department(department):
     """Department page of the app"""
-
     covfr = CovidFr()
     covfr.load_df()
     covfr.overall_departments_data_as_json()
