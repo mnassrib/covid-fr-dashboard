@@ -69,8 +69,7 @@
                                 <div class="card-body">
                                     <p align="center">
                                         Les états de santé et les possibles transitions entre elles pour un patient atteint du virus COVID-19
-                                    </p>
-                                
+                                    </p>                                
                                     <center> <img src="{{ url_for('static', filename='images/transition.png') }}" height="200" /> </center>
                                 </div>
                                 <div class="row">
@@ -265,8 +264,7 @@
             <div class="card mb-4 box-shadow">
                 <div class="card-body">
                     {% if (label != 'France'): %}
-                        <h3 id="Personnes hospitalisées">Nombre de patients actuellement hospitalisés au dépt. {{ label }} (FR-{{ department }})</h3>
-                        
+                        <h3 id="Personnes hospitalisées">Nombre de patients actuellement hospitalisés au dépt. {{ label }} (FR-{{ department }})</h3>                        
                     {% else : %}
                         <h3 id="Personnes hospitalisées">Nombre de patients actuellement hospitalisés en {{ label }}</h3> 
                     {% endif %} 
@@ -278,8 +276,7 @@
             <div class="card mb-4 box-shadow">
                 <div class="card-body">
                     {% if (label != 'France'): %}
-                        <h3 id="Personnes en réanimation">Nombre de patients actuellement en réanimation au dépt. {{ label }} (FR-{{ department }})</h3>
-                        
+                        <h3 id="Personnes en réanimation">Nombre de patients actuellement en réanimation au dépt. {{ label }} (FR-{{ department }})</h3>                        
                     {% else : %}
                         <h3 id="Personnes en réanimation">Nombre de patients actuellement en réanimation en {{ label }}</h3> 
                     {% endif %} 
@@ -291,8 +288,7 @@
             <div class="card mb-4 box-shadow">
                 <div class="card-body">
                     {% if (label != 'France'): %}
-                        <h3 id="Cumul personnes décédées">Nombre cumulé de patients décédés à l'hôpital au dépt. {{ label }} (FR-{{ department }})</h3>
-                        
+                        <h3 id="Cumul personnes décédées">Nombre cumulé de patients décédés à l'hôpital au dépt. {{ label }} (FR-{{ department }})</h3>                        
                     {% else : %}
                         <h3 id="Cumul personnes décédées">Nombre cumulé de patients décédés à l'hôpital en {{ label }}</h3> 
                     {% endif %}
@@ -353,13 +349,14 @@
                 "showTips": false,
             };
 
-        var graphs = {{graphJSON | safe}};
+        var graphs = {{ graphJSON | safe }};
 
         for(var i in graphs) {
             Plotly.plot(
                 graphs[i].id, // the ID of the div, created above
                 graphs[i].data,
-                graphs[i].layout || {}, plotlyConfig);
+                graphs[i].layout || {}, 
+                plotlyConfig);
         }
     </script>
     

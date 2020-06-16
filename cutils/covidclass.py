@@ -10,10 +10,10 @@ from datetime import datetime
 class CovidFr():
     """docstring for CovidFr"""
 
-    ### URL source for loading covid data
-    source_url = 'https://www.data.gouv.fr/fr/datasets/r/63352e38-d353-4b54-bfd1-f1b3ee1cabd7'
+    ### URL sources for loading covid data
+    synthesis_covid_url = 'https://www.data.gouv.fr/fr/datasets/r/63352e38-d353-4b54-bfd1-f1b3ee1cabd7'
 
-    source_url_daily_covid = "https://www.data.gouv.fr/fr/datasets/r/6fadff46-9efd-4c53-942a-54aca783c30c"
+    daily_covid_url = "https://www.data.gouv.fr/fr/datasets/r/6fadff46-9efd-4c53-942a-54aca783c30c"
 
     def __init__(self):
         # Init basic departments data
@@ -31,8 +31,8 @@ class CovidFr():
         """
         Loading dataframes
         """
-        self.covid = pd.read_csv(CovidFr.source_url, sep=';')
-        self.daily_covid = pd.read_csv(CovidFr.source_url_daily_covid, sep=';')
+        self.covid = pd.read_csv(CovidFr.synthesis_covid_url, sep=';')
+        self.daily_covid = pd.read_csv(CovidFr.daily_covid_url, sep=';')
     
     def overall_departments_data_as_json(self):
         """
@@ -52,8 +52,7 @@ class CovidFr():
 
         dep_data = pd.concat([dep_data, self.department_base_data], axis=1)
 
-        for feature in self.features:
-             
+        for feature in self.features:         
             if feature == "dc" or feature == "rad":
                 ### For death and or rad case maps
                 dep_data[feature+'_par_habitants'] = (dep_data[feature] / dep_data['population']) * 100000
@@ -146,11 +145,9 @@ class CovidFr():
         for i in range(len(cdata.index)):
             dc_rectif.append(max(cdata.dc[0:i+1]))
             rad_rectif.append(max(cdata.rad[0:i+1]))
-
             if i == 0:
                 dc_j.append(cdata.dc[i])
-                rad_j.append(cdata.rad[i])
-                
+                rad_j.append(cdata.rad[i])                
             else:   
                 dc_j.append(max(cdata.dc[0:i+1]) - max(cdata.dc[0:i]))
                 rad_j.append(max(cdata.rad[0:i+1]) - max(cdata.rad[0:i]))
@@ -331,6 +328,6 @@ def last_updated():
     with urllib.request.urlopen("https://www.data.gouv.fr/datasets/5e7e104ace2080d9162b61d8/rdf.json") as url:
         data = json.loads(url.read().decode())  
         for dataset in data['@graph']:
-            if 'accessURL' in dataset.keys() and dataset['accessURL'] == CovidFr.source_url:
+            if 'accessURL' in dataset.keys() and dataset['accessURL'] == CovidFr.synthesis_covid_url:
                 last_update = dataset['modified']
     return last_update
