@@ -4,6 +4,14 @@ from cutils.covidclass import CovidFr
 
 app = Flask(__name__)
 
+##############
+#Added 6/16/20
+from futils.pcaml import quadratics 
+
+graphJSONquadratics = quadratics()
+
+#############
+
 @app.route('/')
 def graphs():
     """Country page of the app"""
@@ -33,6 +41,8 @@ def graphs():
 
         overall_departments_data_rea = covfr.overall_departments_rea_as_json['data_rea'],
         overall_departments_quantiles_rea = covfr.overall_departments_rea_as_json['quantiles_rea'],
+
+        graphJSONquadratics = graphJSONquadratics,
     )
 
 @app.route('/departement/<string:department>')
@@ -69,6 +79,8 @@ def view_department(department):
 
         overall_departments_data_rea = covfr.overall_departments_rea_as_json['data_rea'],
         overall_departments_quantiles_rea = covfr.overall_departments_rea_as_json['quantiles_rea'],
+
+        graphJSONquadratics = graphJSONquadratics,
     )
 
 if __name__ == '__main__':
