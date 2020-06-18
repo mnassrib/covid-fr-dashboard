@@ -207,13 +207,3 @@ def quadratics():
     graphJSON = json.dumps(graphs, cls=plotly.utils.PlotlyJSONEncoder)
      
     return graphJSON
-
-
-
-
-
-
-
-
-
-

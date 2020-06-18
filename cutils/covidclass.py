@@ -7,6 +7,10 @@ import os
 import urllib.request
 from datetime import datetime
 
+from sklearn.preprocessing import StandardScaler
+from scipy.stats import chi2
+from numpy.linalg import inv
+
 class CovidFr():
     """docstring for CovidFr"""
 
@@ -33,14 +37,18 @@ class CovidFr():
         """
         self.covid = pd.read_csv(CovidFr.synthesis_covid_url, sep=';')
         self.daily_covid = pd.read_csv(CovidFr.daily_covid_url, sep=';')
+        return self.covid
     
-    def overall_departments_data_as_json(self):
+    def overall_departments_data_as_json(self, data=None):
         """
         Get data from departments as a JSON string along with quantiles
         Returns:
             JSON string of departments overall data
         """
-        dep_data = self.covid[(self.covid['sexe'] == 0)]
+        if data is None:
+            dep_data = self.covid[(self.covid['sexe'] == 0)]
+        else:
+            dep_data = data[(data['sexe'] == 0)]
 
         nat_data = dep_data.copy()
         nat_data = nat_data.groupby("jour").sum()
@@ -51,6 +59,8 @@ class CovidFr():
             .max()
 
         dep_data = pd.concat([dep_data, self.department_base_data], axis=1)
+
+        overall_dep_data_as_json_dict = {}
 
         for feature in self.features:         
             if feature == "dc" or feature == "rad":
@@ -76,6 +86,8 @@ class CovidFr():
 
                 setattr(self, 'overall_departments_{}'.format(feature)+"_as_json", {"data_"+feature: data_feature.to_json(orient='index'), "quantiles_"+feature: quantiles_feature.to_json(orient='index')})
 
+                overall_dep_data_as_json_dict.update({'overall_departments_{}'.format(feature)+"_as_json": {"data_"+feature: data_feature.to_json(orient='index'), "quantiles_"+feature: quantiles_feature.to_json(orient='index')}})
+         
             elif feature == "r_dc_rad":
                 ### For rate death case map
                 dep_data[feature] = (dep_data['dc'] / (dep_data['dc'] + dep_data['rad']))
@@ -97,6 +109,8 @@ class CovidFr():
                 data_feature[feature] = data_feature[feature].round(2)
 
                 setattr(self, 'overall_departments_{}'.format(feature)+"_as_json", {"data_"+feature: data_feature.to_json(orient='index'), "quantiles_"+feature: quantiles_feature.to_json(orient='index')})
+
+                overall_dep_data_as_json_dict.update({'overall_departments_{}'.format(feature)+"_as_json": {"data_"+feature: data_feature.to_json(orient='index'), "quantiles_"+feature: quantiles_feature.to_json(orient='index')}})
 
             elif feature == "hosp" or feature == "rea":
                 ### For hosp and or rea case map
@@ -128,11 +142,50 @@ class CovidFr():
 
                 setattr(self, 'overall_departments_{}'.format(feature)+"_as_json", {"data_"+feature: data_feature.to_json(orient='index'), "quantiles_"+feature: quantiles_feature.to_json(orient='index')})
 
-    def charts(self, department): 
-        if department == 'ALL':
-            cdata = self.covid[self.covid.sexe == 0].groupby(['jour']).sum().copy()
-        else: 
-            cdata = self.covid[(self.covid.dep == department) & (self.covid.sexe == 0)].groupby(['jour']).sum().copy()
+                overall_dep_data_as_json_dict.update({'overall_departments_{}'.format(feature)+"_as_json": {"data_"+feature: data_feature.to_json(orient='index'), "quantiles_"+feature: quantiles_feature.to_json(orient='index')}})
+
+        return overall_dep_data_as_json_dict
+
+    @staticmethod
+    def dailycases(data=None):
+        cdata = data[data.sexe == 0].groupby(['jour']).sum().copy()
+        cdata = cdata[['hosp', 'rea', 'rad', 'dc']]
+
+        cdata.index = pd.to_datetime(cdata.index)
+
+        dc_j = []
+        rad_j = []
+        dc_rectif = []
+        rad_rectif = []
+        for i in range(len(cdata.index)):
+            dc_rectif.append(max(cdata.dc[0:i+1]))
+            rad_rectif.append(max(cdata.rad[0:i+1]))
+            if i == 0:
+                dc_j.append(cdata.dc[i])
+                rad_j.append(cdata.rad[i])                
+            else:   
+                dc_j.append(max(cdata.dc[0:i+1]) - max(cdata.dc[0:i]))
+                rad_j.append(max(cdata.rad[0:i+1]) - max(cdata.rad[0:i]))
+
+        cdata["dc_rectif"] = dc_rectif
+        cdata["rad_rectif"] = rad_rectif
+        cdata["dc_j"] = dc_j
+        cdata["rad_j"] = rad_j
+        cdata = cdata[['hosp', 'rea', 'rad_j', 'dc_j']]
+        cdata.rename(columns={'rad_j':'rad', 'dc_j':'dc'})
+        return cdata
+
+    def charts(self, data=None, department=None): 
+        if department is None:  
+            if data is None:
+                cdata = self.covid[self.covid.sexe == 0].groupby(['jour']).sum().copy()
+            else: 
+                cdata = data[data.sexe == 0].groupby(['jour']).sum().copy()
+        else:
+            if data is None:
+                cdata = self.covid[(self.covid.dep == department) & (self.covid.sexe == 0)].groupby(['jour']).sum().copy()
+            else: 
+                cdata = data[(data.dep == department) & (data.sexe == 0)].groupby(['jour']).sum().copy()
 
         cdata = cdata[['hosp', 'rea', 'rad', 'dc']]
 
@@ -156,7 +209,7 @@ class CovidFr():
         cdata["rad_rectif"] = rad_rectif
         cdata["dc_j"] = dc_j
         cdata["rad_j"] = rad_j
-        
+
         graphs = [
             dict(
                 id= "Nombre de personnes actuellement hospitalisées",
@@ -311,6 +364,9 @@ class CovidFr():
                                     "nat_rea": ((fdata.at[datetime.strptime(self.last_update, "%Y-%m-%dT%H:%M:%S.%f").strftime("%Y-%m-%d"), 'rea'] / popfr) * 100000).round(2),
                                     },
                         }
+        return {"graphJSON": self.graphJSON, 
+                "counters": self.counters,
+                }
 
     def department_label(self, department):
         """Get a department label from its insee code
@@ -320,6 +376,110 @@ class CovidFr():
         if department in self.department_base_data.index:
             return self.department_base_data.at[department, 'label']
         return ""
+
+    def acp(self, data, pcdim, q=0.975, normalize=False, start_d_learn='2020-05-14', end_d_learn='2020-06-14', alpha=1-0.4):
+        
+        dataindex = data.index
+        learn_data = data[(data.index>=start_d_learn) & (data.index<=end_d_learn)].copy()
+        
+        if normalize == True:
+            std = StandardScaler().fit(learn_data)
+            learn_data = std.transform(learn_data)
+            data = std.transform(data)
+        
+        u, s, vh = np.linalg.svd(np.dot(np.transpose(learn_data), learn_data)/(learn_data.shape[0]), full_matrices=True)
+        
+        u_tilde = u[:, pcdim:]
+        c_tilde = np.dot(u_tilde, np.transpose(u_tilde))
+        spe = np.diag(np.dot(np.dot(data, c_tilde), np.transpose(data)))
+        
+        numgspe = np.trace(np.square(np.diag(s[pcdim:])))
+        dengspe = np.trace(np.diag(s[pcdim:]))
+        gspe = numgspe/dengspe
+
+        numhspe = np.square(dengspe)
+        denhspe = numgspe
+        hspe = numhspe/denhspe
+
+        u_hat = u[:, :pcdim]
+        c_hat_Hotelling =np.dot(np.dot(u_hat, inv(np.diag(s[:pcdim]))), np.transpose(u_hat))     
+        t2 = np.diag(np.dot(np.dot(data, c_hat_Hotelling), np.transpose(data)))
+
+        graphs = [
+            dict(
+                id = 'SPE',
+                data=[
+                    dict(
+                        x = dataindex,
+                        y = spe,
+                        type='line',
+                        name='score',
+                        marker=dict(
+                        color='#02056D',
+                        line=dict(color='#02056D', width=3)
+                        ),
+                        hovertemplate =
+                            #'<b>Score</b>: %{y:.2f}<br>'+
+                            '<b>%{text}</b><extra></extra>',
+                            text = ['uncontrolled' if spe[i]>gspe*chi2.ppf(q, df=hspe) else 'controlled' for i in range(len(dataindex))],
+                    ),
+
+                    dict(
+                        x = dataindex,
+                        y = ewma_filter(data=spe, alpha=alpha),
+                        type='line',
+                        name="score filtré",
+                        marker=dict(
+                        color='#026D2F',
+                        line=dict(color='#026D2F', width=3)
+                        ),
+                        hovertemplate =
+                            #'<b>Score</b>: %{y:.2f}<br>'+
+                            '<b>%{text}</b><extra></extra>',
+                            text = ['uncontrolled' if ewma_filter(data=spe, alpha=alpha)[i]>gspe*chi2.ppf(q, df=hspe) else 'controlled' for i in range(len(dataindex))],
+                    ),
+
+                    dict(
+                        x = dataindex,
+                        y = np.repeat(gspe*chi2.ppf(q, df=hspe), spe.shape[0]),
+                        type='line',
+                        name='seuil',
+                        marker=dict(
+                        color='#ff0000',
+                        line=dict(color='#ff0000', width=3)
+                        ),
+                        hovertemplate =
+                            #'<b>Score</b>: %{y:.2f}<br>'+
+                            '<b>%{text}</b><extra></extra>',
+                            text = ['seuil' for i in range(len(dataindex))],
+                        showlegend = False,
+                    ),
+                ],
+                layout=dict(
+                    #title="Indice SPE",
+                    legend=dict(orientation="h"),
+                    linemode='overlay',
+                    margin=dict(l=30, r=30, b=30, t=30),      
+                )
+            ),
+        ]
+
+        # Convert the figures to JSON
+        # PlotlyJSONEncoder appropriately converts pandas, datetime, etc
+        # objects to their JSON equivalents
+        graphJSON = json.dumps(graphs, cls=plotly.utils.PlotlyJSONEncoder)
+
+        return {'graphJSON': graphJSON,
+                'explained variance': ((np.trace(np.diag(s[:pcdim]))/np.trace(np.diag(s)))*100).round(2),
+                'SPE': {'spe': spe,
+                        'filtered_spe': ewma_filter(data=spe, alpha=alpha),
+                        'threshold': gspe*chi2.ppf(q, df=hspe),
+                       },
+                'Hotelling': {'t2': t2, 
+                              'filtered_t2': ewma_filter(data=t2, alpha=alpha), 
+                              'threshold': chi2.ppf(q, df=pcdim)
+                             },
+               }
  
 ###############################
    
@@ -331,3 +491,74 @@ def last_updated():
             if 'accessURL' in dataset.keys() and dataset['accessURL'] == CovidFr.synthesis_covid_url:
                 last_update = dataset['modified']
     return last_update
+
+
+def ewma_filter(data, alpha, offset=None, dtype=None, order='C', out=None):
+    """
+    Calculates the exponential moving average over a vector.
+    Will fail for large inputs.
+    :param data: Input data
+    :param alpha: scalar float in range (0,1)
+        The alpha parameter for the moving average.
+    :param offset: optional
+        The offset for the moving average, scalar. Defaults to data[0].
+    :param dtype: optional
+        Data type used for calculations. Defaults to float64 unless
+        data.dtype is float32, then it will use float32.
+    :param order: {'C', 'F', 'A'}, optional
+        Order to use when flattening the data. Defaults to 'C'.
+    :param out: ndarray, or None, optional
+        A location into which the result is stored. If provided, it must have
+        the same shape as the input. If not provided or `None`,
+        a freshly-allocated array is returned.
+    """
+    data = np.array(data, copy=False)
+
+    if dtype is None:
+        if data.dtype == np.float32:
+            dtype = np.float32
+        else:
+            dtype = np.float64
+    else:
+        dtype = np.dtype(dtype)
+
+    if data.ndim > 1:
+        # flatten input
+        data = data.reshape(-1, order)
+
+    if out is None:
+        out = np.empty_like(data, dtype=dtype)
+    else:
+        assert out.shape == data.shape
+        assert out.dtype == dtype
+
+    if data.size < 1:
+        # empty input, return empty array
+        return out
+
+    if offset is None:
+        offset = data[0]
+
+    alpha = np.array(alpha, copy=False).astype(dtype, copy=False)
+
+    # scaling_factors -> 0 as len(data) gets large
+    # this leads to divide-by-zeros below
+    scaling_factors = np.power(1. - alpha, np.arange(data.size + 1, dtype=dtype),
+                               dtype=dtype)
+    # create cumulative sum array
+    np.multiply(data, (alpha * scaling_factors[-2]) / scaling_factors[:-1],
+                dtype=dtype, out=out)
+    np.cumsum(out, dtype=dtype, out=out)
+
+    # cumsums / scaling
+    out /= scaling_factors[-2::-1]
+
+    if offset != 0:
+        offset = np.array(offset, copy=False).astype(dtype, copy=False)
+        # add offsets
+        out += offset * scaling_factors[1:]
+
+    return out
+
+
+

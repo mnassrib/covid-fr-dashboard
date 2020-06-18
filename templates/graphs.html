@@ -333,18 +333,14 @@
             </div>
         </div>
 
-
         <div class="col-md-12">
             <div class="card mb-4 box-shadow">
                 <div class="card-body">
-                    <h3>à deviner
+                    <h3>Indicateur à deviner !</h3>
                     <div id="SPE"> </div>
                 </div>
             </div>
         </div>
-
-
-
 
     </div>
 </div>
@@ -373,7 +369,7 @@
                 plotlyConfig);
         }
     </script>
-    
+
     <!-- death map -->
     <script type="text/javascript">
         $(function() {
@@ -759,17 +755,8 @@
         });
     </script>
 
-
     <!-- charts -->
     <script type="text/javascript">
-        // Init charts
-        var plotlyConfig = {
-                "locale": "fr",
-                "modeBarButtonsToRemove": ["sendDataToCloud", "autoScale2d", "hoverClosestCartesian", "hoverCompareCartesian", "lasso2d", "select2d"],
-                "displaylogo": false,
-                "showTips": false,
-            };
-
         var graphs = {{ graphJSONquadratics | safe }};
 
         for(var i in graphs) {
