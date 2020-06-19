@@ -3,7 +3,6 @@ import numpy as np
 import json
 import plotly
 import os
-import plotly.graph_objs as go
 
 import urllib.request
 from datetime import datetime
@@ -11,14 +10,13 @@ from datetime import datetime
 from sklearn.preprocessing import StandardScaler
 from scipy.stats import chi2
 from numpy.linalg import inv
+import plotly.graph_objs as go
 
 class CovidFr():
     """docstring for CovidFr"""
 
-    ### URL sources for loading covid data
+    ### URL source for loading covid data
     synthesis_covid_url = 'https://www.data.gouv.fr/fr/datasets/r/63352e38-d353-4b54-bfd1-f1b3ee1cabd7'
-
-    daily_covid_url = "https://www.data.gouv.fr/fr/datasets/r/6fadff46-9efd-4c53-942a-54aca783c30c"
 
     def __init__(self):
         # Init basic departments data
@@ -37,7 +35,6 @@ class CovidFr():
         Loading dataframes
         """
         self.covid = pd.read_csv(CovidFr.synthesis_covid_url, sep=';')
-        self.daily_covid = pd.read_csv(CovidFr.daily_covid_url, sep=';')
         return self.covid
     
     def overall_departments_data_as_json(self, data=None):
@@ -147,36 +144,6 @@ class CovidFr():
 
         return overall_dep_data_as_json_dict
 
-    @staticmethod
-    def dailycases(data=None):
-        cdata = data[data.sexe == 0].groupby(['jour']).sum().copy()
-        cdata = cdata[['hosp', 'rea', 'rad', 'dc']]
-
-        cdata.index = pd.to_datetime(cdata.index)
-
-        dc_j = []
-        rad_j = []
-        dc_rectif = []
-        rad_rectif = []
-        for i in range(len(cdata.index)):
-            dc_rectif.append(max(cdata.dc[0:i+1]))
-            rad_rectif.append(max(cdata.rad[0:i+1]))
-            if i == 0:
-                dc_j.append(cdata.dc[i])
-                rad_j.append(cdata.rad[i])                
-            else:   
-                dc_j.append(max(cdata.dc[0:i+1]) - max(cdata.dc[0:i]))
-                rad_j.append(max(cdata.rad[0:i+1]) - max(cdata.rad[0:i]))
-
-        cdata["dc_rectif"] = dc_rectif
-        cdata["rad_rectif"] = rad_rectif
-        cdata["dc_j"] = dc_j
-        cdata["rad_j"] = rad_j
-        
-        cdata = cdata[['hosp', 'rea', 'rad_j', 'dc_j']]
-        cdata.rename(columns={'rad_j':'rad', 'dc_j':'dc'})
-        return cdata
-
     def charts(self, data=None, department=None): 
         if department is None:  
             if data is None:
@@ -189,28 +156,7 @@ class CovidFr():
             else: 
                 cdata = data[(data.dep == department) & (data.sexe == 0)].groupby(['jour']).sum().copy()
 
-        cdata = cdata[['hosp', 'rea', 'rad', 'dc']]
-
-        cdata.index = pd.to_datetime(cdata.index)
-
-        dc_j = []
-        rad_j = []
-        dc_rectif = []
-        rad_rectif = []
-        for i in range(len(cdata.index)):
-            dc_rectif.append(max(cdata.dc[0:i+1]))
-            rad_rectif.append(max(cdata.rad[0:i+1]))
-            if i == 0:
-                dc_j.append(cdata.dc[i])
-                rad_j.append(cdata.rad[i])                
-            else:   
-                dc_j.append(max(cdata.dc[0:i+1]) - max(cdata.dc[0:i]))
-                rad_j.append(max(cdata.rad[0:i+1]) - max(cdata.rad[0:i]))
-
-        cdata["dc_rectif"] = dc_rectif
-        cdata["rad_rectif"] = rad_rectif
-        cdata["dc_j"] = dc_j
-        cdata["rad_j"] = rad_j
+        cdata = CovidFr.dailycases(data=cdata, pca=False)
 
         graphs = [
             dict(
@@ -549,7 +495,6 @@ class CovidFr():
                 )
             ),
         ]
-
         # Convert the figures to JSON
         # PlotlyJSONEncoder appropriately converts pandas, datetime, etc
         # objects to their JSON equivalents
@@ -569,6 +514,38 @@ class CovidFr():
                              },
                }
  
+    @staticmethod
+    def dailycases(data=None, pca=False):
+        cdata = data[data.sexe == 0].groupby(['jour']).sum().copy()
+        cdata = cdata[['hosp', 'rea', 'rad', 'dc']]
+
+        cdata.index = pd.to_datetime(cdata.index)
+
+        dc_j = []
+        rad_j = []
+        dc_rectif = []
+        rad_rectif = []
+        for i in range(len(cdata.index)):
+            dc_rectif.append(max(cdata.dc[0:i+1]))
+            rad_rectif.append(max(cdata.rad[0:i+1]))
+            if i == 0:
+                dc_j.append(cdata.dc[i])
+                rad_j.append(cdata.rad[i])                
+            else:   
+                dc_j.append(max(cdata.dc[0:i+1]) - max(cdata.dc[0:i]))
+                rad_j.append(max(cdata.rad[0:i+1]) - max(cdata.rad[0:i]))
+
+        cdata["dc_rectif"] = dc_rectif
+        cdata["rad_rectif"] = rad_rectif
+        cdata["dc_j"] = dc_j
+        cdata["rad_j"] = rad_j
+
+        if pca is True:
+            cdata = cdata[['hosp', 'rea', 'rad_j', 'dc_j']]
+            cdata.rename(columns={'rad_j':'rad', 'dc_j':'dc'})
+            return cdata
+        return cdata
+
     @staticmethod
     def last_updated():
         last_update = ""
@@ -644,8 +621,4 @@ class CovidFr():
             offset = np.array(offset, copy=False).astype(dtype, copy=False)
             # add offsets
             out += offset * scaling_factors[1:]
-
         return out
-
-
-

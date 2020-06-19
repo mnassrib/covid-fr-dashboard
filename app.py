@@ -7,7 +7,7 @@ app = Flask(__name__)
 covfr = CovidFr()
 covid = covfr.load_df()
 oddaj = covfr.overall_departments_data_as_json()
-daily = covfr.dailycases(data=covid)
+daily = covfr.dailycases(data=covid, pca=True)
 
 graphJSONquadratics = covfr.acp(data=daily, pcdim=2, normalize=True)
 
