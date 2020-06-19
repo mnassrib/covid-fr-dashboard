@@ -3,6 +3,7 @@ import numpy as np
 import json
 import plotly
 import os
+import plotly.graph_objs as go
 
 import urllib.request
 from datetime import datetime
@@ -27,7 +28,7 @@ class CovidFr():
         self.department_base_data.index = self.department_base_data['insee']
         self.department_base_data = self.department_base_data.sort_index()
 
-        self.last_update = last_updated()
+        self.last_update = CovidFr.last_updated()
 
         self.features = ["dc", "r_dc_rad", "rad", "hosp", "rea"]
    
@@ -171,6 +172,7 @@ class CovidFr():
         cdata["rad_rectif"] = rad_rectif
         cdata["dc_j"] = dc_j
         cdata["rad_j"] = rad_j
+        
         cdata = cdata[['hosp', 'rea', 'rad_j', 'dc_j']]
         cdata.rename(columns={'rad_j':'rad', 'dc_j':'dc'})
         return cdata
@@ -382,7 +384,7 @@ class CovidFr():
         dataindex = data.index
         learn_data = data[(data.index>=start_d_learn) & (data.index<=end_d_learn)].copy()
         
-        if normalize == True:
+        if normalize is True:
             std = StandardScaler().fit(learn_data)
             learn_data = std.transform(learn_data)
             data = std.transform(data)
@@ -413,7 +415,7 @@ class CovidFr():
                         x = dataindex,
                         y = spe,
                         type='line',
-                        name='score',
+                        name='score s',
                         marker=dict(
                         color='#02056D',
                         line=dict(color='#02056D', width=3)
@@ -426,9 +428,9 @@ class CovidFr():
 
                     dict(
                         x = dataindex,
-                        y = ewma_filter(data=spe, alpha=alpha),
+                        y = CovidFr.ewma_filter(data=spe, alpha=alpha),
                         type='line',
-                        name="score filtré",
+                        name="score s filtré",
                         marker=dict(
                         color='#026D2F',
                         line=dict(color='#026D2F', width=3)
@@ -436,7 +438,7 @@ class CovidFr():
                         hovertemplate =
                             #'<b>Score</b>: %{y:.2f}<br>'+
                             '<b>%{text}</b><extra></extra>',
-                            text = ['uncontrolled' if ewma_filter(data=spe, alpha=alpha)[i]>gspe*chi2.ppf(q, df=hspe) else 'controlled' for i in range(len(dataindex))],
+                            text = ['uncontrolled' if CovidFr.ewma_filter(data=spe, alpha=alpha)[i]>gspe*chi2.ppf(q, df=hspe) else 'controlled' for i in range(len(dataindex))],
                     ),
 
                     dict(
@@ -462,6 +464,90 @@ class CovidFr():
                     margin=dict(l=30, r=30, b=30, t=30),      
                 )
             ),
+
+            dict(
+                id = 'Hotelling',
+                data=[
+                    dict(
+                        x = dataindex,
+                        y = t2,
+                        type='line',
+                        name='score t',
+                        marker=dict(
+                        color='#02056D',
+                        line=dict(color='#02056D', width=3)
+                        ),
+                        hovertemplate =
+                            #'<b>Score</b>: %{y:.2f}<br>'+
+                            '<b>%{text}</b><extra></extra>',
+                            text = ['uncontrolled' if t2[i]>chi2.ppf(q, df=pcdim) else 'controlled' for i in range(len(dataindex))],
+                    ),
+
+                    dict(
+                        x = dataindex,
+                        y = CovidFr.ewma_filter(data=t2, alpha=alpha),
+                        type='line',
+                        name="score t filtré",
+                        marker=dict(
+                        color='#026D2F',
+                        line=dict(color='#026D2F', width=3)
+                        ),
+                        hovertemplate =
+                            #'<b>Score</b>: %{y:.2f}<br>'+
+                            '<b>%{text}</b><extra></extra>',
+                            text = ['uncontrolled' if CovidFr.ewma_filter(data=t2, alpha=alpha)[i]>chi2.ppf(q, df=pcdim) else 'controlled' for i in range(len(dataindex))],
+                    ),
+
+                    dict(
+                        x = dataindex,
+                        y = np.repeat(chi2.ppf(q, df=pcdim), t2.shape[0]),
+                        type='line',
+                        name='seuil',
+                        marker=dict(
+                        color='#ff0000',
+                        line=dict(color='#ff0000', width=3)
+                        ),
+                        hovertemplate =
+                            #'<b>Score</b>: %{y:.2f}<br>'+
+                            '<b>%{text}</b><extra></extra>',
+                            text = ['seuil' for i in range(len(dataindex))],
+                        showlegend = False,
+                    ),
+                ],
+                layout=dict(
+                    #title="Indice Hotelling",
+                    legend=dict(orientation="h"),
+                    linemode='overlay',
+                    margin=dict(l=30, r=30, b=30, t=30), 
+                    annotations=[
+                        go.layout.Annotation(
+                            x=max(dataindex)-(max(dataindex)-min(dataindex))/4,
+                            y=3*max(t2)/4,
+                            xref="x",
+                            yref="y",
+                            text='ev: {}%<br>pc: {}<br>normalized: {}<br>lp from {} to {}'.format(((np.trace(np.diag(s[:pcdim]))/np.trace(np.diag(s)))*100).round(2), pcdim, normalize, start_d_learn, end_d_learn),
+                            showarrow=False,
+                            font=dict(
+                                family="Courier New, monospace",
+                                size=10,
+                                color="#ffffff",
+                                ),
+                            align="left",
+                            arrowhead=2,
+                            arrowsize=1,
+                            arrowwidth=2,
+                            arrowcolor="#636363",
+                            ax=20,
+                            ay=-30,
+                            bordercolor="#c7c7c7",
+                            borderwidth=2,
+                            borderpad=4,
+                            bgcolor="#ff7f0e",
+                            opacity=0.7,
+                        )
+                    ],     
+                )
+            ),
         ]
 
         # Convert the figures to JSON
@@ -470,95 +556,96 @@ class CovidFr():
         graphJSON = json.dumps(graphs, cls=plotly.utils.PlotlyJSONEncoder)
 
         return {'graphJSON': graphJSON,
+                'retained PCs': pcdim,
+                'normalized': normalize,
                 'explained variance': ((np.trace(np.diag(s[:pcdim]))/np.trace(np.diag(s)))*100).round(2),
                 'SPE': {'spe': spe,
-                        'filtered_spe': ewma_filter(data=spe, alpha=alpha),
+                        'filtered_spe': CovidFr.ewma_filter(data=spe, alpha=alpha),
                         'threshold': gspe*chi2.ppf(q, df=hspe),
                        },
                 'Hotelling': {'t2': t2, 
-                              'filtered_t2': ewma_filter(data=t2, alpha=alpha), 
+                              'filtered_t2': CovidFr.ewma_filter(data=t2, alpha=alpha), 
                               'threshold': chi2.ppf(q, df=pcdim)
                              },
                }
  
-###############################
-   
-def last_updated():
-    last_update = ""
-    with urllib.request.urlopen("https://www.data.gouv.fr/datasets/5e7e104ace2080d9162b61d8/rdf.json") as url:
-        data = json.loads(url.read().decode())  
-        for dataset in data['@graph']:
-            if 'accessURL' in dataset.keys() and dataset['accessURL'] == CovidFr.synthesis_covid_url:
-                last_update = dataset['modified']
-    return last_update
+    @staticmethod
+    def last_updated():
+        last_update = ""
+        with urllib.request.urlopen("https://www.data.gouv.fr/datasets/5e7e104ace2080d9162b61d8/rdf.json") as url:
+            data = json.loads(url.read().decode())  
+            for dataset in data['@graph']:
+                if 'accessURL' in dataset.keys() and dataset['accessURL'] == CovidFr.synthesis_covid_url:
+                    last_update = dataset['modified']
+        return last_update
 
+    @staticmethod
+    def ewma_filter(data, alpha, offset=None, dtype=None, order='C', out=None):
+        """
+        Calculates the exponential moving average over a vector.
+        Will fail for large inputs.
+        :param data: Input data
+        :param alpha: scalar float in range (0,1)
+            The alpha parameter for the moving average.
+        :param offset: optional
+            The offset for the moving average, scalar. Defaults to data[0].
+        :param dtype: optional
+            Data type used for calculations. Defaults to float64 unless
+            data.dtype is float32, then it will use float32.
+        :param order: {'C', 'F', 'A'}, optional
+            Order to use when flattening the data. Defaults to 'C'.
+        :param out: ndarray, or None, optional
+            A location into which the result is stored. If provided, it must have
+            the same shape as the input. If not provided or `None`,
+            a freshly-allocated array is returned.
+        """
+        data = np.array(data, copy=False)
 
-def ewma_filter(data, alpha, offset=None, dtype=None, order='C', out=None):
-    """
-    Calculates the exponential moving average over a vector.
-    Will fail for large inputs.
-    :param data: Input data
-    :param alpha: scalar float in range (0,1)
-        The alpha parameter for the moving average.
-    :param offset: optional
-        The offset for the moving average, scalar. Defaults to data[0].
-    :param dtype: optional
-        Data type used for calculations. Defaults to float64 unless
-        data.dtype is float32, then it will use float32.
-    :param order: {'C', 'F', 'A'}, optional
-        Order to use when flattening the data. Defaults to 'C'.
-    :param out: ndarray, or None, optional
-        A location into which the result is stored. If provided, it must have
-        the same shape as the input. If not provided or `None`,
-        a freshly-allocated array is returned.
-    """
-    data = np.array(data, copy=False)
-
-    if dtype is None:
-        if data.dtype == np.float32:
-            dtype = np.float32
+        if dtype is None:
+            if data.dtype == np.float32:
+                dtype = np.float32
+            else:
+                dtype = np.float64
         else:
-            dtype = np.float64
-    else:
-        dtype = np.dtype(dtype)
+            dtype = np.dtype(dtype)
 
-    if data.ndim > 1:
-        # flatten input
-        data = data.reshape(-1, order)
+        if data.ndim > 1:
+            # flatten input
+            data = data.reshape(-1, order)
 
-    if out is None:
-        out = np.empty_like(data, dtype=dtype)
-    else:
-        assert out.shape == data.shape
-        assert out.dtype == dtype
+        if out is None:
+            out = np.empty_like(data, dtype=dtype)
+        else:
+            assert out.shape == data.shape
+            assert out.dtype == dtype
 
-    if data.size < 1:
-        # empty input, return empty array
+        if data.size < 1:
+            # empty input, return empty array
+            return out
+
+        if offset is None:
+            offset = data[0]
+
+        alpha = np.array(alpha, copy=False).astype(dtype, copy=False)
+
+        # scaling_factors -> 0 as len(data) gets large
+        # this leads to divide-by-zeros below
+        scaling_factors = np.power(1. - alpha, np.arange(data.size + 1, dtype=dtype),
+                                   dtype=dtype)
+        # create cumulative sum array
+        np.multiply(data, (alpha * scaling_factors[-2]) / scaling_factors[:-1],
+                    dtype=dtype, out=out)
+        np.cumsum(out, dtype=dtype, out=out)
+
+        # cumsums / scaling
+        out /= scaling_factors[-2::-1]
+
+        if offset != 0:
+            offset = np.array(offset, copy=False).astype(dtype, copy=False)
+            # add offsets
+            out += offset * scaling_factors[1:]
+
         return out
-
-    if offset is None:
-        offset = data[0]
-
-    alpha = np.array(alpha, copy=False).astype(dtype, copy=False)
-
-    # scaling_factors -> 0 as len(data) gets large
-    # this leads to divide-by-zeros below
-    scaling_factors = np.power(1. - alpha, np.arange(data.size + 1, dtype=dtype),
-                               dtype=dtype)
-    # create cumulative sum array
-    np.multiply(data, (alpha * scaling_factors[-2]) / scaling_factors[:-1],
-                dtype=dtype, out=out)
-    np.cumsum(out, dtype=dtype, out=out)
-
-    # cumsums / scaling
-    out /= scaling_factors[-2::-1]
-
-    if offset != 0:
-        offset = np.array(offset, copy=False).astype(dtype, copy=False)
-        # add offsets
-        out += offset * scaling_factors[1:]
-
-    return out
 
 
 

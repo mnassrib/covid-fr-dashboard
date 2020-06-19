@@ -9,18 +9,18 @@ covid = covfr.load_df()
 oddaj = covfr.overall_departments_data_as_json()
 daily = covfr.dailycases(data=covid)
 
-graphJSONquadratics = covfr.acp(data=daily, pcdim=2, normalize=True)["graphJSON"]
+graphJSONquadratics = covfr.acp(data=daily, pcdim=2, normalize=True)
 
 @app.route('/')
 def graphs():
     """Country page of the app"""
 
-    chartreqs = covfr.charts()
+    charts_and_parameters = covfr.charts()
     
     return render_template(
         "graphs.html", 
-        graphJSON = chartreqs["graphJSON"],  
-        counters = chartreqs["counters"],
+        graphJSON = charts_and_parameters["graphJSON"],  
+        counters = charts_and_parameters["counters"],
         label = "France",
         department = '',
 
@@ -46,7 +46,7 @@ def graphs():
 def view_department(department):
     """Department page of the app"""
 
-    chartreqs = covfr.charts(data=None, department=department)
+    charts_and_parameters = covfr.charts(data=None, department=department)
 
     label = covfr.department_label(department)
     if label == "":
@@ -55,8 +55,8 @@ def view_department(department):
 
     return render_template(
         "graphs.html", 
-        graphJSON = chartreqs["graphJSON"], 
-        counters = chartreqs["counters"],
+        graphJSON = charts_and_parameters["graphJSON"], 
+        counters = charts_and_parameters["counters"],
         label = label,
         department = department,
 

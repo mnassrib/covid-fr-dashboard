@@ -48,15 +48,23 @@
                                             <a href="#Personnes décédées par jour">
                                                 <div class="key-indicator-death">
                                                     <span class="key-value">{{ counters['last_dc'] }}</span>
-                                                    <br /> nouveaux décès
+                                                    {% if (counters['last_dc']>1): %}
+                                                        <br /> nouveaux décès
+                                                    {% else: %}
+                                                        <br /> nouveau décès
+                                                    {% endif %}
                                                 </div>
                                             </a>
                                         </div>
                                         <div class="col-md-12">
                                             <a href="#Cumul personnes décédées">
                                                 <div class="key-indicator-death">
-                                                    <span class="key-value">{{ counters['all_dc']|int }}</span>
-                                                    <br /> décès au total
+                                                    <span class="key-value">{{ counters['all_dc'] }}</span>
+                                                    {% if (counters['all_dc']>1): %}
+                                                        <br /> décès au total
+                                                    {% else: %}
+                                                        <br /> décès au total
+                                                    {% endif %}
                                                 </div>
                                             </a>
                                         </div>
@@ -76,8 +84,12 @@
                                     <div class="col-md-6">
                                         <a href="#Personnes en réanimation">
                                             <div class="key-indicator-resuscitation">
-                                                <span class="key-value">{{ counters['current_rea']|int }}</span>
-                                                <br /> réanimations
+                                                <span class="key-value">{{ counters['current_rea'] }}</span>
+                                                {% if (counters['current_rea']>1): %}
+                                                    <br /> réanimations
+                                                {% else: %}
+                                                    <br /> réanimation
+                                                {% endif %}
                                             </div>
                                         <a/>
                                     </div>
@@ -85,7 +97,11 @@
                                         <a href="#Personnes hospitalisées">
                                             <div class="key-indicator-hospitalized">
                                                 <span class="key-value">{{ counters['current_hosp'] }}</span>
-                                                <br /> hospitalisations
+                                                {% if (counters['current_hosp']>1): %}
+                                                    <br /> hospitalisations
+                                                {% else: %}
+                                                    <br /> hospitalisation
+                                                {% endif %}
                                             </div>
                                         <a/>
                                     </div>
@@ -100,15 +116,23 @@
                                             <a href="#Personnes retournées par jour">
                                                 <div class="key-indicator-healed">
                                                     <span class="key-value">{{ counters['last_rad'] }}</span>
-                                                    <br /> nouvelles guérisons
+                                                    {% if (counters['last_rad']>1): %}
+                                                        <br /> nouvelles guérisons
+                                                    {% else: %}
+                                                        <br /> nouvelle guérison
+                                                    {% endif %}
                                                 </div>
                                             </a>
                                         </div>
                                         <div class="col-md-12">
                                             <a href="#Cumul personnes retournées">
                                                 <div class="key-indicator-healed">
-                                                    <span class="key-value">{{ counters['all_rad']|int }}</span>
-                                                    <br /> guérisons au total
+                                                    <span class="key-value">{{ counters['all_rad'] }}</span>
+                                                    {% if (counters['all_rad']>1): %}
+                                                        <br /> guérisons au total
+                                                    {% else: %}
+                                                        <br /> guérison au total
+                                                    {% endif %}
                                                 </div>
                                             </a>
                                         </div>
@@ -336,7 +360,16 @@
         <div class="col-md-12">
             <div class="card mb-4 box-shadow">
                 <div class="card-body">
-                    <h3>Indicateur à deviner !</h3>
+                    <h3>Indicateur t !</h3>
+                    <div id="Hotelling"> </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-md-12">
+            <div class="card mb-4 box-shadow">
+                <div class="card-body">
+                    <h3>Indicateur s !</h3>
                     <div id="SPE"> </div>
                 </div>
             </div>
@@ -757,7 +790,7 @@
 
     <!-- charts -->
     <script type="text/javascript">
-        var graphs = {{ graphJSONquadratics | safe }};
+        var graphs = {{ graphJSONquadratics["graphJSON"] | safe }};
 
         for(var i in graphs) {
             Plotly.plot(
