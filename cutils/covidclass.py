@@ -622,3 +622,34 @@ class CovidFr():
             # add offsets
             out += offset * scaling_factors[1:]
         return out
+
+
+
+
+def regions():
+
+    codeinsee = ['01', '02', '03', '04', '06', '11', '24', '27', '28', '32', '44', '52', '53', '75', '76', '84', '93', '94']
+    labelinsee = {
+                "Guadeloupe": ['971'],
+                "Martinique": ['972'],
+                "Guyane": ['973'],
+                "La Réunion": ['974'],
+                "Mayotte": ['976'],
+                "Île-de-France": ['92', '93', '94', '78', '75', '77', '91', '95'],
+                "Centre-Val de Loire": ['41', '28', '45', '18', '37', '36'],
+                "Bourgogne-Franche-Comté": ['71', '58', '25', '70', '90', '39', '89', '21'],
+                "Normandie": ['76', '61', '50', '14', '27'],
+                #"Nord-Pas-de-Calais-Picardie": [],
+                "Hauts-de-France": ['60', '59', '02', '62', '80'],
+                #"Alsace-Champagne-Ardenne-Lorraine": [],
+                "Grand Est": ['54', '68', '51', '55', '08', '57', '67', '52', '88', '10'],
+                "Pays de la Loire": ['49', '85', '44', '72', '53'],
+                "Bretagne": ['29', '56', '35', '22'],
+                #"Aquitaine-Limousin-Poitou-Charentes": [],
+                "Nouvelle-Aquitaine": ['24', '17', '33', '64', '16', '40', '19', '79', '87', '86', '47', '23'],
+                #"Languedoc-Roussillon-Midi-Pyrénées": [],
+                "Occitanie": ['34', '48', '46', '82', '11', '12', '32', '09', '81', '65', '30', '66', '31'], 
+                "Auvergne-Rhône-Alpes": ['38', '01', '42', '74', '73', '43', '03', '26', '69', '07', '63', '15'],
+                "Provence-Alpes-Côte d'Azur": ['13', '05', '06', '84', '04', '83'],
+                "Corse": ['2B', '2A'],
+                }
