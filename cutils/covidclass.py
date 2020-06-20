@@ -26,6 +26,10 @@ class CovidFr():
         self.department_base_data.index = self.department_base_data['insee']
         self.department_base_data = self.department_base_data.sort_index()
 
+        self.region_base_data = pd.read_csv(data_dir + "/regions.csv")
+        self.region_base_data.index = self.region_base_data['insee']
+        self.region_base_data = self.region_base_data.sort_index()
+
         self.last_update = CovidFr.last_updated()
 
         self.features = ["dc", "r_dc_rad", "rad", "hosp", "rea"]
@@ -35,6 +39,37 @@ class CovidFr():
         Loading dataframes
         """
         self.covid = pd.read_csv(CovidFr.synthesis_covid_url, sep=';')
+
+        regions = {
+            "01": {"Guadeloupe": ['971']},
+            "02": {"Martinique": ['972']},
+            "03": {"Guyane": ['973']},
+            "04": {"La Réunion": ['974']},
+            "06": {"Mayotte": ['976']},
+            "11": {"Île-de-France": ['92', '93', '94', '78', '75', '77', '91', '95']},
+            "24": {"Centre-Val de Loire": ['41', '28', '45', '18', '37', '36']},
+            "27": {"Bourgogne-Franche-Comté": ['71', '58', '25', '70', '90', '39', '89', '21']},
+            "28": {"Normandie": ['76', '61', '50', '14', '27']},
+            #"Nord-Pas-de-Calais-Picardie": [],
+            "32": {"Hauts-de-France": ['60', '59', '02', '62', '80']},
+            #"Alsace-Champagne-Ardenne-Lorraine": [],
+            "44": {"Grand Est": ['54', '68', '51', '55', '08', '57', '67', '52', '88', '10']},
+            "52": {"Pays de la Loire": ['49', '85', '44', '72', '53']},
+            "53": {"Bretagne": ['29', '56', '35', '22']},
+            #"Aquitaine-Limousin-Poitou-Charentes": [],
+            "75": {"Nouvelle-Aquitaine": ['24', '17', '33', '64', '16', '40', '19', '79', '87', '86', '47', '23']},
+            #"Languedoc-Roussillon-Midi-Pyrénées": [],
+            "76": {"Occitanie": ['34', '48', '46', '82', '11', '12', '32', '09', '81', '65', '30', '66', '31']}, 
+            "84": {"Auvergne-Rhône-Alpes": ['38', '01', '42', '74', '73', '43', '03', '26', '69', '07', '63', '15']},
+            "93": {"Provence-Alpes-Côte d'Azur": ['13', '05', '06', '84', '04', '83']},
+            "94": {"Corse": ['2B', '2A']},
+            }
+
+        for key, value in regions.items():
+            for k, v in value.items():
+                self.covid.loc[self.covid.loc[self.covid['dep'].isin(v)].index, 'reg'] = key
+        self.covid = self.covid[["reg", "dep", "sexe", "jour", "hosp", "rea", "rad", "dc"]]
+
         return self.covid
     
     def overall_departments_data_as_json(self, data=None):
@@ -52,7 +87,7 @@ class CovidFr():
         nat_data = nat_data.groupby("jour").sum()
 
         dep_data = dep_data \
-            .drop(['jour', 'sexe'], axis=1) \
+            .drop(['reg', 'jour', 'sexe'], axis=1) \
             .groupby('dep') \
             .max()
 
@@ -114,7 +149,7 @@ class CovidFr():
                 ### For hosp and or rea case map
                 dep_data_j = self.covid[(self.covid['sexe'] == 0) & (self.covid['jour'] == datetime.strptime(self.last_update, "%Y-%m-%dT%H:%M:%S.%f").strftime("%Y-%m-%d"))]
                 dep_data_j = dep_data_j \
-                    .drop(['jour', 'sexe'], axis=1) \
+                    .drop(['reg', 'jour', 'sexe'], axis=1) \
                     .groupby('dep') \
                     .max()
                 dep_data_j = pd.concat([dep_data_j, self.department_base_data], axis=1)
@@ -143,6 +178,113 @@ class CovidFr():
                 overall_dep_data_as_json_dict.update({'overall_departments_{}'.format(feature)+"_as_json": {"data_"+feature: data_feature.to_json(orient='index'), "quantiles_"+feature: quantiles_feature.to_json(orient='index')}})
 
         return overall_dep_data_as_json_dict
+
+    def overall_regions_data_as_json(self, data=None):
+        """
+        Get data from regions as a JSON string along with quantiles
+        Returns:
+            JSON string of regions overall data
+        """
+        if data is None:
+            reg_data = self.covid[(self.covid['sexe'] == 0)]
+        else:
+            reg_data = data[(data['sexe'] == 0)]
+
+        nat_data = reg_data.copy()
+        nat_data = nat_data.groupby("jour").sum()
+
+        reg_data = reg_data \
+            .drop(['dep', 'jour', 'sexe'], axis=1) \
+            .groupby('reg') \
+            .max()
+
+        reg_data = pd.concat([reg_data, self.region_base_data], axis=1)
+
+        overall_reg_data_as_json_dict = {}
+
+        for feature in self.features:         
+            if feature == "dc" or feature == "rad":
+                ### For death and or rad case maps
+                reg_data[feature+'_par_habitants'] = (reg_data[feature] / reg_data['population']) * 100000
+
+                data_feature = reg_data.copy()
+                
+                data_feature = data_feature.set_index("region-" + data_feature.index)
+                
+                data_feature = data_feature.loc[:, ['label', feature, feature+'_par_habitants', 'insee']]
+
+                q_feature = np.mean(data_feature[feature+'_par_habitants'].to_numpy() \
+                    <= ((nat_data.at[datetime.strptime(self.last_update, "%Y-%m-%dT%H:%M:%S.%f").strftime("%Y-%m-%d"), feature] / self.region_base_data["population"].sum()) * 100000))
+
+                q_feature_list = [0.1, 0.1+(q_feature-0.1)/2, q_feature, q_feature+(.949-q_feature)/2, .949]
+             
+                quantiles_feature = data_feature[feature+'_par_habitants'] \
+                    .quantile(q_feature_list) \
+                    .round(2)
+
+                data_feature[feature+'_par_habitants'] = data_feature[feature+'_par_habitants'].round(2)
+
+                setattr(self, 'overall_regions_{}'.format(feature)+"_as_json", {"data_"+feature: data_feature.to_json(orient='index'), "quantiles_"+feature: quantiles_feature.to_json(orient='index')})
+
+                overall_reg_data_as_json_dict.update({'overall_regions_{}'.format(feature)+"_as_json": {"data_"+feature: data_feature.to_json(orient='index'), "quantiles_"+feature: quantiles_feature.to_json(orient='index')}})
+         
+            elif feature == "r_dc_rad":
+                ### For rate death case map
+                reg_data[feature] = (reg_data['dc'] / (reg_data['dc'] + reg_data['rad']))
+               
+                data_feature = reg_data.copy()
+
+                data_feature = data_feature.set_index("region-" + data_feature.index)
+
+                data_feature = data_feature.loc[:, ['label', 'dc', 'rad', feature, 'insee']]
+
+                q_feature = np.mean(reg_data[feature].to_numpy() <= (data_feature['dc'].sum() / (data_feature['dc'].sum() + data_feature['rad'].sum())))
+
+                q_feature_list = [0.1, 0.1+(q_feature-0.1)/2, q_feature, q_feature+2*(.979-q_feature)/3, .979]
+
+                quantiles_feature = data_feature[feature] \
+                    .quantile(q_feature_list) \
+                    .round(2)
+
+                data_feature[feature] = data_feature[feature].round(2)
+
+                setattr(self, 'overall_regions_{}'.format(feature)+"_as_json", {"data_"+feature: data_feature.to_json(orient='index'), "quantiles_"+feature: quantiles_feature.to_json(orient='index')})
+
+                overall_reg_data_as_json_dict.update({'overall_regions_{}'.format(feature)+"_as_json": {"data_"+feature: data_feature.to_json(orient='index'), "quantiles_"+feature: quantiles_feature.to_json(orient='index')}})
+
+            elif feature == "hosp" or feature == "rea":
+                ### For hosp and or rea case map
+                reg_data_j = self.covid[(self.covid['sexe'] == 0) & (self.covid['jour'] == datetime.strptime(self.last_update, "%Y-%m-%dT%H:%M:%S.%f").strftime("%Y-%m-%d"))]
+                reg_data_j = reg_data_j \
+                    .drop(['dep', 'jour', 'sexe'], axis=1) \
+                    .groupby('reg') \
+                    .max()
+                reg_data_j = pd.concat([reg_data_j, self.region_base_data], axis=1)
+
+                reg_data_j[feature+'_par_habitants'] = (reg_data_j[feature] / reg_data_j['population']) * 100000
+                
+                data_feature = reg_data_j.copy()
+                
+                data_feature = data_feature.set_index("region-" + data_feature.index)
+                
+                data_feature = data_feature.loc[:, ['label', feature, feature+'_par_habitants', 'insee']]
+
+                q_feature = np.mean(data_feature[feature+'_par_habitants'].to_numpy() \
+                    <= ((nat_data.at[datetime.strptime(self.last_update, "%Y-%m-%dT%H:%M:%S.%f").strftime("%Y-%m-%d"), feature] / self.region_base_data["population"].sum()) * 100000))
+
+                q_feature_list = [0.1, 0.1+(q_feature-0.1)/2, q_feature, q_feature+(.949-q_feature)/2, .949]
+
+                quantiles_feature = data_feature[feature+'_par_habitants'] \
+                    .quantile(q_feature_list) \
+                    .round(2)
+
+                data_feature[feature+'_par_habitants'] = data_feature[feature+'_par_habitants'].round(2)
+
+                setattr(self, 'overall_regions_{}'.format(feature)+"_as_json", {"data_"+feature: data_feature.to_json(orient='index'), "quantiles_"+feature: quantiles_feature.to_json(orient='index')})
+
+                overall_reg_data_as_json_dict.update({'overall_regions_{}'.format(feature)+"_as_json": {"data_"+feature: data_feature.to_json(orient='index'), "quantiles_"+feature: quantiles_feature.to_json(orient='index')}})
+
+        return overall_reg_data_as_json_dict
 
     def charts(self, data=None, department=None): 
         if department is None:  
@@ -624,32 +766,43 @@ class CovidFr():
         return out
 
 
-
-
 def regions():
+    regions = {
+            "01": {"Guadeloupe": ['971']},
+            "02": {"Martinique": ['972']},
+            "03": {"Guyane": ['973']},
+            "04": {"La Réunion": ['974']},
+            "06": {"Mayotte": ['976']},
+            "11": {"Île-de-France": ['92', '93', '94', '78', '75', '77', '91', '95']},
+            "24": {"Centre-Val de Loire": ['41', '28', '45', '18', '37', '36']},
+            "27": {"Bourgogne-Franche-Comté": ['71', '58', '25', '70', '90', '39', '89', '21']},
+            "28": {"Normandie": ['76', '61', '50', '14', '27']},
+            #"Nord-Pas-de-Calais-Picardie": [],
+            "32": {"Hauts-de-France": ['60', '59', '02', '62', '80']},
+            #"Alsace-Champagne-Ardenne-Lorraine": [],
+            "44": {"Grand Est": ['54', '68', '51', '55', '08', '57', '67', '52', '88', '10']},
+            "52": {"Pays de la Loire": ['49', '85', '44', '72', '53']},
+            "53": {"Bretagne": ['29', '56', '35', '22']},
+            #"Aquitaine-Limousin-Poitou-Charentes": [],
+            "75": {"Nouvelle-Aquitaine": ['24', '17', '33', '64', '16', '40', '19', '79', '87', '86', '47', '23']},
+            #"Languedoc-Roussillon-Midi-Pyrénées": [],
+            "76": {"Occitanie": ['34', '48', '46', '82', '11', '12', '32', '09', '81', '65', '30', '66', '31']}, 
+            "84": {"Auvergne-Rhône-Alpes": ['38', '01', '42', '74', '73', '43', '03', '26', '69', '07', '63', '15']},
+            "93": {"Provence-Alpes-Côte d'Azur": ['13', '05', '06', '84', '04', '83']},
+            "94": {"Corse": ['2B', '2A']},
+            }
 
-    codeinsee = ['01', '02', '03', '04', '06', '11', '24', '27', '28', '32', '44', '52', '53', '75', '76', '84', '93', '94']
-    labelinsee = {
-                "Guadeloupe": ['971'],
-                "Martinique": ['972'],
-                "Guyane": ['973'],
-                "La Réunion": ['974'],
-                "Mayotte": ['976'],
-                "Île-de-France": ['92', '93', '94', '78', '75', '77', '91', '95'],
-                "Centre-Val de Loire": ['41', '28', '45', '18', '37', '36'],
-                "Bourgogne-Franche-Comté": ['71', '58', '25', '70', '90', '39', '89', '21'],
-                "Normandie": ['76', '61', '50', '14', '27'],
-                #"Nord-Pas-de-Calais-Picardie": [],
-                "Hauts-de-France": ['60', '59', '02', '62', '80'],
-                #"Alsace-Champagne-Ardenne-Lorraine": [],
-                "Grand Est": ['54', '68', '51', '55', '08', '57', '67', '52', '88', '10'],
-                "Pays de la Loire": ['49', '85', '44', '72', '53'],
-                "Bretagne": ['29', '56', '35', '22'],
-                #"Aquitaine-Limousin-Poitou-Charentes": [],
-                "Nouvelle-Aquitaine": ['24', '17', '33', '64', '16', '40', '19', '79', '87', '86', '47', '23'],
-                #"Languedoc-Roussillon-Midi-Pyrénées": [],
-                "Occitanie": ['34', '48', '46', '82', '11', '12', '32', '09', '81', '65', '30', '66', '31'], 
-                "Auvergne-Rhône-Alpes": ['38', '01', '42', '74', '73', '43', '03', '26', '69', '07', '63', '15'],
-                "Provence-Alpes-Côte d'Azur": ['13', '05', '06', '84', '04', '83'],
-                "Corse": ['2B', '2A'],
-                }
+    inseedata = pd.DataFrame(regions.items(), columns=['insee', 'regiondeps'])
+
+    labeldata = []
+    for i in inseedata.index:
+        # store DataFrame in list
+        labeldata.append(pd.DataFrame(inseedata.regiondeps[i].items(), columns=['label', 'regiondepstmp']))
+    labeldata = pd.concat(labeldata).reset_index(drop=True)
+    inseelabeldata = pd.concat([inseedata, labeldata], axis=1)
+    population = []
+    for i in inseelabeldata.index:
+        population.append(self.department_base_data.loc[self.department_base_data['insee'].isin(inseelabeldata.regiondepstmp[i])]['population'].sum())
+    inseelabeldata["population"] = population
+    self.region_base_data = inseelabeldata.drop(['regiondeps', 'regiondepstmp'], axis=1)
+    #return self.region_base_data
