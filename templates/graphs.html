@@ -375,12 +375,119 @@
             </div>
         </div>
 
+        <div class="col-md-12" id="death_map_reg">
+            <div class="card mb-4 box-shadow">
+                <div class="card-body">
+                    <div class="pictos">
+                        <a class="picto-item" aria-label="Cliquez sur une région pour afficher le détail">
+                            <h3>Nombre de décès à l'hôpital par région *</h3>
+                        </a>
+                    </div>
+                    <div class="row">
+                        <div class="col-md-6">
+                            <div class="map"></div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="card mb-4 box-shadow">
+                                <div class="card-body">
+                                    <a class="picto-item" aria-label="Sélectionnez les couleurs que vous souhaitez afficher sur la carte">
+                                        <p>Légende</p>
+                                    </a>
+                                    <div class="areaLegend"></div>
+                                    <p style="color:red">&#x26A0 Niveau national : {{ counters['nat_refs']['nat_dc'] }} décès *</p>
+                                    <p style="color:black"><small>(* : pour 100 000 habitants)</small></p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
     </div>
 </div>
 
 {% endblock %}
 
 {% block js %}
+    
+    <!-- death map regions-->
+    <script type="text/javascript">
+        $(function() {
+            // Init map
+            var regions = {{ overall_regions_data_dc|safe }};
+            var quantiles = {{ overall_regions_quantiles_dc|safe }};
+            quantiles = Object.values(quantiles);
+            var slices = [
+                    {"max": quantiles[0], "label": "Moins de " + quantiles[0] + " décès *", attrs: {fill: "#D6F77F"}}
+                ];
+            colors = ["#f2f53a", '#df891a', '#e61919', '#680000', '#1d0303']
+            for (var i = 0; i < quantiles.length; i++) {
+                var slice = {
+                        attrs: {
+                            fill: colors[i]
+                        }
+                    };
+                slice.min = quantiles[i];
+                if (i < quantiles.length -1) {
+                    slice.max = quantiles[i + 1];
+                    slice.label = "Entre " + slice.min + " et " + slice.max + " décès *";
+                } else {
+                    slice.label = "Plus de " + slice.min + " décès *";
+                }
+                slices.push(slice);
+            }
+            for (var id in regions) {
+                regions[id]['value'] = regions[id]['dc_par_habitants'];
+                regions[id]['tooltip'] = {
+                    "content": regions[id]['label'] + " : <b>" + regions[id]['dc'] + "</b> décès (<b>" + regions[id]['dc_par_habitants'] + "</b> pour 100 000 habitants)"
+                };
+                regions[id]['href'] = "/region/" + regions[id]['insee'] + "#";
+                if (regions[id]['insee'] === '{{ region }}') {
+                    regions[id]['href'] = "/";
+                    delete regions[id]['value'];
+                    regions[id]['attrs'] = {
+                        "fill": "#004a9b",
+                    };
+                }
+            }
+            $("#death_map_reg").mapael({
+                "map": {
+                    "name": "france_regions_2016_domtom",
+                    zoom: {
+                        enabled: true,
+                        maxLevel: 10
+                    },
+                    "defaultArea": {
+                        "attrs": {
+                            "fill": "#f4f4e8",
+                            "stroke": "#ced8d0",
+                        },
+                        "attrsHover": {
+                            "fill": "#004a9b",
+                        },
+                        "text": {
+                            "attrs": {
+                                "fill": "#505444"
+                            },
+                            "attrsHover": {
+                                "fill": "#000",
+                            }
+                        }
+                    }
+                },
+                "legend": {
+                    "area": {
+                        "marginBottom": 20,
+                        "slices": slices
+                    }
+                },
+                "areas": regions
+            });
+        });
+    </script>
+
+
 
     <!-- charts -->
     <script type="text/javascript">

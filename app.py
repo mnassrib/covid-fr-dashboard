@@ -9,7 +9,7 @@ covid = covfr.load_df()
 oddaj_dep = covfr.overall_departments_data_as_json()
 daily = covfr.dailycases(data=covid, pca=True)
 
-#oddaj_dep_reg = covfr.overall_regions_data_as_json()
+oddaj_reg = covfr.overall_regions_data_as_json()
 
 graphJSONquadratics = covfr.acp(data=daily, pcdim=2, normalize=True)
 
@@ -42,6 +42,9 @@ def graphs():
         overall_departments_quantiles_rea = oddaj_dep["overall_departments_rea_as_json"]['quantiles_rea'],
 
         graphJSONquadratics = graphJSONquadratics,
+
+        overall_regions_data_dc = oddaj_reg["overall_regions_dc_as_json"]['data_dc'],
+        overall_regions_quantiles_dc = oddaj_reg["overall_regions_dc_as_json"]['quantiles_dc'],
     )
 
 @app.route('/departement/<string:department>')

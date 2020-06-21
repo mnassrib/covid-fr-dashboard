@@ -1,19 +1,19 @@
-insee,label,population
-01,Guadeloupe,390253.0
-02,Martinique,372594.0
-03,Guyane,268700.0
-04,La Réunion,853659.0
-06,Mayotte,256518.0
-11,Île-de-France,12174900.0
-24,Centre-Val de Loire,2576252.0
-27,Bourgogne-Franche-Comté,2811423.0
-28,Normandie,3330480.0
-32,Hauts-de-France,6003816.0
-44,Grand Est,5549585.0
-52,Pays de la Loire,3757601.0
-53,Bretagne,3318905.0
-75,Nouvelle-Aquitaine,5956974.0
-76,Occitanie,5845098.0
-84,Auvergne-Rhône-Alpes,7948286.0
-93,Provence-Alpes-Côte d'Azur,5030888.0
-94,Corse,334938.0
+"insee","label","population"
+"01","Guadeloupe",390253.0
+"02","Martinique",372594.0
+"03","Guyane",268700.0
+"04","La Réunion",853659.0
+"06","Mayotte",256518.0
+"11","Île-de-France",12.1749e+06
+"24","Centre-Val de Loire",2.576252e+06
+"27","Bourgogne-Franche-Comté",2.811423e+06
+"28","Normandie",3.33048e+06
+"32","Hauts-de-France",6.003816e+06
+"44","Grand Est",5.549585e+06
+"52","Pays de la Loire",3.757601e+06
+"53","Bretagne",3.318905e+06
+"75","Nouvelle-Aquitaine",5.956974e+06
+"76","Occitanie",5.845098e+06
+"84","Auvergne-Rhône-Alpes",7.948286e+06
+"93","Provence-Alpes-Côte d'Azur",5.030888e+06
+"94","Corse",334938.0

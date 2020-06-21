@@ -26,7 +26,7 @@ class CovidFr():
         self.department_base_data.index = self.department_base_data['insee']
         self.department_base_data = self.department_base_data.sort_index()
 
-        self.region_base_data = pd.read_csv(data_dir + "/regions.csv")
+        self.region_base_data = pd.read_csv(data_dir + "/regions.csv", converters={'insee': '{:0>2}'.format})
         self.region_base_data.index = self.region_base_data['insee']
         self.region_base_data = self.region_base_data.sort_index()
 
@@ -50,26 +50,20 @@ class CovidFr():
             "24": {"Centre-Val de Loire": ['41', '28', '45', '18', '37', '36']},
             "27": {"Bourgogne-Franche-Comté": ['71', '58', '25', '70', '90', '39', '89', '21']},
             "28": {"Normandie": ['76', '61', '50', '14', '27']},
-            #"Nord-Pas-de-Calais-Picardie": [],
             "32": {"Hauts-de-France": ['60', '59', '02', '62', '80']},
-            #"Alsace-Champagne-Ardenne-Lorraine": [],
             "44": {"Grand Est": ['54', '68', '51', '55', '08', '57', '67', '52', '88', '10']},
             "52": {"Pays de la Loire": ['49', '85', '44', '72', '53']},
             "53": {"Bretagne": ['29', '56', '35', '22']},
-            #"Aquitaine-Limousin-Poitou-Charentes": [],
             "75": {"Nouvelle-Aquitaine": ['24', '17', '33', '64', '16', '40', '19', '79', '87', '86', '47', '23']},
-            #"Languedoc-Roussillon-Midi-Pyrénées": [],
             "76": {"Occitanie": ['34', '48', '46', '82', '11', '12', '32', '09', '81', '65', '30', '66', '31']}, 
             "84": {"Auvergne-Rhône-Alpes": ['38', '01', '42', '74', '73', '43', '03', '26', '69', '07', '63', '15']},
             "93": {"Provence-Alpes-Côte d'Azur": ['13', '05', '06', '84', '04', '83']},
             "94": {"Corse": ['2B', '2A']},
             }
-
         for key, value in regions.items():
             for k, v in value.items():
                 self.covid.loc[self.covid.loc[self.covid['dep'].isin(v)].index, 'reg'] = key
         self.covid = self.covid[["reg", "dep", "sexe", "jour", "hosp", "rea", "rad", "dc"]]
-
         return self.covid
     
     def overall_departments_data_as_json(self, data=None):
@@ -193,10 +187,19 @@ class CovidFr():
         nat_data = reg_data.copy()
         nat_data = nat_data.groupby("jour").sum()
 
-        reg_data = reg_data \
-            .drop(['dep', 'jour', 'sexe'], axis=1) \
-            .groupby('reg') \
-            .max()
+        #reg_data = reg_data \
+        #    .drop(['dep', 'jour', 'sexe'], axis=1) \
+        #    .groupby('reg') \
+        #    .max()
+
+        ###the bellow added 6/21/20
+        regdf = {}
+        dep_data = self.covid[self.covid["sexe"]==0].drop(['reg', 'jour', 'sexe'], axis=1).groupby('dep').max()
+        for i in self.covid["reg"].unique():
+            regdf[i]=dep_data.loc[self.covid[self.covid["reg"]==i]["dep"].unique(),:].sum()
+        reg_data = pd.DataFrame.from_dict(regdf, orient='index')
+        reg_data.reset_index().dropna().set_index('index').rename_axis('reg')
+        ### the above added 6/21/20
 
         reg_data = pd.concat([reg_data, self.region_base_data], axis=1)
 
@@ -217,7 +220,7 @@ class CovidFr():
                     <= ((nat_data.at[datetime.strptime(self.last_update, "%Y-%m-%dT%H:%M:%S.%f").strftime("%Y-%m-%d"), feature] / self.region_base_data["population"].sum()) * 100000))
 
                 q_feature_list = [0.1, 0.1+(q_feature-0.1)/2, q_feature, q_feature+(.949-q_feature)/2, .949]
-             
+                             
                 quantiles_feature = data_feature[feature+'_par_habitants'] \
                     .quantile(q_feature_list) \
                     .round(2)
@@ -764,45 +767,3 @@ class CovidFr():
             # add offsets
             out += offset * scaling_factors[1:]
         return out
-
-
-def regions():
-    regions = {
-            "01": {"Guadeloupe": ['971']},
-            "02": {"Martinique": ['972']},
-            "03": {"Guyane": ['973']},
-            "04": {"La Réunion": ['974']},
-            "06": {"Mayotte": ['976']},
-            "11": {"Île-de-France": ['92', '93', '94', '78', '75', '77', '91', '95']},
-            "24": {"Centre-Val de Loire": ['41', '28', '45', '18', '37', '36']},
-            "27": {"Bourgogne-Franche-Comté": ['71', '58', '25', '70', '90', '39', '89', '21']},
-            "28": {"Normandie": ['76', '61', '50', '14', '27']},
-            #"Nord-Pas-de-Calais-Picardie": [],
-            "32": {"Hauts-de-France": ['60', '59', '02', '62', '80']},
-            #"Alsace-Champagne-Ardenne-Lorraine": [],
-            "44": {"Grand Est": ['54', '68', '51', '55', '08', '57', '67', '52', '88', '10']},
-            "52": {"Pays de la Loire": ['49', '85', '44', '72', '53']},
-            "53": {"Bretagne": ['29', '56', '35', '22']},
-            #"Aquitaine-Limousin-Poitou-Charentes": [],
-            "75": {"Nouvelle-Aquitaine": ['24', '17', '33', '64', '16', '40', '19', '79', '87', '86', '47', '23']},
-            #"Languedoc-Roussillon-Midi-Pyrénées": [],
-            "76": {"Occitanie": ['34', '48', '46', '82', '11', '12', '32', '09', '81', '65', '30', '66', '31']}, 
-            "84": {"Auvergne-Rhône-Alpes": ['38', '01', '42', '74', '73', '43', '03', '26', '69', '07', '63', '15']},
-            "93": {"Provence-Alpes-Côte d'Azur": ['13', '05', '06', '84', '04', '83']},
-            "94": {"Corse": ['2B', '2A']},
-            }
-
-    inseedata = pd.DataFrame(regions.items(), columns=['insee', 'regiondeps'])
-
-    labeldata = []
-    for i in inseedata.index:
-        # store DataFrame in list
-        labeldata.append(pd.DataFrame(inseedata.regiondeps[i].items(), columns=['label', 'regiondepstmp']))
-    labeldata = pd.concat(labeldata).reset_index(drop=True)
-    inseelabeldata = pd.concat([inseedata, labeldata], axis=1)
-    population = []
-    for i in inseelabeldata.index:
-        population.append(self.department_base_data.loc[self.department_base_data['insee'].isin(inseelabeldata.regiondepstmp[i])]['population'].sum())
-    inseelabeldata["population"] = population
-    self.region_base_data = inseelabeldata.drop(['regiondeps', 'regiondepstmp'], axis=1)
-    #return self.region_base_data
