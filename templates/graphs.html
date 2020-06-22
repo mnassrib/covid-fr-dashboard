@@ -144,19 +144,20 @@
                 </div>
             </div>
         </div>
-        <div class="col-md-12" id="death_map">
+
+        <div class="col-md-6" id="death_map_reg">
             <div class="card mb-4 box-shadow">
                 <div class="card-body">
                     <div class="pictos">
-                        <a class="picto-item" aria-label="Cliquez sur un département pour afficher le détail">
-                            <h3>Nombre de décès à l'hôpital par département *</h3>
+                        <a class="picto-item" aria-label="Cliquez sur une région pour afficher le détail">
+                            <h3>Nombre de décès à l'hôpital par région *</h3>
                         </a>
                     </div>
                     <div class="row">
-                        <div class="col-md-6">
+                        <div class="col-md-12">
                             <div class="map"></div>
                         </div>
-                        <div class="col-md-6">
+                        <div class="col-md-12">
                             <div class="card mb-4 box-shadow">
                                 <div class="card-body">
                                     <a class="picto-item" aria-label="Sélectionnez les couleurs que vous souhaitez afficher sur la carte">
@@ -172,19 +173,49 @@
                 </div>
             </div>
         </div>
-        <div class="col-md-12" id="rate_death_map">
+
+        <div class="col-md-6" id="death_map_dep">
             <div class="card mb-4 box-shadow">
                 <div class="card-body">
                     <div class="pictos">
                         <a class="picto-item" aria-label="Cliquez sur un département pour afficher le détail">
-                            <h3>Taux décès / (décès + guérisons) par département</h3>
+                            <h3>Nombre de décès à l'hôpital par département *</h3>
                         </a>
                     </div>
                     <div class="row">
-                        <div class="col-md-6">
+                        <div class="col-md-12">
                             <div class="map"></div>
                         </div>
-                        <div class="col-md-6">
+                        <div class="col-md-12">
+                            <div class="card mb-4 box-shadow">
+                                <div class="card-body">
+                                    <a class="picto-item" aria-label="Sélectionnez les couleurs que vous souhaitez afficher sur la carte">
+                                        <p>Légende</p>
+                                    </a>
+                                    <div class="areaLegend"></div>
+                                    <p style="color:red">&#x26A0 Niveau national : {{ counters['nat_refs']['nat_dc'] }} décès *</p>
+                                    <p style="color:black"><small>(* : pour 100 000 habitants)</small></p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-md-6" id="rate_death_map_reg">
+            <div class="card mb-4 box-shadow">
+                <div class="card-body">
+                    <div class="pictos">
+                        <a class="picto-item" aria-label="Cliquez sur un département pour afficher le détail">
+                            <h3>Taux décès / (décès + guérisons) par région</h3>
+                        </a>
+                    </div>
+                    <div class="row">
+                        <div class="col-md-12">
+                            <div class="map"></div>
+                        </div>
+                        <div class="col-md-12">
                             <div class="card mb-4 box-shadow">
                                 <div class="card-body">
                                     <a class="picto-item" aria-label="Sélectionnez les couleurs que vous souhaitez afficher sur la carte">
@@ -199,19 +230,48 @@
                 </div>
             </div>
         </div>
-        <div class="col-md-12" id="rad_map">
+
+        <div class="col-md-6" id="rate_death_map_dep">
             <div class="card mb-4 box-shadow">
                 <div class="card-body">
                     <div class="pictos">
                         <a class="picto-item" aria-label="Cliquez sur un département pour afficher le détail">
-                            <h3>Nombre de guérisons à l'hôpital par département *</h3>
+                            <h3>Taux décès / (décès + guérisons) par département</h3>
                         </a>
                     </div>
                     <div class="row">
-                        <div class="col-md-6">
+                        <div class="col-md-12">
                             <div class="map"></div>
                         </div>
-                        <div class="col-md-6">
+                        <div class="col-md-12">
+                            <div class="card mb-4 box-shadow">
+                                <div class="card-body">
+                                    <a class="picto-item" aria-label="Sélectionnez les couleurs que vous souhaitez afficher sur la carte">
+                                        <p>Légende</p>
+                                    </a>
+                                    <div class="areaLegend"></div>
+                                    <p style="color:red">&#x26A0 Taux national : {{ counters['nat_refs']['nat_r_dc_rad'] }}</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-md-6" id="rad_map_reg">
+            <div class="card mb-4 box-shadow">
+                <div class="card-body">
+                    <div class="pictos">
+                        <a class="picto-item" aria-label="Cliquez sur un département pour afficher le détail">
+                            <h3>Nombre de guérisons à l'hôpital par région *</h3>
+                        </a>
+                    </div>
+                    <div class="row">
+                        <div class="col-md-12">
+                            <div class="map"></div>
+                        </div>
+                        <div class="col-md-12">
                             <div class="card mb-4 box-shadow">
                                 <div class="card-body">
                                     <a class="picto-item" aria-label="Sélectionnez les couleurs que vous souhaitez afficher sur la carte">
@@ -227,19 +287,49 @@
                 </div>
             </div>
         </div>
-        <div class="col-md-12" id="hosp_map">
+
+        <div class="col-md-6" id="rad_map_dep">
             <div class="card mb-4 box-shadow">
                 <div class="card-body">
                     <div class="pictos">
                         <a class="picto-item" aria-label="Cliquez sur un département pour afficher le détail">
-                            <h3>Nombre d'hospitalisations par département le {{ counters['last_update_fr']["day"] }} *
+                            <h3>Nombre de guérisons à l'hôpital par département *</h3>
                         </a>
                     </div>
                     <div class="row">
-                        <div class="col-md-6">
+                        <div class="col-md-12">
                             <div class="map"></div>
                         </div>
-                        <div class="col-md-6">
+                        <div class="col-md-12">
+                            <div class="card mb-4 box-shadow">
+                                <div class="card-body">
+                                    <a class="picto-item" aria-label="Sélectionnez les couleurs que vous souhaitez afficher sur la carte">
+                                        <p>Légende</p>
+                                    </a>
+                                    <div class="areaLegend"></div>
+                                    <p style="color:green">&#x26A0 Niveau national : {{ counters['nat_refs']['nat_rad'] }} guérisons *</p>
+                                    <p style="color:black"><small>(* : pour 100 000 habitants)</small></p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-md-6" id="hosp_map_reg">
+            <div class="card mb-4 box-shadow">
+                <div class="card-body">
+                    <div class="pictos">
+                        <a class="picto-item" aria-label="Cliquez sur un département pour afficher le détail">
+                            <h3>Nombre d'hospitalisations par région le {{ counters['last_update_fr']["day"] }} *
+                        </a>
+                    </div>
+                    <div class="row">
+                        <div class="col-md-12">
+                            <div class="map"></div>
+                        </div>
+                        <div class="col-md-12">
                             <div class="card mb-4 box-shadow">
                                 <div class="card-body">
                                     <a class="picto-item" aria-label="Sélectionnez les couleurs que vous souhaitez afficher sur la carte">
@@ -255,7 +345,66 @@
                 </div>
             </div>
         </div>
-        <div class="col-md-12" id="rea_map">
+
+        <div class="col-md-6" id="hosp_map_dep">
+            <div class="card mb-4 box-shadow">
+                <div class="card-body">
+                    <div class="pictos">
+                        <a class="picto-item" aria-label="Cliquez sur un département pour afficher le détail">
+                            <h3>Nombre d'hospitalisations par département le {{ counters['last_update_fr']["day"] }} *
+                        </a>
+                    </div>
+                    <div class="row">
+                        <div class="col-md-12">
+                            <div class="map"></div>
+                        </div>
+                        <div class="col-md-12">
+                            <div class="card mb-4 box-shadow">
+                                <div class="card-body">
+                                    <a class="picto-item" aria-label="Sélectionnez les couleurs que vous souhaitez afficher sur la carte">
+                                        <p>Légende</p>
+                                    </a>
+                                    <div class="areaLegend"></div>
+                                    <p style="color:red">&#x26A0 Niveau national : {{ counters['nat_refs']['nat_hosp'] }} hospitalisations *</p>
+                                    <p style="color:black"><small>(* : pour 100 000 habitants)</small></p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-md-6" id="rea_map_reg">
+            <div class="card mb-4 box-shadow">
+                <div class="card-body">
+                    <div class="pictos">
+                        <a class="picto-item" aria-label="Cliquez sur un département pour afficher le détail">
+                            <h3>Nombre de réanimations par région le {{ counters['last_update_fr']["day"] }} *
+                        </a>
+                    </div>
+                    <div class="row">
+                        <div class="col-md-12">
+                            <div class="map"></div>
+                        </div>
+                        <div class="col-md-12">
+                            <div class="card mb-4 box-shadow">
+                                <div class="card-body">
+                                    <a class="picto-item" aria-label="Sélectionnez les couleurs que vous souhaitez afficher sur la carte">
+                                        <p>Légende</p>
+                                    </a>
+                                    <div class="areaLegend"></div>
+                                    <p style="color:red">&#x26A0 Niveau national : {{ counters['nat_refs']['nat_rea'] }} réanimations *</p>
+                                    <p style="color:black"><small>(* : pour 100 000 habitants)</small></p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-md-6" id="rea_map_dep">
             <div class="card mb-4 box-shadow">
                 <div class="card-body">
                     <div class="pictos">
@@ -264,10 +413,10 @@
                         </a>
                     </div>
                     <div class="row">
-                        <div class="col-md-6">
+                        <div class="col-md-12">
                             <div class="map"></div>
                         </div>
-                        <div class="col-md-6">
+                        <div class="col-md-12">
                             <div class="card mb-4 box-shadow">
                                 <div class="card-body">
                                     <a class="picto-item" aria-label="Sélectionnez les couleurs que vous souhaitez afficher sur la carte">
@@ -357,6 +506,8 @@
             </div>
         </div>
 
+
+
         <div class="col-md-12">
             <div class="card mb-4 box-shadow">
                 <div class="card-body">
@@ -375,34 +526,13 @@
             </div>
         </div>
 
-        <div class="col-md-12" id="death_map_reg">
-            <div class="card mb-4 box-shadow">
-                <div class="card-body">
-                    <div class="pictos">
-                        <a class="picto-item" aria-label="Cliquez sur une région pour afficher le détail">
-                            <h3>Nombre de décès à l'hôpital par région *</h3>
-                        </a>
-                    </div>
-                    <div class="row">
-                        <div class="col-md-6">
-                            <div class="map"></div>
-                        </div>
-                        <div class="col-md-6">
-                            <div class="card mb-4 box-shadow">
-                                <div class="card-body">
-                                    <a class="picto-item" aria-label="Sélectionnez les couleurs que vous souhaitez afficher sur la carte">
-                                        <p>Légende</p>
-                                    </a>
-                                    <div class="areaLegend"></div>
-                                    <p style="color:red">&#x26A0 Niveau national : {{ counters['nat_refs']['nat_dc'] }} décès *</p>
-                                    <p style="color:black"><small>(* : pour 100 000 habitants)</small></p>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
+
+
+
+
+
+
+
 
     </div>
 </div>
@@ -479,6 +609,82 @@
                 "legend": {
                     "area": {
                         "marginBottom": 20,
+                        "slices": slices,
+                    }
+                },
+                "areas": regions
+            });
+        });
+    </script>
+
+    <!-- rate dc map regions -->
+    <script type="text/javascript">
+        $(function() {
+            // Init map
+            var regions = {{ overall_regions_data_r_dc_rad|safe }};
+            var quantiles = {{ overall_regions_quantiles_r_dc_rad|safe }};
+            quantiles = Object.values(quantiles);
+            var slices = [
+                    {"max": quantiles[0], "label": "Taux inférieur à " + quantiles[0], attrs: {fill: '#D6F77F'}}
+                ];
+            colors = ["#f2f53a", '#df891a', '#e61919', '#680000', '#1d0303'] 
+            for (var i = 0; i < quantiles.length; i++) {
+                var slice = {
+                        attrs: {
+                            fill: colors[i]
+                        }
+                    };
+                slice.min = quantiles[i];
+                if (i < quantiles.length -1) {
+                    slice.max = quantiles[i + 1];
+                    slice.label = "Taux entre " + slice.min + " et " + slice.max;
+                } else {
+                    slice.label = "Taux supérieur à " + slice.min;
+                }
+                slices.push(slice);
+            }
+            for (var id in regions) {
+                regions[id]['value'] = regions[id]['r_dc_rad'];
+                regions[id]['tooltip'] = {
+                    "content": regions[id]['label'] + " : <b>" + regions[id]['dc'] + "</b> décès, <b>" + regions[id]['rad'] + "</b> guérisons (Taux régional : <b>" + regions[id]['r_dc_rad'] + "</b>)"
+                };
+                regions[id]['href'] = "/region/" + regions[id]['insee'] + "#"; 
+                if (regions[id]['insee'] === '{{ region }}') {
+                    regions[id]['href'] = "/";
+                    delete regions[id]['value'];
+                    regions[id]['attrs'] = {
+                        "fill": "#004a9b", 
+                    };
+                }
+            }      
+            $("#rate_death_map_reg").mapael({
+                "map": {
+                    "name": "france_regions_2016_domtom",
+                    zoom: {
+                        enabled: true,
+                        maxLevel: 10
+                    },  
+                    "defaultArea": {
+                        "attrs": {
+                            "fill": "#f4f4e8",
+                            "stroke": "#ced8d0",
+                        },
+                        "attrsHover": {
+                            "fill": "#004a9b",
+                        },
+                        "text": {
+                            "attrs": {
+                                "fill": "#505444"
+                            },
+                            "attrsHover": {
+                                "fill": "#000",
+                            }
+                        }
+                    }   
+                },
+                "legend": {
+                    "area": {
+                        "marginBottom": 20,
                         "slices": slices
                     }
                 },
@@ -487,30 +693,240 @@
         });
     </script>
 
-
-
-    <!-- charts -->
+    <!-- rad map regions-->
     <script type="text/javascript">
-        // Init charts
-        var plotlyConfig = {
-                "locale": "fr",
-                "modeBarButtonsToRemove": ["sendDataToCloud", "autoScale2d", "hoverClosestCartesian", "hoverCompareCartesian", "lasso2d", "select2d"],
-                "displaylogo": false,
-                "showTips": false,
-            };
-
-        var graphs = {{ graphJSON | safe }};
-
-        for(var i in graphs) {
-            Plotly.plot(
-                graphs[i].id, // the ID of the div, created above
-                graphs[i].data,
-                graphs[i].layout || {}, 
-                plotlyConfig);
-        }
+        $(function() {
+            // Init map
+            var regions = {{ overall_regions_data_rad|safe }};
+            var quantiles = {{ overall_regions_quantiles_rad|safe }};
+            quantiles = Object.values(quantiles);
+            var slices = [
+                {"max": quantiles[0], "label": "Moins de " + quantiles[0] + " guérisons *", attrs: {fill: "#FEB653"}}
+                ];
+            colors = ["#FED674", '#F5F50A', '#A4F905', '#06BF06', '#146806']  
+            for (var i = 0; i < quantiles.length; i++) {
+                var slice = {
+                        attrs: {
+                            fill: colors[i]
+                        }
+                    };
+                slice.min = quantiles[i];
+                if (i < quantiles.length -1) {
+                    slice.max = quantiles[i + 1];
+                    slice.label = "Entre " + slice.min + " et " + slice.max + " guérisons *";
+                } else {
+                    slice.label = "Plus de " + slice.min + " guérisons *";
+                }
+                slices.push(slice);
+            }
+            for (var id in regions) {
+                regions[id]['value'] = regions[id]['rad_par_habitants'];
+                regions[id]['tooltip'] = {
+                    "content": regions[id]['label'] + " : <b>" + regions[id]['rad'] + "</b> guérisons (<b>" + regions[id]['rad_par_habitants'] + "</b> pour 100 000 habitants)"
+                };
+                regions[id]['href'] = "/region/" + regions[id]['insee'] + "#"; 
+                if (regions[id]['insee'] === '{{ region }}') {
+                    regions[id]['href'] = "/";
+                    delete regions[id]['value'];
+                    regions[id]['attrs'] = {
+                        "fill": "#004a9b", 
+                    };
+                }
+            }   
+            $("#rad_map_reg").mapael({
+                "map": {
+                    "name": "france_regions_2016_domtom",
+                    zoom: {
+                        enabled: true,
+                        maxLevel: 10
+                    },
+                
+                    "defaultArea": {
+                        "attrs": {
+                            "fill": "#f4f4e8",
+                            "stroke": "#ced8d0",
+                        },
+                        "attrsHover": {
+                            "fill": "#004a9b",
+                        },
+                        "text": {
+                            "attrs": {
+                                "fill": "#505444"
+                            },
+                            "attrsHover": {
+                                "fill": "#000",
+                            }
+                        }
+                    }   
+                },
+                "legend": {
+                    "area": {
+                        "marginBottom": 20,
+                        "slices": slices
+                    }
+                },
+                "areas": regions
+            });
+        });
     </script>
 
-    <!-- death map -->
+    <!-- hosp map regions-->
+    <script type="text/javascript">
+        $(function() {
+            // Init map
+            var regions = {{ overall_regions_data_hosp|safe }};
+            var quantiles = {{ overall_regions_quantiles_hosp|safe }};
+            quantiles = Object.values(quantiles);
+            var slices = [
+                    {"max": quantiles[0], "label": "Moins de " + quantiles[0] + " hospitalisations *", attrs: {fill: "#D6F77F"}}
+                ];
+            colors = ["#f2f53a", '#df891a', '#e61919', '#680000', '#1d0303']
+            for (var i = 0; i < quantiles.length; i++) {
+                var slice = {
+                        attrs: {
+                            fill: colors[i]
+                        }
+                    };
+                slice.min = quantiles[i];
+                if (i < quantiles.length -1) {
+                    slice.max = quantiles[i + 1];
+                    slice.label = "Entre " + slice.min + " et " + slice.max + " hospitalisations *";
+                } else {
+                    slice.label = "Plus de " + slice.min + " hospitalisations *";
+                }
+                slices.push(slice);
+            }
+            for (var id in regions) {
+                regions[id]['value'] = regions[id]['hosp_par_habitants'];
+                regions[id]['tooltip'] = {
+                    "content": regions[id]['label'] + " : <b>" + regions[id]['hosp'] + "</b> hospitalisations (<b>" + regions[id]['hosp_par_habitants'] + "</b> pour 100 000 habitants)"
+                };
+                regions[id]['href'] = "/region/" + regions[id]['insee'] + "#"; 
+                if (regions[id]['insee'] === '{{ region }}') {
+                    regions[id]['href'] = "/";
+                    delete regions[id]['value'];
+                    regions[id]['attrs'] = {
+                        "fill": "#004a9b", 
+                    };
+                }
+            }        
+            $("#hosp_map_reg").mapael({
+                "map": {
+                    "name": "france_regions_2016_domtom",
+                    zoom: {
+                        enabled: true,
+                        maxLevel: 10
+                    },      
+                    "defaultArea": {
+                        "attrs": {
+                            "fill": "#f4f4e8",
+                            "stroke": "#ced8d0",
+                        },
+                        "attrsHover": {
+                            "fill": "#004a9b",
+                        },
+                        "text": {
+                            "attrs": {
+                                "fill": "#505444"
+                            },
+                            "attrsHover": {
+                                "fill": "#000",
+                            }
+                        }
+                    }   
+                },          
+                "legend": {
+                    "area": {
+                        "marginBottom": 20,
+                        "slices": slices
+                    }
+                },
+                "areas": regions
+            });
+        });
+    </script>
+
+    <!-- rea map regions-->
+    <script type="text/javascript">
+        $(function() {
+            // Init map
+            var regions = {{ overall_regions_data_rea|safe }};
+            var quantiles = {{ overall_regions_quantiles_rea|safe }};
+            quantiles = Object.values(quantiles);
+            var slices = [
+                    {"max": quantiles[0], "label": quantiles[0] + " réanimations *", attrs: {fill: "#D6F77F"}}
+                ];
+            colors = ["#f2f53a", '#df891a', '#e61919', '#680000', '#1d0303']
+            for (var i = 0; i < quantiles.length; i++) {
+                var slice = {
+                        attrs: {
+                            fill: colors[i]
+                        }
+                    };
+                slice.min = quantiles[i];
+                if (i < quantiles.length -1) {
+                    slice.max = quantiles[i + 1];
+                    slice.label = "Entre " + slice.min + " et " + slice.max + " réanimations *";
+                } else {
+                    slice.label = "Plus de " + slice.min + " réanimations *";
+                }
+                if (i == 0) {
+                    slice.max = quantiles[i + 1];
+                    slice.label = "Moins de " + slice.max + " réanimations *";
+                }           
+                slices.push(slice);
+            }
+            for (var id in regions) {
+                regions[id]['value'] = regions[id]['rea_par_habitants'];
+                regions[id]['tooltip'] = {
+                    "content": regions[id]['label'] + " : <b>" + regions[id]['rea'] + "</b> réanimations (<b>" + regions[id]['rea_par_habitants'] + "</b> pour 100 000 habitants)"
+                };
+                regions[id]['href'] = "/region/" + regions[id]['insee'] + "#"; 
+                if (regions[id]['insee'] === '{{ region }}') {
+                    regions[id]['href'] = "/";
+                    delete regions[id]['value'];
+                    regions[id]['attrs'] = {
+                        "fill": "#004a9b", 
+                    };
+                }
+            }       
+            $("#rea_map_reg").mapael({
+                "map": {
+                    "name": "france_regions_2016_domtom",
+                    zoom: {
+                        enabled: true,
+                        maxLevel: 10
+                    },                  
+                    "defaultArea": {
+                        "attrs": {
+                            "fill": "#f4f4e8",
+                            "stroke": "#ced8d0",
+                        },
+                        "attrsHover": {
+                            "fill": "#004a9b",
+                        },
+                        "text": {
+                            "attrs": {
+                                "fill": "#505444"
+                            },
+                            "attrsHover": {
+                                "fill": "#000",
+                            }
+                        }
+                    }   
+                },  
+                "legend": {
+                    "area": {
+                        "marginBottom": 20,
+                        "slices": slices
+                    }
+                },
+                "areas": regions
+            });
+        });
+    </script>
+
+    <!-- death map departments-->
     <script type="text/javascript">
         $(function() {
             // Init map
@@ -550,7 +966,7 @@
                     };
                 }
             }
-            $("#death_map").mapael({
+            $("#death_map_dep").mapael({
                 "map": {
                     "name": "france_departments_domtom",
                     zoom: {
@@ -586,7 +1002,7 @@
         });
     </script>
     
-    <!-- rate dc map -->
+    <!-- rate dc map departments-->
     <script type="text/javascript">
         $(function() {
             // Init map
@@ -626,7 +1042,7 @@
                     };
                 }
             }      
-            $("#rate_death_map").mapael({
+            $("#rate_death_map_dep").mapael({
                 "map": {
                     "name": "france_departments_domtom",
                     zoom: {
@@ -662,7 +1078,7 @@
         });
     </script>
 
-    <!-- rad map -->
+    <!-- rad map departments -->
     <script type="text/javascript">
         $(function() {
             // Init map
@@ -702,7 +1118,7 @@
                     };
                 }
             }   
-            $("#rad_map").mapael({
+            $("#rad_map_dep").mapael({
                 "map": {
                     "name": "france_departments_domtom",
                     zoom: {
@@ -739,7 +1155,7 @@
         });
     </script>
         
-    <!-- hosp map -->
+    <!-- hosp map departments-->
     <script type="text/javascript">
         $(function() {
             // Init map
@@ -779,7 +1195,7 @@
                     };
                 }
             }        
-            $("#hosp_map").mapael({
+            $("#hosp_map_dep").mapael({
                 "map": {
                     "name": "france_departments_domtom",
                     zoom: {
@@ -815,7 +1231,7 @@
         });
     </script>
     
-    <!-- rea map -->
+    <!-- rea map departments-->
     <script type="text/javascript">
         $(function() {
             // Init map
@@ -859,7 +1275,7 @@
                     };
                 }
             }       
-            $("#rea_map").mapael({
+            $("#rea_map_dep").mapael({
                 "map": {
                     "name": "france_departments_domtom",
                     zoom: {
@@ -896,6 +1312,27 @@
     </script>
 
     <!-- charts -->
+    <script type="text/javascript">
+        // Init charts
+        var plotlyConfig = {
+                "locale": "fr",
+                "modeBarButtonsToRemove": ["sendDataToCloud", "autoScale2d", "hoverClosestCartesian", "hoverCompareCartesian", "lasso2d", "select2d"],
+                "displaylogo": false,
+                "showTips": false,
+            };
+
+        var graphs = {{ graphJSON | safe }};
+
+        for(var i in graphs) {
+            Plotly.plot(
+                graphs[i].id, // the ID of the div, created above
+                graphs[i].data,
+                graphs[i].layout || {}, 
+                plotlyConfig);
+        }
+    </script>
+
+    <!-- charts pca-->
     <script type="text/javascript">
         var graphs = {{ graphJSONquadratics["graphJSON"] | safe }};
 

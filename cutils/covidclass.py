@@ -11,6 +11,7 @@ from sklearn.preprocessing import StandardScaler
 from scipy.stats import chi2
 from numpy.linalg import inv
 import plotly.graph_objs as go
+from functools import reduce
 
 class CovidFr():
     """docstring for CovidFr"""
@@ -38,7 +39,7 @@ class CovidFr():
         """
         Loading dataframes
         """
-        self.covid = pd.read_csv(CovidFr.synthesis_covid_url, sep=';')
+        self.covid = pd.read_csv(CovidFr.synthesis_covid_url, sep=';').dropna()
 
         regions = {
             "01": {"Guadeloupe": ['971']},
@@ -192,13 +193,16 @@ class CovidFr():
         #    .groupby('reg') \
         #    .max()
 
-        ###the bellow added 6/21/20
+        ###the reg data is related to dep data, the bellow added 6/21/20
         regdf = {}
-        dep_data = self.covid[self.covid["sexe"]==0].drop(['reg', 'jour', 'sexe'], axis=1).groupby('dep').max()
+        dep_data = self.covid[self.covid["sexe"]==0] \
+            .drop(['reg', 'jour', 'sexe'], axis=1) \
+            .groupby('dep') \
+            .max()
         for i in self.covid["reg"].unique():
             regdf[i]=dep_data.loc[self.covid[self.covid["reg"]==i]["dep"].unique(),:].sum()
         reg_data = pd.DataFrame.from_dict(regdf, orient='index')
-        reg_data.reset_index().dropna().set_index('index').rename_axis('reg')
+        reg_data.reset_index().set_index('index').rename_axis('reg')
         ### the above added 6/21/20
 
         reg_data = pd.concat([reg_data, self.region_base_data], axis=1)
@@ -258,10 +262,12 @@ class CovidFr():
             elif feature == "hosp" or feature == "rea":
                 ### For hosp and or rea case map
                 reg_data_j = self.covid[(self.covid['sexe'] == 0) & (self.covid['jour'] == datetime.strptime(self.last_update, "%Y-%m-%dT%H:%M:%S.%f").strftime("%Y-%m-%d"))]
+                
                 reg_data_j = reg_data_j \
                     .drop(['dep', 'jour', 'sexe'], axis=1) \
                     .groupby('reg') \
-                    .max()
+                    .sum()
+
                 reg_data_j = pd.concat([reg_data_j, self.region_base_data], axis=1)
 
                 reg_data_j[feature+'_par_habitants'] = (reg_data_j[feature] / reg_data_j['population']) * 100000
@@ -461,6 +467,186 @@ class CovidFr():
                 "counters": self.counters,
                 }
 
+
+    def charts_reg(self, data=None, region=None): 
+        if region is None:  
+            if data is None:
+                cdata = self.covid[self.covid.sexe == 0].groupby(['jour']).sum().copy()
+            else: 
+                cdata = data[data.sexe == 0].groupby(['jour']).sum().copy()
+        else:
+            if data is None:
+                #cdata = self.covid[(self.covid.dep == department) & (self.covid.sexe == 0)].groupby(['jour']).sum().copy()
+                #here to change the code
+                regdep = []
+                for d in self.covid[self.covid.reg==region].dep.unique():
+                    vars()["dep_%s"%d] = CovidFr.dailycases(data=self.covid[(self.covid.dep == d) & (self.covid.sexe == 0)].groupby(['jour']).sum(), pca=False)
+                    regdep.append(vars()["dep_%s"%d])
+                cdata = reduce(lambda x, y: x.add(y, fill_value=0), regdep)
+
+            else: 
+                cdata = data[(data.dep == department) & (data.sexe == 0)].groupby(['jour']).sum().copy()
+
+        #cdata = CovidFr.dailycases(data=cdata, pca=False)
+
+        graphs = [
+            dict(
+                id= "Nombre de personnes actuellement hospitalisées",
+                data=[
+                    dict(
+                        x=cdata.index,
+                        y=cdata['hosp'],
+                        type='line',
+                        marker=dict(
+                                    color='#ff7f00',
+                                    line=dict(color='#ff7f00', width=3)
+                                    )
+                        ),
+                    ],
+                layout=dict(
+                            #title="Nombre de personnes actuellement hospitalisées",
+                            margin=dict(l=30, r=30, b=30, t=30),
+                            )
+                ),
+            
+            dict(
+                id="Nombre de personnes actuellement en réanimation",
+                data=[
+                    dict(
+                        x=cdata.index,
+                        y=cdata['rea'],
+                        type='line',
+                        marker=dict(
+                                    color='#ff0000',
+                                    line=dict(color='#ff0000', width=3)
+                                    )
+                        ),
+                    ],
+                layout=dict(
+                            #title="Nombre de personnes actuellement en réanimation ou soins intensifs",
+                            margin=dict(l=30, r=30, b=30, t=30),
+                            )
+                ),
+            
+            dict(
+                id="Nombre cumulé de personnes décédées à l'hôpital",
+                data=[
+                    dict(
+                        x=cdata.index,
+                        y=cdata['dc_rectif'],#cdata['dc'],
+                        type='line',
+                        marker=dict(
+                                    color='#730800',
+                                    line=dict(color='#730800', width=3)
+                                    )
+                        ),
+                    ],
+                layout=dict(
+                            #title="Nombre cumulé de personnes décédées à l'hôpital",
+                            margin=dict(l=30, r=30, b=30, t=30),
+                            )
+                ),
+
+            dict(
+                id="Nombre cumulé de personnes retournées à domicile",
+                data=[
+                    dict(
+                        x=cdata.index,
+                        y=cdata['rad_rectif'],#cdata['rad'],
+                        type='line',
+                        marker=dict(
+                                    color='#57d53b',
+                                    line=dict(color='#57d53b', width=3)
+                                    )
+                        ),
+                    ],
+                layout=dict(
+                            #title="Nombre cumulé de personnes retournées à domicile",
+                            #autosize=False,
+                            #width=600,
+                            #height=600,
+                            margin=dict(l=30, r=30, b=30, t=30),
+                            )
+                ),
+
+            dict(
+                id="Nombre de personnes décédées par jour à l'hôpital",
+                data=[
+                    dict(
+                        x=cdata.index,
+                        y=cdata['dc_j'],
+                        type='bar',
+                        marker=dict(
+                                    color='#730800',
+                                    line=dict(color='#730800', width=1)
+                                    )
+                        ),
+                    ],
+                layout=dict(
+                            #title="Nombre de personnes décédées par jour à l'hôpital",
+                            margin=dict(l=30, r=10, b=30, t=30),
+                            barmode='overlay',
+                            linemode='overlay',
+                            legend_orientation="h",
+                            )
+                ),
+
+            dict(
+                id="Nombre de personnes retournées par jour à domicile",
+                data=[
+                    dict(
+                        x=cdata.index,
+                        y=cdata['rad_j'],
+                        type='bar',
+                        marker=dict(
+                                    color='#57d53b',
+                                    line=dict(color='#57d53b', width=1),
+                                    opacity=0.8,
+                                    )
+                        ),
+                    ],
+                layout=dict(
+                            #title="Nombre de personnes retournées par jour à domicile",
+                            margin=dict(l=30, r=10, b=30, t=30),
+                            barmode='overlay',
+                            linemode='overlay',
+                            legend_orientation="h",
+                            )
+                ),
+        ]
+        # Convert the figures to JSON
+        # PlotlyJSONEncoder appropriately converts pandas, datetime, etc
+        # objects to their JSON equivalents
+        self.graphJSON = json.dumps(graphs, cls=plotly.utils.PlotlyJSONEncoder)
+
+        fdata = self.covid[self.covid.sexe == 0].groupby(['jour']).sum().copy()
+        popfr = self.department_base_data["population"].sum()
+        
+        self.counters = {
+                        "last_update_fr": {
+                                           "day": datetime.strptime(self.last_update, "%Y-%m-%dT%H:%M:%S.%f").strftime("%d/%m/%Y"),
+                                           "day_hour": datetime.strptime(self.last_update, "%Y-%m-%dT%H:%M:%S.%f").strftime("%d/%m/%Y à %Hh%M")
+                                           },
+                                    
+                        "last_dc": cdata.at[datetime.strptime(self.last_update, "%Y-%m-%dT%H:%M:%S.%f").strftime("%Y-%m-%d"), 'dc_j'],
+                        "all_dc": cdata.at[datetime.strptime(self.last_update, "%Y-%m-%dT%H:%M:%S.%f").strftime("%Y-%m-%d"), 'dc_rectif'],
+                        "last_rad": cdata.at[datetime.strptime(self.last_update, "%Y-%m-%dT%H:%M:%S.%f").strftime("%Y-%m-%d"), 'rad_j'],
+                        "all_rad": cdata.at[datetime.strptime(self.last_update, "%Y-%m-%dT%H:%M:%S.%f").strftime("%Y-%m-%d"), 'rad_rectif'],          
+                        "current_hosp": cdata.at[datetime.strptime(self.last_update, "%Y-%m-%dT%H:%M:%S.%f").strftime("%Y-%m-%d"), 'hosp'],
+                        "current_rea": cdata.at[datetime.strptime(self.last_update, "%Y-%m-%dT%H:%M:%S.%f").strftime("%Y-%m-%d"), 'rea'], 
+                    
+                        "nat_refs": {
+                                    "nat_dc": ((fdata.at[datetime.strptime(self.last_update, "%Y-%m-%dT%H:%M:%S.%f").strftime("%Y-%m-%d"), 'dc'] / popfr) * 100000).round(2),
+                                    "nat_r_dc_rad": (fdata.at[datetime.strptime(self.last_update, "%Y-%m-%dT%H:%M:%S.%f").strftime("%Y-%m-%d"), 'dc'] / (fdata.at[datetime.strptime(self.last_update, "%Y-%m-%dT%H:%M:%S.%f").strftime("%Y-%m-%d"), 'dc'] + fdata.at[datetime.strptime(self.last_update, "%Y-%m-%dT%H:%M:%S.%f").strftime("%Y-%m-%d"), 'rad'])).round(2),
+                                    "nat_rad": ((fdata.at[datetime.strptime(self.last_update, "%Y-%m-%dT%H:%M:%S.%f").strftime("%Y-%m-%d"), 'rad'] / popfr) * 100000).round(2),
+                                    "nat_hosp": ((fdata.at[datetime.strptime(self.last_update, "%Y-%m-%dT%H:%M:%S.%f").strftime("%Y-%m-%d"), 'hosp'] / popfr) * 100000).round(2),
+                                    "nat_rea": ((fdata.at[datetime.strptime(self.last_update, "%Y-%m-%dT%H:%M:%S.%f").strftime("%Y-%m-%d"), 'rea'] / popfr) * 100000).round(2),
+                                    },
+                        }
+        return {"graphJSON": self.graphJSON, 
+                "counters": self.counters,
+                }
+
     def department_label(self, department):
         """Get a department label from its insee code
         Returns:
@@ -468,6 +654,15 @@ class CovidFr():
         """
         if department in self.department_base_data.index:
             return self.department_base_data.at[department, 'label']
+        return ""
+
+    def region_label(self, region):
+        """Get a region label from its insee code
+        Returns:
+            Region label
+        """
+        if region in self.region_base_data.index:
+            return self.region_base_data.at[region, 'label']
         return ""
 
     def acp(self, data, pcdim, q=0.975, normalize=False, start_d_learn='2020-05-14', end_d_learn='2020-06-14', alpha=1-0.4):
