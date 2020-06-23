@@ -121,7 +121,11 @@
                                 <span class="nav-link-text">
                                     Dashboard 									
                                     {% if (label != 'France'): %}
-                                        {{ label }} (FR-{{ department }})
+                                        {% if (label['type'] == 'department'): %}
+                                            {{ label['prefix'] }} {{ label['name'] }} (FR-{{ department }})
+                                        {% else : %}
+                                            {{ label['prefix'] }} {{ label['name'] }} (FR-{{ region }})
+                                        {% endif %}
                                     {% else : %}
                                         {{ label }}
                                     {% endif %} 
@@ -153,7 +157,11 @@
                             <a class="nav-link" href="/">
                                 Dashboard 									
                                 {% if (label != 'France'): %}
-                                    {{ label }} (FR-{{ department }})
+                                    {% if (label['type'] == 'department'): %}
+                                        {{ label['prefix'] }} {{ label['name'] }} (FR-{{ department }})
+                                    {% else : %}
+                                        {{ label['prefix'] }} {{ label['name'] }} (FR-{{ region }})
+                                    {% endif %}
                                 {% else : %}
                                     {{ label }}
                                 {% endif %} 

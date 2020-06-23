@@ -467,7 +467,6 @@ class CovidFr():
                 "counters": self.counters,
                 }
 
-
     def charts_reg(self, data=None, region=None): 
         if region is None:  
             if data is None:
@@ -476,19 +475,17 @@ class CovidFr():
                 cdata = data[data.sexe == 0].groupby(['jour']).sum().copy()
         else:
             if data is None:
-                #cdata = self.covid[(self.covid.dep == department) & (self.covid.sexe == 0)].groupby(['jour']).sum().copy()
-                #here to change the code
                 regdep = []
                 for d in self.covid[self.covid.reg==region].dep.unique():
-                    vars()["dep_%s"%d] = CovidFr.dailycases(data=self.covid[(self.covid.dep == d) & (self.covid.sexe == 0)].groupby(['jour']).sum(), pca=False)
-                    regdep.append(vars()["dep_%s"%d])
+                    regdep.append(CovidFr.dailycases(data=self.covid[(self.covid.dep == d) & (self.covid.sexe == 0)].groupby(['jour']).sum(), pca=False))
                 cdata = reduce(lambda x, y: x.add(y, fill_value=0), regdep)
 
             else: 
-                cdata = data[(data.dep == department) & (data.sexe == 0)].groupby(['jour']).sum().copy()
-
-        #cdata = CovidFr.dailycases(data=cdata, pca=False)
-
+                regdep = []
+                for d in data[data.reg==region].dep.unique():
+                    regdep.append(CovidFr.dailycases(data=data[(data.dep == d) & (data.sexe == 0)].groupby(['jour']).sum(), pca=False))
+                cdata = reduce(lambda x, y: x.add(y, fill_value=0), regdep)
+                
         graphs = [
             dict(
                 id= "Nombre de personnes actuellement hospitalisées",
@@ -620,7 +617,7 @@ class CovidFr():
         self.graphJSON = json.dumps(graphs, cls=plotly.utils.PlotlyJSONEncoder)
 
         fdata = self.covid[self.covid.sexe == 0].groupby(['jour']).sum().copy()
-        popfr = self.department_base_data["population"].sum()
+        popfr = self.region_base_data["population"].sum()
         
         self.counters = {
                         "last_update_fr": {
@@ -653,7 +650,7 @@ class CovidFr():
             Department label
         """
         if department in self.department_base_data.index:
-            return self.department_base_data.at[department, 'label']
+            return {"prefix": "dépt.", "type": "department", "name": self.department_base_data.at[department, 'label']}
         return ""
 
     def region_label(self, region):
@@ -662,7 +659,7 @@ class CovidFr():
             Region label
         """
         if region in self.region_base_data.index:
-            return self.region_base_data.at[region, 'label']
+            return {"prefix": "région", "type": "region", "name": self.region_base_data.at[region, 'label']}
         return ""
 
     def acp(self, data, pcdim, q=0.975, normalize=False, start_d_learn='2020-05-14', end_d_learn='2020-06-14', alpha=1-0.4):
