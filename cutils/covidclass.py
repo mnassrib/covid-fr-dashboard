@@ -706,7 +706,7 @@ class CovidFr():
                         hovertemplate =
                             #'<b>Score</b>: %{y:.2f}<br>'+
                             '<b>%{text}</b><extra></extra>',
-                            text = ['uncontrolled' if spe[i]>gspe*chi2.ppf(q, df=hspe) else 'controlled' for i in range(len(dataindex))],
+                            text = ['situation anormale' if spe[i]>gspe*chi2.ppf(q, df=hspe) else 'situation normale' for i in range(len(dataindex))],
                     ),
 
                     dict(
@@ -721,7 +721,7 @@ class CovidFr():
                         hovertemplate =
                             #'<b>Score</b>: %{y:.2f}<br>'+
                             '<b>%{text}</b><extra></extra>',
-                            text = ['uncontrolled' if CovidFr.ewma_filter(data=spe, alpha=alpha)[i]>gspe*chi2.ppf(q, df=hspe) else 'controlled' for i in range(len(dataindex))],
+                            text = ['situation anormale' if CovidFr.ewma_filter(data=spe, alpha=alpha)[i]>gspe*chi2.ppf(q, df=hspe) else 'situation normale' for i in range(len(dataindex))],
                     ),
 
                     dict(
@@ -763,7 +763,7 @@ class CovidFr():
                         hovertemplate =
                             #'<b>Score</b>: %{y:.2f}<br>'+
                             '<b>%{text}</b><extra></extra>',
-                            text = ['uncontrolled' if t2[i]>chi2.ppf(q, df=pcdim) else 'controlled' for i in range(len(dataindex))],
+                            text = ['situation anormale' if t2[i]>chi2.ppf(q, df=pcdim) else 'situation normale' for i in range(len(dataindex))],
                     ),
 
                     dict(
@@ -778,7 +778,7 @@ class CovidFr():
                         hovertemplate =
                             #'<b>Score</b>: %{y:.2f}<br>'+
                             '<b>%{text}</b><extra></extra>',
-                            text = ['uncontrolled' if CovidFr.ewma_filter(data=t2, alpha=alpha)[i]>chi2.ppf(q, df=pcdim) else 'controlled' for i in range(len(dataindex))],
+                            text = ['situation anormale' if CovidFr.ewma_filter(data=t2, alpha=alpha)[i]>chi2.ppf(q, df=pcdim) else 'situation normale' for i in range(len(dataindex))],
                     ),
 
                     dict(
@@ -808,11 +808,11 @@ class CovidFr():
                             y=3*max(t2)/4,
                             xref="x",
                             yref="y",
-                            text='ev: {}%<br>pc: {}<br>normalized: {}<br>lp from {} to {}'.format(((np.trace(np.diag(s[:pcdim]))/np.trace(np.diag(s)))*100).round(2), pcdim, normalize, start_d_learn, end_d_learn),
+                            text='ev: {}% ({} pcs)<br>normalized data: {}<br>learn {} to {}'.format(((np.trace(np.diag(s[:pcdim]))/np.trace(np.diag(s)))*100).round(2), pcdim, normalize, start_d_learn, end_d_learn),
                             showarrow=False,
                             font=dict(
                                 family="Courier New, monospace",
-                                size=10,
+                                size=11,
                                 color="#ffffff",
                                 ),
                             align="left",
@@ -825,8 +825,8 @@ class CovidFr():
                             bordercolor="#c7c7c7",
                             borderwidth=2,
                             borderpad=4,
-                            bgcolor="#ff7f0e",
-                            opacity=0.7,
+                            bgcolor='#000080',
+                            opacity=0.3,
                         )
                     ],     
                 )
