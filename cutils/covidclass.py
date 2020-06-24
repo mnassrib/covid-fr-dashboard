@@ -41,32 +41,9 @@ class CovidFr():
         """
         self.covid = pd.read_csv(CovidFr.synthesis_covid_url, sep=';').dropna()
 
-        regions = {
-            "01": {"Guadeloupe": ['971']},
-            "02": {"Martinique": ['972']},
-            "03": {"Guyane": ['973']},
-            "04": {"La Réunion": ['974']},
-            "06": {"Mayotte": ['976']},
-            "11": {"Île-de-France": ['92', '93', '94', '78', '75', '77', '91', '95']},
-            "24": {"Centre-Val de Loire": ['41', '28', '45', '18', '37', '36']},
-            "27": {"Bourgogne-Franche-Comté": ['71', '58', '25', '70', '90', '39', '89', '21']},
-            "28": {"Normandie": ['76', '61', '50', '14', '27']},
-            "32": {"Hauts-de-France": ['60', '59', '02', '62', '80']},
-            "44": {"Grand Est": ['54', '68', '51', '55', '08', '57', '67', '52', '88', '10']},
-            "52": {"Pays de la Loire": ['49', '85', '44', '72', '53']},
-            "53": {"Bretagne": ['29', '56', '35', '22']},
-            "75": {"Nouvelle-Aquitaine": ['24', '17', '33', '64', '16', '40', '19', '79', '87', '86', '47', '23']},
-            "76": {"Occitanie": ['34', '48', '46', '82', '11', '12', '32', '09', '81', '65', '30', '66', '31']}, 
-            "84": {"Auvergne-Rhône-Alpes": ['38', '01', '42', '74', '73', '43', '03', '26', '69', '07', '63', '15']},
-            "93": {"Provence-Alpes-Côte d'Azur": ['13', '05', '06', '84', '04', '83']},
-            "94": {"Corse": ['2B', '2A']},
-            }
-        for key, value in regions.items():
-            for k, v in value.items():
-                self.covid.loc[self.covid.loc[self.covid['dep'].isin(v)].index, 'reg'] = key
-        self.covid = self.covid[["reg", "dep", "sexe", "jour", "hosp", "rea", "rad", "dc"]]
-        return self.covid
-    
+        self.covid = CovidFr.regionadd(data=self.covid)
+        return self.covid 
+
     def overall_departments_data_as_json(self, data=None):
         """
         Get data from departments as a JSON string along with quantiles
@@ -295,19 +272,33 @@ class CovidFr():
 
         return overall_reg_data_as_json_dict
 
-    def charts(self, data=None, department=None): 
-        if department is None:  
+    def charts(self, data=None, department=None, region=None): 
+        if region is None and department is None:
             if data is None:
                 cdata = self.covid[self.covid.sexe == 0].groupby(['jour']).sum().copy()
+                cdata = CovidFr.dailycases(data=cdata, pca=False)
             else: 
                 cdata = data[data.sexe == 0].groupby(['jour']).sum().copy()
-        else:
+                cdata = CovidFr.dailycases(data=cdata, pca=False)
+        elif region is None and not department is None:
             if data is None:
                 cdata = self.covid[(self.covid.dep == department) & (self.covid.sexe == 0)].groupby(['jour']).sum().copy()
+                cdata = CovidFr.dailycases(data=cdata, pca=False)
             else: 
                 cdata = data[(data.dep == department) & (data.sexe == 0)].groupby(['jour']).sum().copy()
+                cdata = CovidFr.dailycases(data=cdata, pca=False)
+        elif not region is None and department is None:
+            if data is None:
+                regdep = []
+                for d in self.covid[self.covid.reg==region].dep.unique():
+                    regdep.append(CovidFr.dailycases(data=self.covid[(self.covid.dep == d) & (self.covid.sexe == 0)].groupby(['jour']).sum(), pca=False))
+                cdata = reduce(lambda x, y: x.add(y, fill_value=0), regdep)
 
-        cdata = CovidFr.dailycases(data=cdata, pca=False)
+            else: 
+                regdep = []
+                for d in data[data.reg==region].dep.unique():
+                    regdep.append(CovidFr.dailycases(data=data[(data.dep == d) & (data.sexe == 0)].groupby(['jour']).sum(), pca=False))
+                cdata = reduce(lambda x, y: x.add(y, fill_value=0), regdep)
 
         graphs = [
             dict(
@@ -467,236 +458,32 @@ class CovidFr():
                 "counters": self.counters,
                 }
 
-    def charts_reg(self, data=None, region=None): 
-        if region is None:  
-            if data is None:
-                cdata = self.covid[self.covid.sexe == 0].groupby(['jour']).sum().copy()
-            else: 
-                cdata = data[data.sexe == 0].groupby(['jour']).sum().copy()
-        else:
-            if data is None:
-                regdep = []
-                for d in self.covid[self.covid.reg==region].dep.unique():
-                    regdep.append(CovidFr.dailycases(data=self.covid[(self.covid.dep == d) & (self.covid.sexe == 0)].groupby(['jour']).sum(), pca=False))
-                cdata = reduce(lambda x, y: x.add(y, fill_value=0), regdep)
-
-            else: 
-                regdep = []
-                for d in data[data.reg==region].dep.unique():
-                    regdep.append(CovidFr.dailycases(data=data[(data.dep == d) & (data.sexe == 0)].groupby(['jour']).sum(), pca=False))
-                cdata = reduce(lambda x, y: x.add(y, fill_value=0), regdep)
-                
-        graphs = [
-            dict(
-                id= "Nombre de personnes actuellement hospitalisées",
-                data=[
-                    dict(
-                        x=cdata.index,
-                        y=cdata['hosp'],
-                        type='line',
-                        marker=dict(
-                                    color='#ff7f00',
-                                    line=dict(color='#ff7f00', width=3)
-                                    )
-                        ),
-                    ],
-                layout=dict(
-                            #title="Nombre de personnes actuellement hospitalisées",
-                            margin=dict(l=30, r=30, b=30, t=30),
-                            )
-                ),
-            
-            dict(
-                id="Nombre de personnes actuellement en réanimation",
-                data=[
-                    dict(
-                        x=cdata.index,
-                        y=cdata['rea'],
-                        type='line',
-                        marker=dict(
-                                    color='#ff0000',
-                                    line=dict(color='#ff0000', width=3)
-                                    )
-                        ),
-                    ],
-                layout=dict(
-                            #title="Nombre de personnes actuellement en réanimation ou soins intensifs",
-                            margin=dict(l=30, r=30, b=30, t=30),
-                            )
-                ),
-            
-            dict(
-                id="Nombre cumulé de personnes décédées à l'hôpital",
-                data=[
-                    dict(
-                        x=cdata.index,
-                        y=cdata['dc_rectif'],#cdata['dc'],
-                        type='line',
-                        marker=dict(
-                                    color='#730800',
-                                    line=dict(color='#730800', width=3)
-                                    )
-                        ),
-                    ],
-                layout=dict(
-                            #title="Nombre cumulé de personnes décédées à l'hôpital",
-                            margin=dict(l=30, r=30, b=30, t=30),
-                            )
-                ),
-
-            dict(
-                id="Nombre cumulé de personnes retournées à domicile",
-                data=[
-                    dict(
-                        x=cdata.index,
-                        y=cdata['rad_rectif'],#cdata['rad'],
-                        type='line',
-                        marker=dict(
-                                    color='#57d53b',
-                                    line=dict(color='#57d53b', width=3)
-                                    )
-                        ),
-                    ],
-                layout=dict(
-                            #title="Nombre cumulé de personnes retournées à domicile",
-                            #autosize=False,
-                            #width=600,
-                            #height=600,
-                            margin=dict(l=30, r=30, b=30, t=30),
-                            )
-                ),
-
-            dict(
-                id="Nombre de personnes décédées par jour à l'hôpital",
-                data=[
-                    dict(
-                        x=cdata.index,
-                        y=cdata['dc_j'],
-                        type='bar',
-                        marker=dict(
-                                    color='#730800',
-                                    line=dict(color='#730800', width=1)
-                                    )
-                        ),
-                    ],
-                layout=dict(
-                            #title="Nombre de personnes décédées par jour à l'hôpital",
-                            margin=dict(l=30, r=10, b=30, t=30),
-                            barmode='overlay',
-                            linemode='overlay',
-                            legend_orientation="h",
-                            )
-                ),
-
-            dict(
-                id="Nombre de personnes retournées par jour à domicile",
-                data=[
-                    dict(
-                        x=cdata.index,
-                        y=cdata['rad_j'],
-                        type='bar',
-                        marker=dict(
-                                    color='#57d53b',
-                                    line=dict(color='#57d53b', width=1),
-                                    opacity=0.8,
-                                    )
-                        ),
-                    ],
-                layout=dict(
-                            #title="Nombre de personnes retournées par jour à domicile",
-                            margin=dict(l=30, r=10, b=30, t=30),
-                            barmode='overlay',
-                            linemode='overlay',
-                            legend_orientation="h",
-                            )
-                ),
-        ]
-        # Convert the figures to JSON
-        # PlotlyJSONEncoder appropriately converts pandas, datetime, etc
-        # objects to their JSON equivalents
-        self.graphJSON = json.dumps(graphs, cls=plotly.utils.PlotlyJSONEncoder)
-
-        fdata = self.covid[self.covid.sexe == 0].groupby(['jour']).sum().copy()
-        popfr = self.region_base_data["population"].sum()
-        
-        self.counters = {
-                        "last_update_fr": {
-                                           "day": datetime.strptime(self.last_update, "%Y-%m-%dT%H:%M:%S.%f").strftime("%d/%m/%Y"),
-                                           "day_hour": datetime.strptime(self.last_update, "%Y-%m-%dT%H:%M:%S.%f").strftime("%d/%m/%Y à %Hh%M")
-                                           },
-                                    
-                        "last_dc": cdata.at[datetime.strptime(self.last_update, "%Y-%m-%dT%H:%M:%S.%f").strftime("%Y-%m-%d"), 'dc_j'],
-                        "all_dc": cdata.at[datetime.strptime(self.last_update, "%Y-%m-%dT%H:%M:%S.%f").strftime("%Y-%m-%d"), 'dc_rectif'],
-                        "last_rad": cdata.at[datetime.strptime(self.last_update, "%Y-%m-%dT%H:%M:%S.%f").strftime("%Y-%m-%d"), 'rad_j'],
-                        "all_rad": cdata.at[datetime.strptime(self.last_update, "%Y-%m-%dT%H:%M:%S.%f").strftime("%Y-%m-%d"), 'rad_rectif'],          
-                        "current_hosp": cdata.at[datetime.strptime(self.last_update, "%Y-%m-%dT%H:%M:%S.%f").strftime("%Y-%m-%d"), 'hosp'],
-                        "current_rea": cdata.at[datetime.strptime(self.last_update, "%Y-%m-%dT%H:%M:%S.%f").strftime("%Y-%m-%d"), 'rea'], 
-                    
-                        "nat_refs": {
-                                    "nat_dc": ((fdata.at[datetime.strptime(self.last_update, "%Y-%m-%dT%H:%M:%S.%f").strftime("%Y-%m-%d"), 'dc'] / popfr) * 100000).round(2),
-                                    "nat_r_dc_rad": (fdata.at[datetime.strptime(self.last_update, "%Y-%m-%dT%H:%M:%S.%f").strftime("%Y-%m-%d"), 'dc'] / (fdata.at[datetime.strptime(self.last_update, "%Y-%m-%dT%H:%M:%S.%f").strftime("%Y-%m-%d"), 'dc'] + fdata.at[datetime.strptime(self.last_update, "%Y-%m-%dT%H:%M:%S.%f").strftime("%Y-%m-%d"), 'rad'])).round(2),
-                                    "nat_rad": ((fdata.at[datetime.strptime(self.last_update, "%Y-%m-%dT%H:%M:%S.%f").strftime("%Y-%m-%d"), 'rad'] / popfr) * 100000).round(2),
-                                    "nat_hosp": ((fdata.at[datetime.strptime(self.last_update, "%Y-%m-%dT%H:%M:%S.%f").strftime("%Y-%m-%d"), 'hosp'] / popfr) * 100000).round(2),
-                                    "nat_rea": ((fdata.at[datetime.strptime(self.last_update, "%Y-%m-%dT%H:%M:%S.%f").strftime("%Y-%m-%d"), 'rea'] / popfr) * 100000).round(2),
-                                    },
-                        }
-        return {"graphJSON": self.graphJSON, 
-                "counters": self.counters,
-                }
-
-    def department_label(self, department):
-        """Get a department label from its insee code
+    def request_label(self, department=None, region=None):
+        """Get a department or a region label from its insee code
         Returns:
-            Department label
+            Department or Region label
         """
-        if department in self.department_base_data.index:
-            return {"prefix": "dépt.", "type": "department", "name": self.department_base_data.at[department, 'label']}
-        return ""
+        if not department is None and region is None:
+            if department in self.department_base_data.index:
+                return {"prefix": "dépt.", "type": "department", "name": self.department_base_data.at[department, 'label']}
+            return ""
+        elif department is None and not region is None:
+            if region in self.region_base_data.index:
+                return {"prefix": "région", "type": "region", "name": self.region_base_data.at[region, 'label']}
+            return ""
+        return "France"
 
-    def region_label(self, region):
-        """Get a region label from its insee code
-        Returns:
-            Region label
-        """
-        if region in self.region_base_data.index:
-            return {"prefix": "région", "type": "region", "name": self.region_base_data.at[region, 'label']}
-        return ""
-
-    def acp(self, data, pcdim, q=0.975, normalize=False, start_d_learn='2020-05-14', end_d_learn='2020-06-14', alpha=1-0.4):
+    def pca_charts(self, data, pcdim, q=0.975, normalize=False, start_d_learn='2020-05-14', end_d_learn='2020-06-14', alpha=1-0.4):
         
-        dataindex = data.index
-        learn_data = data[(data.index>=start_d_learn) & (data.index<=end_d_learn)].copy()
-        
-        if normalize is True:
-            std = StandardScaler().fit(learn_data)
-            learn_data = std.transform(learn_data)
-            data = std.transform(data)
-        
-        u, s, vh = np.linalg.svd(np.dot(np.transpose(learn_data), learn_data)/(learn_data.shape[0]), full_matrices=True)
-        
-        u_tilde = u[:, pcdim:]
-        c_tilde = np.dot(u_tilde, np.transpose(u_tilde))
-        spe = np.diag(np.dot(np.dot(data, c_tilde), np.transpose(data)))
-        
-        numgspe = np.trace(np.square(np.diag(s[pcdim:])))
-        dengspe = np.trace(np.diag(s[pcdim:]))
-        gspe = numgspe/dengspe
-
-        numhspe = np.square(dengspe)
-        denhspe = numgspe
-        hspe = numhspe/denhspe
-
-        u_hat = u[:, :pcdim]
-        c_hat_Hotelling =np.dot(np.dot(u_hat, inv(np.diag(s[:pcdim]))), np.transpose(u_hat))     
-        t2 = np.diag(np.dot(np.dot(data, c_hat_Hotelling), np.transpose(data)))
+        results = CovidFr.pca(data, pcdim, q, normalize, start_d_learn, end_d_learn, alpha)
 
         graphs = [
             dict(
                 id = 'SPE',
                 data=[
                     dict(
-                        x = dataindex,
-                        y = spe,
+                        x = results["SPE"]["dataindex"],
+                        y = results["SPE"]["spe"],
                         type='line',
                         name='score s',
                         marker=dict(
@@ -706,12 +493,12 @@ class CovidFr():
                         hovertemplate =
                             #'<b>Score</b>: %{y:.2f}<br>'+
                             '<b>%{text}</b><extra></extra>',
-                            text = ['situation anormale' if spe[i]>gspe*chi2.ppf(q, df=hspe) else 'situation normale' for i in range(len(dataindex))],
+                            text = ['situation anormale' if results["SPE"]["spe"][i]>results["SPE"]["threshold"] else 'situation normale' for i in range(len(results["SPE"]["dataindex"]))],
                     ),
 
                     dict(
-                        x = dataindex,
-                        y = CovidFr.ewma_filter(data=spe, alpha=alpha),
+                        x = results["SPE"]["dataindex"],
+                        y = results["SPE"]["smoothed_spe"],
                         type='line',
                         name="score s filtré",
                         marker=dict(
@@ -721,12 +508,12 @@ class CovidFr():
                         hovertemplate =
                             #'<b>Score</b>: %{y:.2f}<br>'+
                             '<b>%{text}</b><extra></extra>',
-                            text = ['situation anormale' if CovidFr.ewma_filter(data=spe, alpha=alpha)[i]>gspe*chi2.ppf(q, df=hspe) else 'situation normale' for i in range(len(dataindex))],
+                            text = ['situation anormale' if results["SPE"]["smoothed_spe"][i]>results["SPE"]["threshold"] else 'situation normale' for i in range(len(results["SPE"]["dataindex"]))],
                     ),
 
                     dict(
-                        x = dataindex,
-                        y = np.repeat(gspe*chi2.ppf(q, df=hspe), spe.shape[0]),
+                        x = results["SPE"]["dataindex"],
+                        y = np.repeat(results["SPE"]["threshold"], results["SPE"]["spe"].shape[0]),
                         type='line',
                         name='seuil',
                         marker=dict(
@@ -736,7 +523,7 @@ class CovidFr():
                         hovertemplate =
                             #'<b>Score</b>: %{y:.2f}<br>'+
                             '<b>%{text}</b><extra></extra>',
-                            text = ['seuil' for i in range(len(dataindex))],
+                            text = ['seuil' for i in range(len(results["SPE"]["dataindex"]))],
                         showlegend = False,
                     ),
                 ],
@@ -752,8 +539,8 @@ class CovidFr():
                 id = 'Hotelling',
                 data=[
                     dict(
-                        x = dataindex,
-                        y = t2,
+                        x = results["Hotelling"]["dataindex"],
+                        y = results["Hotelling"]["t2"],
                         type='line',
                         name='score t',
                         marker=dict(
@@ -763,12 +550,12 @@ class CovidFr():
                         hovertemplate =
                             #'<b>Score</b>: %{y:.2f}<br>'+
                             '<b>%{text}</b><extra></extra>',
-                            text = ['situation anormale' if t2[i]>chi2.ppf(q, df=pcdim) else 'situation normale' for i in range(len(dataindex))],
+                            text = ['situation anormale' if results["Hotelling"]["t2"][i]>results["Hotelling"]["threshold"] else 'situation normale' for i in range(len(results["Hotelling"]["dataindex"]))],
                     ),
 
                     dict(
-                        x = dataindex,
-                        y = CovidFr.ewma_filter(data=t2, alpha=alpha),
+                        x = results["Hotelling"]["dataindex"],
+                        y = results["Hotelling"]["smoothed_t2"],
                         type='line',
                         name="score t filtré",
                         marker=dict(
@@ -778,12 +565,12 @@ class CovidFr():
                         hovertemplate =
                             #'<b>Score</b>: %{y:.2f}<br>'+
                             '<b>%{text}</b><extra></extra>',
-                            text = ['situation anormale' if CovidFr.ewma_filter(data=t2, alpha=alpha)[i]>chi2.ppf(q, df=pcdim) else 'situation normale' for i in range(len(dataindex))],
+                            text = ['situation anormale' if results["Hotelling"]["smoothed_t2"][i]>results["Hotelling"]["threshold"] else 'situation normale' for i in range(len(results["Hotelling"]["dataindex"]))],
                     ),
 
                     dict(
-                        x = dataindex,
-                        y = np.repeat(chi2.ppf(q, df=pcdim), t2.shape[0]),
+                        x = results["Hotelling"]["dataindex"],
+                        y = np.repeat(results["Hotelling"]["threshold"], results["Hotelling"]["t2"].shape[0]),
                         type='line',
                         name='seuil',
                         marker=dict(
@@ -793,7 +580,7 @@ class CovidFr():
                         hovertemplate =
                             #'<b>Score</b>: %{y:.2f}<br>'+
                             '<b>%{text}</b><extra></extra>',
-                            text = ['seuil' for i in range(len(dataindex))],
+                            text = ['seuil' for i in range(len(results["Hotelling"]["dataindex"]))],
                         showlegend = False,
                     ),
                 ],
@@ -804,11 +591,11 @@ class CovidFr():
                     margin=dict(l=30, r=30, b=30, t=30), 
                     annotations=[
                         go.layout.Annotation(
-                            x=max(dataindex)-(max(dataindex)-min(dataindex))/4,
-                            y=3*max(t2)/4,
+                            x=max(results["Hotelling"]["dataindex"])-(max(results["Hotelling"]["dataindex"])-min(results["Hotelling"]["dataindex"]))/4,
+                            y=3*max(results["Hotelling"]["t2"])/4,
                             xref="x",
                             yref="y",
-                            text='ev: {}% ({} pcs)<br>normalized data: {}<br>learn {} to {}'.format(((np.trace(np.diag(s[:pcdim]))/np.trace(np.diag(s)))*100).round(2), pcdim, normalize, start_d_learn, end_d_learn),
+                            text='ev: {}% ({} pcs)<br>normalized data: {}<br>learn {} to {}'.format(((np.trace(np.diag(results["eigenvalues"][:pcdim]))/np.trace(np.diag(results["eigenvalues"])))*100).round(2), pcdim, normalize, start_d_learn, end_d_learn),
                             showarrow=False,
                             font=dict(
                                 family="Courier New, monospace",
@@ -840,16 +627,44 @@ class CovidFr():
         return {'graphJSON': graphJSON,
                 'retained PCs': pcdim,
                 'normalized': normalize,
-                'explained variance': ((np.trace(np.diag(s[:pcdim]))/np.trace(np.diag(s)))*100).round(2),
-                'SPE': {'spe': spe,
-                        'filtered_spe': CovidFr.ewma_filter(data=spe, alpha=alpha),
-                        'threshold': gspe*chi2.ppf(q, df=hspe),
+                'explained variance': ((np.trace(np.diag(results["eigenvalues"][:pcdim]))/np.trace(np.diag(results["eigenvalues"])))*100).round(2),
+                'SPE': {'spe': results["SPE"]["spe"],
+                        'filtered_spe': results["SPE"]["smoothed_spe"],
+                        'threshold': results["SPE"]["threshold"],
                        },
-                'Hotelling': {'t2': t2, 
-                              'filtered_t2': CovidFr.ewma_filter(data=t2, alpha=alpha), 
-                              'threshold': chi2.ppf(q, df=pcdim)
+                'Hotelling': {'t2': results["Hotelling"]["t2"], 
+                              'filtered_t2': results["Hotelling"]["smoothed_t2"], 
+                              'threshold': results["Hotelling"]["threshold"],
                              },
                }
+
+    @staticmethod
+    def regionadd(data):
+        regions = {
+            "01": {"Guadeloupe": ['971']},
+            "02": {"Martinique": ['972']},
+            "03": {"Guyane": ['973']},
+            "04": {"La Réunion": ['974']},
+            "06": {"Mayotte": ['976']},
+            "11": {"Île-de-France": ['92', '93', '94', '78', '75', '77', '91', '95']},
+            "24": {"Centre-Val de Loire": ['41', '28', '45', '18', '37', '36']},
+            "27": {"Bourgogne-Franche-Comté": ['71', '58', '25', '70', '90', '39', '89', '21']},
+            "28": {"Normandie": ['76', '61', '50', '14', '27']},
+            "32": {"Hauts-de-France": ['60', '59', '02', '62', '80']},
+            "44": {"Grand Est": ['54', '68', '51', '55', '08', '57', '67', '52', '88', '10']},
+            "52": {"Pays de la Loire": ['49', '85', '44', '72', '53']},
+            "53": {"Bretagne": ['29', '56', '35', '22']},
+            "75": {"Nouvelle-Aquitaine": ['24', '17', '33', '64', '16', '40', '19', '79', '87', '86', '47', '23']},
+            "76": {"Occitanie": ['34', '48', '46', '82', '11', '12', '32', '09', '81', '65', '30', '66', '31']}, 
+            "84": {"Auvergne-Rhône-Alpes": ['38', '01', '42', '74', '73', '43', '03', '26', '69', '07', '63', '15']},
+            "93": {"Provence-Alpes-Côte d'Azur": ['13', '05', '06', '84', '04', '83']},
+            "94": {"Corse": ['2B', '2A']},
+            }
+        for key, value in regions.items():
+            for k, v in value.items():
+                data.loc[data.loc[data['dep'].isin(v)].index, 'reg'] = key
+        data = data[["reg", "dep", "sexe", "jour", "hosp", "rea", "rad", "dc"]]
+        return data
  
     @staticmethod
     def dailycases(data=None, pca=False):
@@ -959,3 +774,49 @@ class CovidFr():
             # add offsets
             out += offset * scaling_factors[1:]
         return out
+
+    @staticmethod
+    def pca(data, pcdim, q=0.975, normalize=False, start_d_learn='2020-05-14', end_d_learn='2020-06-14', alpha=1-0.4):
+        """
+        Get PCA on data
+        """
+        dataindex = data.index
+        learn_data = data[(data.index>=start_d_learn) & (data.index<=end_d_learn)].copy()
+        
+        if normalize is True:
+            std = StandardScaler().fit(learn_data)
+            learn_data = std.transform(learn_data)
+            data = std.transform(data)
+        
+        u, s, vh = np.linalg.svd(np.dot(np.transpose(learn_data), learn_data)/(learn_data.shape[0]), full_matrices=True)
+        
+        u_tilde = u[:, pcdim:]
+        c_tilde = np.dot(u_tilde, np.transpose(u_tilde))
+        spe = np.diag(np.dot(np.dot(data, c_tilde), np.transpose(data)))
+        
+        numgspe = np.trace(np.square(np.diag(s[pcdim:])))
+        dengspe = np.trace(np.diag(s[pcdim:]))
+        gspe = numgspe/dengspe
+
+        numhspe = np.square(dengspe)
+        denhspe = numgspe
+        hspe = numhspe/denhspe
+
+        u_hat = u[:, :pcdim]
+        c_hat_Hotelling =np.dot(np.dot(u_hat, inv(np.diag(s[:pcdim]))), np.transpose(u_hat))     
+        t2 = np.diag(np.dot(np.dot(data, c_hat_Hotelling), np.transpose(data)))
+
+        return {"SPE": {
+                        "dataindex": dataindex,
+                        "spe": spe,
+                        "smoothed_spe": CovidFr.ewma_filter(data=spe, alpha=alpha),
+                        "threshold": gspe*chi2.ppf(q, df=hspe),
+                        },
+                "Hotelling": {
+                        "dataindex": dataindex,
+                        "t2": t2,
+                        "smoothed_t2": CovidFr.ewma_filter(data=t2, alpha=alpha),
+                        "threshold": chi2.ppf(q, df=pcdim),
+                        },
+                "eigenvalues": s,
+                }

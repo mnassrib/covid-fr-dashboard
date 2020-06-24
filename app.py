@@ -7,24 +7,22 @@ app = Flask(__name__)
 covfr = CovidFr()
 covid = covfr.load_df()
 oddaj_dep = covfr.overall_departments_data_as_json()
-daily = covfr.dailycases(data=covid, pca=True)
-
 oddaj_reg = covfr.overall_regions_data_as_json()
 
-graphJSONquadratics = covfr.acp(data=daily, pcdim=2, normalize=True)
+daily = covfr.dailycases(data=covid, pca=True)
+
+graphJSONquadratics = covfr.pca_charts(data=daily, pcdim=2, normalize=True)
 
 @app.route('/')
 def graphs():
     """Country page of the app"""
-
     charts_and_parameters = covfr.charts()
     
     return render_template(
         "graphs.html", 
         graphJSON = charts_and_parameters["graphJSON"],  
         counters = charts_and_parameters["counters"],
-        label = "France",
-        department = '',
+        label = covfr.request_label(department=None, region=None),
 
         overall_departments_data_dc = oddaj_dep["overall_departments_dc_as_json"]['data_dc'],
         overall_departments_quantiles_dc = oddaj_dep["overall_departments_dc_as_json"]['quantiles_dc'],
@@ -62,13 +60,8 @@ def graphs():
 @app.route('/departement/<string:department>')
 def view_department(department):
     """Department page of the app"""
-
-    charts_and_parameters = covfr.charts(data=None, department=department)
-
-    label = covfr.department_label(department)
-    if label == "":
-        label = "France"
-        department = ""
+    charts_and_parameters = covfr.charts(data=None, department=department, region=None)
+    label = covfr.request_label(department=department, region=None)
 
     return render_template(
         "graphs.html", 
@@ -113,13 +106,8 @@ def view_department(department):
 @app.route('/region/<string:region>')
 def view_region(region):
     """Region page of the app"""
-
-    charts_and_parameters = covfr.charts_reg(data=None, region=region)
-
-    label = covfr.region_label(region)
-    if label == "":
-        label = "France"
-        region = ""
+    charts_and_parameters = covfr.charts(data=None, department=None, region=region)
+    label = covfr.request_label(department=None, region=region)
 
     return render_template(
         "graphs.html", 
