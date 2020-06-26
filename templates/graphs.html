@@ -538,20 +538,86 @@
             </div>
         </div>
 
-        <div class="col-md-12">
+        <div class="col-md-12" id="global_monitoring">
             <div class="card mb-4 box-shadow">
                 <div class="card-body">
-                    <h3>Indicateur t !</h3>
+                    <h3>Suivi global de la situation épidémique</h3>
+                    <form method="POST" action="{{ url_for('global_monitoring_settings') }}">
+                        <div class="form-row align-items-center">
+                            <div class="col-auto my-1">
+                                <label class="mr-sm-2" for="inlineFormCustomSelect">pc number</label>
+                                <select name="global_parameters" class="custom-select mr-sm-2" id="inlineFormCustomSelect">
+                                    {% for pc in global_pc %}
+                                        <option value="{{ pc }}">{{ pc }}</option>
+                                    {% endfor %}
+                                </select>
+                            </div>
+
+                            <div class="col-auto my-1">
+                                <label class="mr-sm-2" for="inlineFormCustomSelect">data normalization</label>
+                                <select name="global_parameters" class="custom-select mr-sm-2" id="inlineFormCustomSelect">
+                                    {% for o in normalize %}
+                                        <option value="{{ o }}">{{ o }}</option>
+                                    {% endfor %}
+                                </select>
+                            </div>
+                            <div class="col-auto my-1">
+                              <button type="submit" class="btn btn-primary">Valider</button>
+                            </div>
+                        </div>
+                    </form> 
+                </div>
+
+                <div class="card-body">
+                    <h3>Indicateur t</h3>
                     <div id="Hotelling"> </div>
+                </div>
+
+                <div class="card-body">
+                    <h3>Indicateur s</h3>
+                    <div id="SPE"> </div>
                 </div>
             </div>
         </div>
 
-        <div class="col-md-12">
+        <div class="col-md-12" id="hosp_monitoring">
             <div class="card mb-4 box-shadow">
                 <div class="card-body">
-                    <h3>Indicateur s !</h3>
-                    <div id="SPE"> </div>
+                    <h3>Suivi de la situation épidémique en surveillant le nombre d'hospitalisations</h3>
+                    <form method="POST" action="{{ url_for('hosp_monitoring_settings') }}">
+                        <div class="form-row align-items-center">
+                            <div class="col-auto my-1">
+                                <label class="mr-sm-2" for="inlineFormCustomSelect">pc number</label>
+                                <select name="hosp_parameters" class="custom-select mr-sm-2" id="inlineFormCustomSelect">
+                                    {% for pc in pc_reg %}
+                                        <option value="{{ pc }}">{{ pc }}</option>
+                                    {% endfor %}
+                                </select>
+                            </div>
+
+                            <div class="col-auto my-1">
+                                <label class="mr-sm-2" for="inlineFormCustomSelect">data normalization</label>
+                                <select name="hosp_parameters" class="custom-select mr-sm-2" id="inlineFormCustomSelect">
+                                    {% for o in normalize %}
+                                        <option value="{{ o }}">{{ o }}</option>
+                                    {% endfor %}
+                                </select>
+                            </div>
+                            <div class="col-auto my-1">
+                              <button type="submit" class="btn btn-primary">Valider</button>
+                            </div>
+                        </div>
+                    </form> 
+                </div>
+
+                <div class="card-body">
+                    <h3>Indicateur t</h3>
+                    <div id="Hotelling_reg"> </div>
+                </div>
+
+                <div class="card-body">
+                    <h3>Indicateur s</h3>
+                    <div id="SPE_reg"> </div>
                 </div>
             </div>
         </div>
@@ -1361,6 +1427,19 @@
         for(var i in graphs) {
             Plotly.plot(
                 graphs[i].id, // the ID of the div, created above
+                graphs[i].data,
+                graphs[i].layout || {}, 
+                plotlyConfig);
+        }
+    </script>
+
+    <!-- charts pca-->
+    <script type="text/javascript">
+        var graphs = {{ graphJSONquadratics_reg["graphJSON"] | safe }};
+
+        for(var i in graphs) {
+            Plotly.plot(
+                graphs[i].id + '_reg', // the ID of the div, created above
                 graphs[i].data,
                 graphs[i].layout || {}, 
                 plotlyConfig);

@@ -31,7 +31,8 @@ class CovidFr():
         self.region_base_data.index = self.region_base_data['insee']
         self.region_base_data = self.region_base_data.sort_index()
 
-        self.last_update = CovidFr.last_updated()
+        self.last_update = ""
+        #self.last_update = CovidFr.last_updated()
 
         self.features = ["dc", "r_dc_rad", "rad", "hosp", "rea"]
    
@@ -43,6 +44,20 @@ class CovidFr():
 
         self.covid = CovidFr.regionadd(data=self.covid)
         return self.covid 
+
+    def need_update(self):
+        """Check the last update of the dataset on data.gouv.fr and tells wether we need to refresh the data or not
+        Returns:
+            True if the data need to be updated, False instead
+        """
+        with urllib.request.urlopen("https://www.data.gouv.fr/datasets/5e7e104ace2080d9162b61d8/rdf.json") as url:
+            data = json.loads(url.read().decode())
+            for dataset in data['@graph']:
+                if 'accessURL' in dataset.keys() and dataset['accessURL'] == CovidFr.synthesis_covid_url:
+                    if self.last_update == "" or self.last_update < dataset['modified']:
+                        self.last_update = dataset['modified']
+                        return True
+        return False
 
     def overall_departments_data_as_json(self, data=None):
         """
@@ -165,12 +180,6 @@ class CovidFr():
         nat_data = reg_data.copy()
         nat_data = nat_data.groupby("jour").sum()
 
-        #reg_data = reg_data \
-        #    .drop(['dep', 'jour', 'sexe'], axis=1) \
-        #    .groupby('reg') \
-        #    .max()
-
-        ###the reg data is related to dep data, the bellow added 6/21/20
         regdf = {}
         dep_data = self.covid[self.covid["sexe"]==0] \
             .drop(['reg', 'jour', 'sexe'], axis=1) \
@@ -180,7 +189,6 @@ class CovidFr():
             regdf[i]=dep_data.loc[self.covid[self.covid["reg"]==i]["dep"].unique(),:].sum()
         reg_data = pd.DataFrame.from_dict(regdf, orient='index')
         reg_data.reset_index().set_index('index').rename_axis('reg')
-        ### the above added 6/21/20
 
         reg_data = pd.concat([reg_data, self.region_base_data], axis=1)
 
@@ -318,8 +326,7 @@ class CovidFr():
                             #title="Nombre de personnes actuellement hospitalisées",
                             margin=dict(l=30, r=30, b=30, t=30),
                             )
-                ),
-            
+                ),            
             dict(
                 id="Nombre de personnes actuellement en réanimation",
                 data=[
@@ -337,8 +344,7 @@ class CovidFr():
                             #title="Nombre de personnes actuellement en réanimation ou soins intensifs",
                             margin=dict(l=30, r=30, b=30, t=30),
                             )
-                ),
-            
+                ),            
             dict(
                 id="Nombre cumulé de personnes décédées à l'hôpital",
                 data=[
@@ -357,7 +363,6 @@ class CovidFr():
                             margin=dict(l=30, r=30, b=30, t=30),
                             )
                 ),
-
             dict(
                 id="Nombre cumulé de personnes retournées à domicile",
                 data=[
@@ -379,7 +384,6 @@ class CovidFr():
                             margin=dict(l=30, r=30, b=30, t=30),
                             )
                 ),
-
             dict(
                 id="Nombre de personnes décédées par jour à l'hôpital",
                 data=[
@@ -401,7 +405,6 @@ class CovidFr():
                             legend_orientation="h",
                             )
                 ),
-
             dict(
                 id="Nombre de personnes retournées par jour à domicile",
                 data=[
@@ -495,7 +498,6 @@ class CovidFr():
                             '<b>%{text}</b><extra></extra>',
                             text = ['situation anormale' if results["SPE"]["spe"][i]>results["SPE"]["threshold"] else 'situation normale' for i in range(len(results["SPE"]["dataindex"]))],
                     ),
-
                     dict(
                         x = results["SPE"]["dataindex"],
                         y = results["SPE"]["smoothed_spe"],
@@ -510,7 +512,6 @@ class CovidFr():
                             '<b>%{text}</b><extra></extra>',
                             text = ['situation anormale' if results["SPE"]["smoothed_spe"][i]>results["SPE"]["threshold"] else 'situation normale' for i in range(len(results["SPE"]["dataindex"]))],
                     ),
-
                     dict(
                         x = results["SPE"]["dataindex"],
                         y = np.repeat(results["SPE"]["threshold"], results["SPE"]["spe"].shape[0]),
@@ -534,7 +535,6 @@ class CovidFr():
                     margin=dict(l=30, r=30, b=30, t=30),      
                 )
             ),
-
             dict(
                 id = 'Hotelling',
                 data=[
@@ -552,7 +552,6 @@ class CovidFr():
                             '<b>%{text}</b><extra></extra>',
                             text = ['situation anormale' if results["Hotelling"]["t2"][i]>results["Hotelling"]["threshold"] else 'situation normale' for i in range(len(results["Hotelling"]["dataindex"]))],
                     ),
-
                     dict(
                         x = results["Hotelling"]["dataindex"],
                         y = results["Hotelling"]["smoothed_t2"],
@@ -567,7 +566,6 @@ class CovidFr():
                             '<b>%{text}</b><extra></extra>',
                             text = ['situation anormale' if results["Hotelling"]["smoothed_t2"][i]>results["Hotelling"]["threshold"] else 'situation normale' for i in range(len(results["Hotelling"]["dataindex"]))],
                     ),
-
                     dict(
                         x = results["Hotelling"]["dataindex"],
                         y = np.repeat(results["Hotelling"]["threshold"], results["Hotelling"]["t2"].shape[0]),
@@ -591,11 +589,12 @@ class CovidFr():
                     margin=dict(l=30, r=30, b=30, t=30), 
                     annotations=[
                         go.layout.Annotation(
-                            x=max(results["Hotelling"]["dataindex"])-(max(results["Hotelling"]["dataindex"])-min(results["Hotelling"]["dataindex"]))/4,
+                            #x=max(results["Hotelling"]["dataindex"])-(max(results["Hotelling"]["dataindex"])-min(results["Hotelling"]["dataindex"]))/4,
+                            x=results["Hotelling"]["dataindex"][-10],
                             y=3*max(results["Hotelling"]["t2"])/4,
                             xref="x",
                             yref="y",
-                            text='ev: {}% ({} pcs)<br>normalized data: {}<br>learn {} to {}'.format(((np.trace(np.diag(results["eigenvalues"][:pcdim]))/np.trace(np.diag(results["eigenvalues"])))*100).round(2), pcdim, normalize, start_d_learn, end_d_learn),
+                            text='rpc: {} pc (ev: {}%)<br>normalized data: {}<br>learn {} to {}'.format(pcdim, ((np.trace(np.diag(results["eigenvalues"][:pcdim]))/np.trace(np.diag(results["eigenvalues"])))*100).round(2), normalize, start_d_learn, end_d_learn),
                             showarrow=False,
                             font=dict(
                                 family="Courier New, monospace",
@@ -629,11 +628,11 @@ class CovidFr():
                 'normalized': normalize,
                 'explained variance': ((np.trace(np.diag(results["eigenvalues"][:pcdim]))/np.trace(np.diag(results["eigenvalues"])))*100).round(2),
                 'SPE': {'spe': results["SPE"]["spe"],
-                        'filtered_spe': results["SPE"]["smoothed_spe"],
+                        'smoothed_spe': results["SPE"]["smoothed_spe"],
                         'threshold': results["SPE"]["threshold"],
                        },
                 'Hotelling': {'t2': results["Hotelling"]["t2"], 
-                              'filtered_t2': results["Hotelling"]["smoothed_t2"], 
+                              'smoothed_t2': results["Hotelling"]["smoothed_t2"], 
                               'threshold': results["Hotelling"]["threshold"],
                              },
                }
@@ -694,19 +693,9 @@ class CovidFr():
 
         if pca is True:
             cdata = cdata[['hosp', 'rea', 'rad_j', 'dc_j']]
-            cdata.rename(columns={'rad_j':'rad', 'dc_j':'dc'})
+            cdata = cdata.rename(columns={'rad_j':'rad', 'dc_j':'dc'})
             return cdata
         return cdata
-
-    @staticmethod
-    def last_updated():
-        last_update = ""
-        with urllib.request.urlopen("https://www.data.gouv.fr/datasets/5e7e104ace2080d9162b61d8/rdf.json") as url:
-            data = json.loads(url.read().decode())  
-            for dataset in data['@graph']:
-                if 'accessURL' in dataset.keys() and dataset['accessURL'] == CovidFr.synthesis_covid_url:
-                    last_update = dataset['modified']
-        return last_update
 
     @staticmethod
     def ewma_filter(data, alpha, offset=None, dtype=None, order='C', out=None):
@@ -776,7 +765,7 @@ class CovidFr():
         return out
 
     @staticmethod
-    def pca(data, pcdim, q=0.975, normalize=False, start_d_learn='2020-05-14', end_d_learn='2020-06-14', alpha=1-0.4):
+    def pca(data, pcdim, q, normalize, start_d_learn, end_d_learn, alpha):
         """
         Get PCA on data
         """
@@ -820,3 +809,24 @@ class CovidFr():
                         },
                 "eigenvalues": s,
                 }
+
+    @staticmethod
+    def regiondailycases(data, feature):
+        if feature in ["dc", "rad"]:   
+            dr = {}
+            for r in data.reg.unique():
+                regdep = []
+                for d in data[data.reg==r].dep.unique():
+                    regdep.append(CovidFr.dailycases(data=data[(data.dep == d) & (data.sexe == 0)].groupby(['jour']).sum(), pca=True))
+                cdata = reduce(lambda x, y: x.add(y, fill_value=0), regdep)
+                dr.update({"reg-"+r: cdata[feature]})
+            return pd.DataFrame.from_dict(dr)
+        elif feature in ["hosp", "rea"]:
+            data_reg = pd.DataFrame()
+            for r in data.reg.unique():
+                dep_reg = []
+                for d in data[data.reg==r].dep.unique():
+                    dep_reg.append(data[(data.sexe == 0) & (data.dep == d)][feature].reset_index(drop=True))
+                data_reg['reg-{}'.format(r)] = reduce(lambda x, y: x.add(y, fill_value=0), dep_reg)
+            data_reg["jour"] = pd.unique(data.jour)
+            return data_reg.groupby("jour").max()
