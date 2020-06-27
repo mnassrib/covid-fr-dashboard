@@ -38,7 +38,7 @@ html {
   }
   
   .scroll-to-top:focus, .scroll-to-top:hover {
-    color: white;
+    color: white; 
   }
   
   .scroll-to-top:hover {
@@ -560,5 +560,3 @@ h3 {
 .mapael .zoomOut {
     top: 50px;
 }
-
-
