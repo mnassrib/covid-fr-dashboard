@@ -7,18 +7,6 @@
 {% block content %}
 
 <div class="container" id="data">
-<!--     
-    <div class="row">
-        {% for id in ids %}
-        <div class="col-md-6">
-            <div class="card mb-6 box-shadow" >
-                <h3>{{id}}</h3>
-                <div class="chart" id="{{id}}"></div>
-            </div>
-        </div>
-        {% endfor %}
-    </div> 
--->
     <h2>
         {% if (label != 'France'): %}
             <a href="/#">France</a> &gt; 
@@ -153,294 +141,332 @@
             </div>
         </div>
 
-        <div class="col-md-6" id="death_map_reg">
+        <div class="col-md-12" id="maps">
             <div class="card mb-4 box-shadow">
                 <div class="card-body">
-                    <div class="pictos">
-                        <a class="picto-item" aria-label="Cliquez sur une région pour afficher le détail">
-                            <h3>Nombre de décès à l'hôpital par région *</h3>
-                        </a>
-                    </div>
-                    <div class="row">
-                        <div class="col-md-12">
-                            <div class="map"></div>
+                    <h3>Choix d'un critère à visualiser</h3>
+                    <form method="POST" action="{{ url_for('maps') }}">
+                        <div class="form-row align-items-center">
+                            <div class="col-auto my-1">
+                                <select name="map_select" class="custom-select mr-sm-2" id="inlineFormCustomSelect">
+                                    {% for m in mapchoice %}
+                                        <option value="{{ m }}">{{ m }}</option>
+                                    {% endfor %}
+                                </select>
+                            </div>
+                            <div class="col-auto my-1">
+                              <button type="submit" class="btn btn-primary">Valider</button>
+                            </div>
                         </div>
-                        <div class="col-md-12">
-                            <div class="card mb-4 box-shadow">
-                                <div class="card-body">
-                                    <a class="picto-item" aria-label="Sélectionnez les couleurs que vous souhaitez afficher sur la carte">
-                                        <p>Légende</p>
+                    </form> 
+                </div>
+
+                <div class="row">
+
+                    {% if (map_select == "Nombre de décès"): %}
+
+                    <div class="col-md-6" id="death_map_reg">
+                        <div class="card mb-4 box-shadow">
+                            <div class="card-body">
+                                <div class="pictos">
+                                    <a class="picto-item" aria-label="Cliquez sur une région pour afficher le détail">
+                                        <h3>Nombre de décès à l'hôpital par région *</h3>
                                     </a>
-                                    <div class="areaLegend"></div>
-                                    <p style="color:red">&#x26A0 Niveau national : {{ counters['nat_refs']['nat_dc'] }} décès *</p>
-                                    <p style="color:black"><small>(* : pour 100 000 habitants)</small></p>
+                                </div>
+                                <div class="row">
+                                    <div class="col-md-12">
+                                        <div class="map"></div>
+                                    </div>
+                                    <div class="col-md-12">
+                                        <div class="card mb-4 box-shadow">
+                                            <div class="card-body">
+                                                <a class="picto-item" aria-label="Sélectionnez les couleurs que vous souhaitez afficher sur la carte">
+                                                    <p>Légende</p>
+                                                </a>
+                                                <div class="areaLegend"></div>
+                                                <p style="color:red">&#x26A0 Niveau national : {{ counters['nat_refs']['nat_dc'] }} décès *</p>
+                                                <p style="color:black"><small>(* : pour 100 000 habitants)</small></p>
+                                            </div>
+                                        </div>
+                                    </div>
                                 </div>
                             </div>
                         </div>
                     </div>
+
+                    <div class="col-md-6" id="death_map_dep">
+                        <div class="card mb-4 box-shadow">
+                            <div class="card-body">
+                                <div class="pictos">
+                                    <a class="picto-item" aria-label="Cliquez sur un département pour afficher le détail">
+                                        <h3>Nombre de décès à l'hôpital par département *</h3>
+                                    </a>
+                                </div>
+                                <div class="row">
+                                    <div class="col-md-12">
+                                        <div class="map"></div>
+                                    </div>
+                                    <div class="col-md-12">
+                                        <div class="card mb-4 box-shadow">
+                                            <div class="card-body">
+                                                <a class="picto-item" aria-label="Sélectionnez les couleurs que vous souhaitez afficher sur la carte">
+                                                    <p>Légende</p>
+                                                </a>
+                                                <div class="areaLegend"></div>
+                                                <p style="color:red">&#x26A0 Niveau national : {{ counters['nat_refs']['nat_dc'] }} décès *</p>
+                                                <p style="color:black"><small>(* : pour 100 000 habitants)</small></p>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    {% elif (map_select == "Taux décès / (décès + guérisons)"): %}
+
+                    <div class="col-md-6" id="rate_death_map_reg">
+                        <div class="card mb-4 box-shadow">
+                            <div class="card-body">
+                                <div class="pictos">
+                                    <a class="picto-item" aria-label="Cliquez sur un département pour afficher le détail">
+                                        <h3>Taux décès / (décès + guérisons) par région</h3>
+                                    </a>
+                                </div>
+                                <div class="row">
+                                    <div class="col-md-12">
+                                        <div class="map"></div>
+                                    </div>
+                                    <div class="col-md-12">
+                                        <div class="card mb-4 box-shadow">
+                                            <div class="card-body">
+                                                <a class="picto-item" aria-label="Sélectionnez les couleurs que vous souhaitez afficher sur la carte">
+                                                    <p>Légende</p>
+                                                </a>
+                                                <div class="areaLegend"></div>
+                                                <p style="color:red">&#x26A0 Taux national : {{ counters['nat_refs']['nat_r_dc_rad'] }}</p>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="col-md-6" id="rate_death_map_dep">
+                        <div class="card mb-4 box-shadow">
+                            <div class="card-body">
+                                <div class="pictos">
+                                    <a class="picto-item" aria-label="Cliquez sur un département pour afficher le détail">
+                                        <h3>Taux décès / (décès + guérisons) par département</h3>
+                                    </a>
+                                </div>
+                                <div class="row">
+                                    <div class="col-md-12">
+                                        <div class="map"></div>
+                                    </div>
+                                    <div class="col-md-12">
+                                        <div class="card mb-4 box-shadow">
+                                            <div class="card-body">
+                                                <a class="picto-item" aria-label="Sélectionnez les couleurs que vous souhaitez afficher sur la carte">
+                                                    <p>Légende</p>
+                                                </a>
+                                                <div class="areaLegend"></div>
+                                                <p style="color:red">&#x26A0 Taux national : {{ counters['nat_refs']['nat_r_dc_rad'] }}</p>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    {% elif (map_select == "Nombre de guérisons"): %}
+
+                    <div class="col-md-6" id="rad_map_reg">
+                        <div class="card mb-4 box-shadow">
+                            <div class="card-body">
+                                <div class="pictos">
+                                    <a class="picto-item" aria-label="Cliquez sur un département pour afficher le détail">
+                                        <h3>Nombre de guérisons à l'hôpital par région *</h3>
+                                    </a>
+                                </div>
+                                <div class="row">
+                                    <div class="col-md-12">
+                                        <div class="map"></div>
+                                    </div>
+                                    <div class="col-md-12">
+                                        <div class="card mb-4 box-shadow">
+                                            <div class="card-body">
+                                                <a class="picto-item" aria-label="Sélectionnez les couleurs que vous souhaitez afficher sur la carte">
+                                                    <p>Légende</p>
+                                                </a>
+                                                <div class="areaLegend"></div>
+                                                <p style="color:green">&#x26A0 Niveau national : {{ counters['nat_refs']['nat_rad'] }} guérisons *</p>
+                                                <p style="color:black"><small>(* : pour 100 000 habitants)</small></p>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="col-md-6" id="rad_map_dep">
+                        <div class="card mb-4 box-shadow">
+                            <div class="card-body">
+                                <div class="pictos">
+                                    <a class="picto-item" aria-label="Cliquez sur un département pour afficher le détail">
+                                        <h3>Nombre de guérisons à l'hôpital par département *</h3>
+                                    </a>
+                                </div>
+                                <div class="row">
+                                    <div class="col-md-12">
+                                        <div class="map"></div>
+                                    </div>
+                                    <div class="col-md-12">
+                                        <div class="card mb-4 box-shadow">
+                                            <div class="card-body">
+                                                <a class="picto-item" aria-label="Sélectionnez les couleurs que vous souhaitez afficher sur la carte">
+                                                    <p>Légende</p>
+                                                </a>
+                                                <div class="areaLegend"></div>
+                                                <p style="color:green">&#x26A0 Niveau national : {{ counters['nat_refs']['nat_rad'] }} guérisons *</p>
+                                                <p style="color:black"><small>(* : pour 100 000 habitants)</small></p>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    {% elif (map_select == "Nombre d'hospitalisations le " + counters['last_update_fr']["day"]): %}
+
+                    <div class="col-md-6" id="hosp_map_reg">
+                        <div class="card mb-4 box-shadow">
+                            <div class="card-body">
+                                <div class="pictos">
+                                    <a class="picto-item" aria-label="Cliquez sur un département pour afficher le détail">
+                                        <h3>Nombre d'hospitalisations par région le {{ counters['last_update_fr']["day"] }} *
+                                    </a>
+                                </div>
+                                <div class="row">
+                                    <div class="col-md-12">
+                                        <div class="map"></div>
+                                    </div>
+                                    <div class="col-md-12">
+                                        <div class="card mb-4 box-shadow">
+                                            <div class="card-body">
+                                                <a class="picto-item" aria-label="Sélectionnez les couleurs que vous souhaitez afficher sur la carte">
+                                                    <p>Légende</p>
+                                                </a>
+                                                <div class="areaLegend"></div>
+                                                <p style="color:red">&#x26A0 Niveau national : {{ counters['nat_refs']['nat_hosp'] }} hospitalisations *</p>
+                                                <p style="color:black"><small>(* : pour 100 000 habitants)</small></p>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="col-md-6" id="hosp_map_dep">
+                        <div class="card mb-4 box-shadow">
+                            <div class="card-body">
+                                <div class="pictos">
+                                    <a class="picto-item" aria-label="Cliquez sur un département pour afficher le détail">
+                                        <h3>Nombre d'hospitalisations par département le {{ counters['last_update_fr']["day"] }} *
+                                    </a>
+                                </div>
+                                <div class="row">
+                                    <div class="col-md-12">
+                                        <div class="map"></div>
+                                    </div>
+                                    <div class="col-md-12">
+                                        <div class="card mb-4 box-shadow">
+                                            <div class="card-body">
+                                                <a class="picto-item" aria-label="Sélectionnez les couleurs que vous souhaitez afficher sur la carte">
+                                                    <p>Légende</p>
+                                                </a>
+                                                <div class="areaLegend"></div>
+                                                <p style="color:red">&#x26A0 Niveau national : {{ counters['nat_refs']['nat_hosp'] }} hospitalisations *</p>
+                                                <p style="color:black"><small>(* : pour 100 000 habitants)</small></p>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    {% elif (map_select == "Nombre de réanimations le " + counters['last_update_fr']["day"]): %}
+
+                    <div class="col-md-6" id="rea_map_reg">
+                        <div class="card mb-4 box-shadow">
+                            <div class="card-body">
+                                <div class="pictos">
+                                    <a class="picto-item" aria-label="Cliquez sur un département pour afficher le détail">
+                                        <h3>Nombre de réanimations par région le {{ counters['last_update_fr']["day"] }} *
+                                    </a>
+                                </div>
+                                <div class="row">
+                                    <div class="col-md-12">
+                                        <div class="map"></div>
+                                    </div>
+                                    <div class="col-md-12">
+                                        <div class="card mb-4 box-shadow">
+                                            <div class="card-body">
+                                                <a class="picto-item" aria-label="Sélectionnez les couleurs que vous souhaitez afficher sur la carte">
+                                                    <p>Légende</p>
+                                                </a>
+                                                <div class="areaLegend"></div>
+                                                <p style="color:red">&#x26A0 Niveau national : {{ counters['nat_refs']['nat_rea'] }} réanimations *</p>
+                                                <p style="color:black"><small>(* : pour 100 000 habitants)</small></p>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="col-md-6" id="rea_map_dep">
+                        <div class="card mb-4 box-shadow">
+                            <div class="card-body">
+                                <div class="pictos">
+                                    <a class="picto-item" aria-label="Cliquez sur un département pour afficher le détail">
+                                        <h3>Nombre de réanimations par département le {{ counters['last_update_fr']["day"] }} *
+                                    </a>
+                                </div>
+                                <div class="row">
+                                    <div class="col-md-12">
+                                        <div class="map"></div>
+                                    </div>
+                                    <div class="col-md-12">
+                                        <div class="card mb-4 box-shadow">
+                                            <div class="card-body">
+                                                <a class="picto-item" aria-label="Sélectionnez les couleurs que vous souhaitez afficher sur la carte">
+                                                    <p>Légende</p>
+                                                </a>
+                                                <div class="areaLegend"></div>
+                                                <p style="color:red">&#x26A0 Niveau national : {{ counters['nat_refs']['nat_rea'] }} réanimations *</p>
+                                                <p style="color:black"><small>(* : pour 100 000 habitants)</small></p>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    {% endif %}
+
                 </div>
             </div>
         </div>
 
-        <div class="col-md-6" id="death_map_dep">
-            <div class="card mb-4 box-shadow">
-                <div class="card-body">
-                    <div class="pictos">
-                        <a class="picto-item" aria-label="Cliquez sur un département pour afficher le détail">
-                            <h3>Nombre de décès à l'hôpital par département *</h3>
-                        </a>
-                    </div>
-                    <div class="row">
-                        <div class="col-md-12">
-                            <div class="map"></div>
-                        </div>
-                        <div class="col-md-12">
-                            <div class="card mb-4 box-shadow">
-                                <div class="card-body">
-                                    <a class="picto-item" aria-label="Sélectionnez les couleurs que vous souhaitez afficher sur la carte">
-                                        <p>Légende</p>
-                                    </a>
-                                    <div class="areaLegend"></div>
-                                    <p style="color:red">&#x26A0 Niveau national : {{ counters['nat_refs']['nat_dc'] }} décès *</p>
-                                    <p style="color:black"><small>(* : pour 100 000 habitants)</small></p>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
-
-        <div class="col-md-6" id="rate_death_map_reg">
-            <div class="card mb-4 box-shadow">
-                <div class="card-body">
-                    <div class="pictos">
-                        <a class="picto-item" aria-label="Cliquez sur un département pour afficher le détail">
-                            <h3>Taux décès / (décès + guérisons) par région</h3>
-                        </a>
-                    </div>
-                    <div class="row">
-                        <div class="col-md-12">
-                            <div class="map"></div>
-                        </div>
-                        <div class="col-md-12">
-                            <div class="card mb-4 box-shadow">
-                                <div class="card-body">
-                                    <a class="picto-item" aria-label="Sélectionnez les couleurs que vous souhaitez afficher sur la carte">
-                                        <p>Légende</p>
-                                    </a>
-                                    <div class="areaLegend"></div>
-                                    <p style="color:red">&#x26A0 Taux national : {{ counters['nat_refs']['nat_r_dc_rad'] }}</p>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
-
-        <div class="col-md-6" id="rate_death_map_dep">
-            <div class="card mb-4 box-shadow">
-                <div class="card-body">
-                    <div class="pictos">
-                        <a class="picto-item" aria-label="Cliquez sur un département pour afficher le détail">
-                            <h3>Taux décès / (décès + guérisons) par département</h3>
-                        </a>
-                    </div>
-                    <div class="row">
-                        <div class="col-md-12">
-                            <div class="map"></div>
-                        </div>
-                        <div class="col-md-12">
-                            <div class="card mb-4 box-shadow">
-                                <div class="card-body">
-                                    <a class="picto-item" aria-label="Sélectionnez les couleurs que vous souhaitez afficher sur la carte">
-                                        <p>Légende</p>
-                                    </a>
-                                    <div class="areaLegend"></div>
-                                    <p style="color:red">&#x26A0 Taux national : {{ counters['nat_refs']['nat_r_dc_rad'] }}</p>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
-
-        <div class="col-md-6" id="rad_map_reg">
-            <div class="card mb-4 box-shadow">
-                <div class="card-body">
-                    <div class="pictos">
-                        <a class="picto-item" aria-label="Cliquez sur un département pour afficher le détail">
-                            <h3>Nombre de guérisons à l'hôpital par région *</h3>
-                        </a>
-                    </div>
-                    <div class="row">
-                        <div class="col-md-12">
-                            <div class="map"></div>
-                        </div>
-                        <div class="col-md-12">
-                            <div class="card mb-4 box-shadow">
-                                <div class="card-body">
-                                    <a class="picto-item" aria-label="Sélectionnez les couleurs que vous souhaitez afficher sur la carte">
-                                        <p>Légende</p>
-                                    </a>
-                                    <div class="areaLegend"></div>
-                                    <p style="color:green">&#x26A0 Niveau national : {{ counters['nat_refs']['nat_rad'] }} guérisons *</p>
-                                    <p style="color:black"><small>(* : pour 100 000 habitants)</small></p>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
-
-        <div class="col-md-6" id="rad_map_dep">
-            <div class="card mb-4 box-shadow">
-                <div class="card-body">
-                    <div class="pictos">
-                        <a class="picto-item" aria-label="Cliquez sur un département pour afficher le détail">
-                            <h3>Nombre de guérisons à l'hôpital par département *</h3>
-                        </a>
-                    </div>
-                    <div class="row">
-                        <div class="col-md-12">
-                            <div class="map"></div>
-                        </div>
-                        <div class="col-md-12">
-                            <div class="card mb-4 box-shadow">
-                                <div class="card-body">
-                                    <a class="picto-item" aria-label="Sélectionnez les couleurs que vous souhaitez afficher sur la carte">
-                                        <p>Légende</p>
-                                    </a>
-                                    <div class="areaLegend"></div>
-                                    <p style="color:green">&#x26A0 Niveau national : {{ counters['nat_refs']['nat_rad'] }} guérisons *</p>
-                                    <p style="color:black"><small>(* : pour 100 000 habitants)</small></p>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
-
-        <div class="col-md-6" id="hosp_map_reg">
-            <div class="card mb-4 box-shadow">
-                <div class="card-body">
-                    <div class="pictos">
-                        <a class="picto-item" aria-label="Cliquez sur un département pour afficher le détail">
-                            <h3>Nombre d'hospitalisations par région le {{ counters['last_update_fr']["day"] }} *
-                        </a>
-                    </div>
-                    <div class="row">
-                        <div class="col-md-12">
-                            <div class="map"></div>
-                        </div>
-                        <div class="col-md-12">
-                            <div class="card mb-4 box-shadow">
-                                <div class="card-body">
-                                    <a class="picto-item" aria-label="Sélectionnez les couleurs que vous souhaitez afficher sur la carte">
-                                        <p>Légende</p>
-                                    </a>
-                                    <div class="areaLegend"></div>
-                                    <p style="color:red">&#x26A0 Niveau national : {{ counters['nat_refs']['nat_hosp'] }} hospitalisations *</p>
-                                    <p style="color:black"><small>(* : pour 100 000 habitants)</small></p>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
-
-        <div class="col-md-6" id="hosp_map_dep">
-            <div class="card mb-4 box-shadow">
-                <div class="card-body">
-                    <div class="pictos">
-                        <a class="picto-item" aria-label="Cliquez sur un département pour afficher le détail">
-                            <h3>Nombre d'hospitalisations par département le {{ counters['last_update_fr']["day"] }} *
-                        </a>
-                    </div>
-                    <div class="row">
-                        <div class="col-md-12">
-                            <div class="map"></div>
-                        </div>
-                        <div class="col-md-12">
-                            <div class="card mb-4 box-shadow">
-                                <div class="card-body">
-                                    <a class="picto-item" aria-label="Sélectionnez les couleurs que vous souhaitez afficher sur la carte">
-                                        <p>Légende</p>
-                                    </a>
-                                    <div class="areaLegend"></div>
-                                    <p style="color:red">&#x26A0 Niveau national : {{ counters['nat_refs']['nat_hosp'] }} hospitalisations *</p>
-                                    <p style="color:black"><small>(* : pour 100 000 habitants)</small></p>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
-
-        <div class="col-md-6" id="rea_map_reg">
-            <div class="card mb-4 box-shadow">
-                <div class="card-body">
-                    <div class="pictos">
-                        <a class="picto-item" aria-label="Cliquez sur un département pour afficher le détail">
-                            <h3>Nombre de réanimations par région le {{ counters['last_update_fr']["day"] }} *
-                        </a>
-                    </div>
-                    <div class="row">
-                        <div class="col-md-12">
-                            <div class="map"></div>
-                        </div>
-                        <div class="col-md-12">
-                            <div class="card mb-4 box-shadow">
-                                <div class="card-body">
-                                    <a class="picto-item" aria-label="Sélectionnez les couleurs que vous souhaitez afficher sur la carte">
-                                        <p>Légende</p>
-                                    </a>
-                                    <div class="areaLegend"></div>
-                                    <p style="color:red">&#x26A0 Niveau national : {{ counters['nat_refs']['nat_rea'] }} réanimations *</p>
-                                    <p style="color:black"><small>(* : pour 100 000 habitants)</small></p>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
-
-        <div class="col-md-6" id="rea_map_dep">
-            <div class="card mb-4 box-shadow">
-                <div class="card-body">
-                    <div class="pictos">
-                        <a class="picto-item" aria-label="Cliquez sur un département pour afficher le détail">
-                            <h3>Nombre de réanimations par département le {{ counters['last_update_fr']["day"] }} *
-                        </a>
-                    </div>
-                    <div class="row">
-                        <div class="col-md-12">
-                            <div class="map"></div>
-                        </div>
-                        <div class="col-md-12">
-                            <div class="card mb-4 box-shadow">
-                                <div class="card-body">
-                                    <a class="picto-item" aria-label="Sélectionnez les couleurs que vous souhaitez afficher sur la carte">
-                                        <p>Légende</p>
-                                    </a>
-                                    <div class="areaLegend"></div>
-                                    <p style="color:red">&#x26A0 Niveau national : {{ counters['nat_refs']['nat_rea'] }} réanimations *</p>
-                                    <p style="color:black"><small>(* : pour 100 000 habitants)</small></p>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
-    
         <div class="col-md-6">
             <div class="card mb-4 box-shadow">
                 <div class="card-body">
@@ -541,7 +567,7 @@
         <div class="col-md-12" id="global_monitoring">
             <div class="card mb-4 box-shadow">
                 <div class="card-body">
-                    <h3>Suivi global de la situation épidémique</h3>
+                    <h3>Suivi global de la situation épidémique en France</h3>
                     <form method="POST" action="{{ url_for('global_monitoring_settings') }}">
                         <div class="form-row align-items-center">
                             <div class="col-auto my-1">
@@ -556,8 +582,8 @@
                             <div class="col-auto my-1">
                                 <label class="mr-sm-2" for="inlineFormCustomSelect">data normalization</label>
                                 <select name="global_parameters" class="custom-select mr-sm-2" id="inlineFormCustomSelect">
-                                    {% for o in normalize %}
-                                        <option value="{{ o }}">{{ o }}</option>
+                                    {% for b in normalize %}
+                                        <option value="{{ b }}">{{ b }}</option>
                                     {% endfor %}
                                 </select>
                             </div>
@@ -568,14 +594,22 @@
                     </form> 
                 </div>
 
-                <div class="card-body">
-                    <h3>Indicateur t</h3>
-                    <div id="Hotelling"> </div>
+                <div class="col-md-12" id="hosp_map_reg">
+                    <div class="card mb-4 box-shadow">
+                        <div class="card-body">
+                            <h3>Indicateur t</h3>
+                            <div id="Hotelling"> </div>
+                        </div>
+                    </div>
                 </div>
 
-                <div class="card-body">
-                    <h3>Indicateur s</h3>
-                    <div id="SPE"> </div>
+                <div class="col-md-12" id="hosp_map_reg">
+                    <div class="card mb-4 box-shadow">
+                        <div class="card-body">
+                            <h3>Indicateur s</h3>
+                            <div id="SPE"> </div>
+                        </div>
+                    </div>
                 </div>
             </div>
         </div>
@@ -583,7 +617,7 @@
         <div class="col-md-12" id="hosp_monitoring">
             <div class="card mb-4 box-shadow">
                 <div class="card-body">
-                    <h3>Suivi de la situation épidémique en surveillant le nombre d'hospitalisations</h3>
+                    <h3>Suivi de la situation épidémique en France en surveillant le nombre d'hospitalisations</h3>
                     <form method="POST" action="{{ url_for('hosp_monitoring_settings') }}">
                         <div class="form-row align-items-center">
                             <div class="col-auto my-1">
@@ -598,8 +632,8 @@
                             <div class="col-auto my-1">
                                 <label class="mr-sm-2" for="inlineFormCustomSelect">data normalization</label>
                                 <select name="hosp_parameters" class="custom-select mr-sm-2" id="inlineFormCustomSelect">
-                                    {% for o in normalize %}
-                                        <option value="{{ o }}">{{ o }}</option>
+                                    {% for b in normalize %}
+                                        <option value="{{ b }}">{{ b }}</option>
                                     {% endfor %}
                                 </select>
                             </div>
@@ -610,18 +644,25 @@
                     </form> 
                 </div>
 
-                <div class="card-body">
-                    <h3>Indicateur t</h3>
-                    <div id="Hotelling_reg"> </div>
+                <div class="col-md-12" id="hosp_map_reg">
+                    <div class="card mb-4 box-shadow">
+                        <div class="card-body">
+                            <h3>Indicateur t</h3>
+                            <div id="Hotelling_reg"> </div>
+                        </div>
+                    </div>
                 </div>
 
-                <div class="card-body">
-                    <h3>Indicateur s</h3>
-                    <div id="SPE_reg"> </div>
+                <div class="col-md-12" id="hosp_map_reg">
+                    <div class="card mb-4 box-shadow">
+                        <div class="card-body">
+                            <h3>Indicateur s</h3>
+                            <div id="SPE_reg"> </div>
+                        </div>
+                    </div>
                 </div>
             </div>
         </div>
-
     </div>
 </div>
 
