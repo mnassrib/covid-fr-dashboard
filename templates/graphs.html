@@ -78,7 +78,7 @@
                                 </div>
                                 <div class="row">
                                     <div class="col-md-6">
-                                        <a href="#patients_en_réanimation ">
+                                        <a href="#patients_en_réanimation">
                                             <div class="key-indicator-resuscitation">
                                                 <span class="key-value">{{ counters['current_rea'] }}</span>
                                                 {% if (counters['current_rea']>1): %}
@@ -145,20 +145,22 @@
             <div class="card mb-4 box-shadow">
                 <div class="card-body">
                     <h3>Choix d'un critère à visualiser</h3>
-                    <form method="POST" action="{{ url_for('maps') }}">
-                        <div class="form-row align-items-center">
-                            <div class="col-auto my-1">
-                                <select name="map_select" class="custom-select mr-sm-2" id="inlineFormCustomSelect">
-                                    {% for m in mapchoice %}
-                                        <option value="{{ m }}">{{ m }}</option>
-                                    {% endfor %}
-                                </select>
+                    <div class="bootstrap-iso">
+                        <form method="POST" action="{{ url_for('maps') }}">
+                            <div class="form-row align-items-center">
+                                <div class="col-auto my-1">
+                                    <select name="map_select" class="custom-select mr-sm-2">
+                                        {% for m in mapchoice %}
+                                            <option value="{{ m }}">{{ m }}</option>
+                                        {% endfor %}
+                                    </select>
+                                </div>
+                                <div class="col-auto my-1">
+                                  <button type="submit" class="btn btn-primary">Valider</button>
+                                </div>
                             </div>
-                            <div class="col-auto my-1">
-                              <button type="submit" class="btn btn-primary">Valider</button>
-                            </div>
-                        </div>
-                    </form> 
+                        </form> 
+                    </div>
                 </div>
 
                 <div class="row">
@@ -488,12 +490,12 @@
                 <div class="card-body">
                     {% if (label != 'France'): %}
                         {% if (label['type'] == 'department'): %}
-                            <h3 id="patients_en_réanimation ">Nombre de patients actuellement en réanimation au {{ label['prefix'] }} {{ label['name'] }} (FR-{{ department }})</h3>
+                            <h3 id="patients_en_réanimation">Nombre de patients actuellement en réanimation au {{ label['prefix'] }} {{ label['name'] }} (FR-{{ department }})</h3>
                         {% else : %}
-                            <h3 id="patients_en_réanimation ">Nombre de patients actuellement en réanimation à la {{ label['prefix'] }} {{ label['name'] }} (FR-{{ region }})</h3>
+                            <h3 id="patients_en_réanimation">Nombre de patients actuellement en réanimation à la {{ label['prefix'] }} {{ label['name'] }} (FR-{{ region }})</h3>
                         {% endif %}
                     {% else : %}
-                        <h3 id="patients_en_réanimation ">Nombre de patients actuellement en réanimation en {{ label }}</h3>
+                        <h3 id="patients_en_réanimation">Nombre de patients actuellement en réanimation en {{ label }}</h3>
                     {% endif %}
                     <div id="Nombre de personnes actuellement en réanimation"></div>
                 </div>
@@ -564,15 +566,17 @@
             </div>
         </div>
 
+
         <div class="col-md-12" id="global_monitoring">
             <div class="card mb-4 box-shadow">
                 <div class="card-body">
                     <h3>Suivi global de la situation épidémique en France</h3>
+                    <div class="bootstrap-iso">
                     <form method="POST" action="{{ url_for('global_monitoring_settings') }}">
                         <div class="form-row align-items-center">
                             <div class="col-auto my-1">
                                 <label class="mr-sm-2" for="inlineFormCustomSelect">pc number</label>
-                                <select name="global_parameters" class="custom-select mr-sm-2" id="inlineFormCustomSelect">
+                                <select name="global_parameters" class="custom-select mr-sm-2">
                                     {% for pc in global_pc %}
                                         <option value="{{ pc }}">{{ pc }}</option>
                                     {% endfor %}
@@ -581,20 +585,27 @@
 
                             <div class="col-auto my-1">
                                 <label class="mr-sm-2" for="inlineFormCustomSelect">data normalization</label>
-                                <select name="global_parameters" class="custom-select mr-sm-2" id="inlineFormCustomSelect">
+                                <select name="global_parameters" class="custom-select mr-sm-2">
                                     {% for b in normalize %}
                                         <option value="{{ b }}">{{ b }}</option>
                                     {% endfor %}
                                 </select>
                             </div>
+
+                            <div class="col-auto my-1">
+                                <label class="control-label" for="date">date range learn</label>
+                                <input type="text" class="form-control" data-filter-type="date-range" data-toggle="daterangepicker" name="global_parameters" value="">
+                            </div>
+
                             <div class="col-auto my-1">
                               <button type="submit" class="btn btn-primary">Valider</button>
                             </div>
                         </div>
                     </form> 
+                    </div>
                 </div>
 
-                <div class="col-md-12" id="hosp_map_reg">
+                <div class="col-md-12" id="">
                     <div class="card mb-4 box-shadow">
                         <div class="card-body">
                             <h3>Indicateur t</h3>
@@ -603,7 +614,7 @@
                     </div>
                 </div>
 
-                <div class="col-md-12" id="hosp_map_reg">
+                <div class="col-md-12" id="">
                     <div class="card mb-4 box-shadow">
                         <div class="card-body">
                             <h3>Indicateur s</h3>
@@ -613,6 +624,7 @@
                 </div>
             </div>
         </div>
+
 
         <div class="col-md-12" id="hosp_monitoring">
             <div class="card mb-4 box-shadow">
@@ -624,7 +636,7 @@
                             <div class="form-row align-items-center">
                                 <div class="col-auto my-1">
                                     <label class="mr-sm-2" for="inlineFormCustomSelect">pc number</label>
-                                    <select name="hosp_parameters" class="custom-select mr-sm-2" id="inlineFormCustomSelect">
+                                    <select name="hosp_parameters" class="custom-select mr-sm-2">
                                         {% for pc in pc_reg %}
                                             <option value="{{ pc }}">{{ pc }}</option>
                                         {% endfor %}
@@ -633,7 +645,7 @@
 
                                 <div class="col-auto my-1">
                                     <label class="mr-sm-2" for="inlineFormCustomSelect">data normalization</label>
-                                    <select name="hosp_parameters" class="custom-select mr-sm-2" id="inlineFormCustomSelect">
+                                    <select name="hosp_parameters" class="custom-select mr-sm-2">
                                         {% for b in normalize %}
                                             <option value="{{ b }}">{{ b }}</option>
                                         {% endfor %}
@@ -641,23 +653,8 @@
                                 </div>
 
                                 <div class="col-auto my-1">
-                                    <label class="control-label" for="date">model start date</label>
-                                    <div class="input-group">
-                                        <div class="input-group-addon">
-                                        <i class="fa fa-calendar"></i>
-                                    </div>
-                                    <input name="hosp_parameters" class="form-control" id="date" placeholder="DD/MM/YYYY" type="text" data-date-start-date="28/03/2020" data-date-end-date="-5d">
-                                    </div>
-                                </div>
-
-                                <div class="col-auto my-1">
-                                    <label class="control-label" for="date">model end date</label>
-                                    <div class="input-group">
-                                        <div class="input-group-addon">
-                                        <i class="fa fa-calendar"></i>
-                                    </div>
-                                    <input name="hosp_parameters" class="form-control" id="date" placeholder="DD/MM/YYYY" type="text" data-date-start-date="28/03/2020" data-date-end-date="-5d">
-                                    </div>
+                                    <label class="control-label" for="date">date range learn</label>
+                                    <input type="text" class="form-control" data-filter-type="date-range" data-toggle="daterangepicker" name="hosp_parameters" value="">
                                 </div>
 
                                 <div class="col-auto my-1">
@@ -668,7 +665,7 @@
                     </div>
                 </div>
 
-                <div class="col-md-12" id="hosp_map_reg">
+                <div class="col-md-12" id="">
                     <div class="card mb-4 box-shadow">
                         <div class="card-body">
                             <h3>Indicateur t</h3>
@@ -677,7 +674,7 @@
                     </div>
                 </div>
 
-                <div class="col-md-12" id="hosp_map_reg">
+                <div class="col-md-12" id="">
                     <div class="card mb-4 box-shadow">
                         <div class="card-body">
                             <h3>Indicateur s</h3>
@@ -695,20 +692,50 @@
 
 {% block js %}
 
-
-    <script>
-    $(document).ready(function(){
-      var date_input=$('input[name="hosp_parameters"]'); //our date input has the name "date"
-      var container=$('.bootstrap-iso form').length>0 ? $('.bootstrap-iso form').parent() : "body";
-      var options={
-        format: 'dd/mm/yyyy',
-        container: container,
-        todayHighlight: true,
-        autoclose: true,
-      };
-      date_input.datepicker(options);
-    })
+     
+    <script type="text/javascript">
+    $(function() {
+        $('input[name="global_parameters"]').daterangepicker({
+            "showDropdowns": true,
+            "autoApply":true,
+            "startDate": "28/03/2020",
+            "endDate": "26/06/2020",
+            "minDate": "28/03/2020",
+            "maxDate": "26/06/2020",
+            "showCustomRangeLabel":true,
+            autoUpdateInput: true,
+            locale: {   format: 'DD/MM/YYYY', 
+                        daysOfWeek: ['Dim', 'Lun', 'Mar', 'Mer', 'Jeu', 'Ven', 'Sam'],
+                        monthNames: ['Janv', 'Févr', 'Mars', 'Avr', 'Mai', 'Juin',
+                            'Juill', 'Août', 'Sept', 'Oct', 'Nov', 'Déc'],
+                        firstDay: 1},
+        });
+    });
     </script>
+
+
+    <script type="text/javascript">
+    $(function() {
+        $('input[name="hosp_parameters"]').daterangepicker({
+            "showDropdowns": true,
+            "autoApply":true,
+            "startDate": "28/03/2020",
+            "endDate": "26/06/2020",
+            "minDate": "28/03/2020",
+            "maxDate": "26/06/2020",
+            "showCustomRangeLabel":true,
+            autoUpdateInput: true,
+            locale: {   format: 'DD/MM/YYYY', 
+                        daysOfWeek: ['Dim', 'Lun', 'Mar', 'Mer', 'Jeu', 'Ven', 'Sam'],
+                        monthNames: ['Janv', 'Févr', 'Mars', 'Avr', 'Mai', 'Juin',
+                            'Juill', 'Août', 'Sept', 'Oct', 'Nov', 'Déc'],
+                        firstDay: 1},
+        });
+    });
+    </script>
+
+
+
 
     <!-- death map regions-->
     <script type="text/javascript">

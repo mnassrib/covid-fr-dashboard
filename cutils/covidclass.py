@@ -594,7 +594,7 @@ class CovidFr():
                             y=3*max(results["Hotelling"]["t2"])/4,
                             xref="x",
                             yref="y",
-                            text='rpc: {} pc (ev: {}%)<br>normalized data: {}<br>learn {} to {}'.format(pcdim, ((np.trace(np.diag(results["eigenvalues"][:pcdim]))/np.trace(np.diag(results["eigenvalues"])))*100).round(2), normalize, start_d_learn, end_d_learn),
+                            text='rpc: {} pc (ev: {}%)<br>normalized data: {}<br>learn {} to {}'.format(pcdim, ((np.trace(np.diag(results["eigenvalues"][:pcdim]))/np.trace(np.diag(results["eigenvalues"])))*100).round(2), normalize, datetime.strptime(start_d_learn, "%Y-%m-%d").strftime("%d/%m/%Y"), datetime.strptime(end_d_learn, "%Y-%m-%d").strftime("%d/%m/%Y") ),
                             showarrow=False,
                             font=dict(
                                 family="Courier New, monospace",
