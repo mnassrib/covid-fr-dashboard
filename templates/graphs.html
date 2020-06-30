@@ -593,7 +593,7 @@
                             </div>
 
                             <div class="col-auto my-1">
-                                <label class="control-label" for="date">date range learn</label>
+                                <label class="control-label" for="date">date range (model learning)</label>
                                 <input type="text" class="form-control" data-filter-type="date-range" data-toggle="daterangepicker" name="global_parameters" value="">
                             </div>
 
@@ -625,7 +625,6 @@
             </div>
         </div>
 
-
         <div class="col-md-12" id="hosp_monitoring">
             <div class="card mb-4 box-shadow">
                 <div class="card-body">
@@ -653,7 +652,7 @@
                                 </div>
 
                                 <div class="col-auto my-1">
-                                    <label class="control-label" for="date">date range learn</label>
+                                    <label class="control-label" for="date">date range (model learning)</label>
                                     <input type="text" class="form-control" data-filter-type="date-range" data-toggle="daterangepicker" name="hosp_parameters" value="">
                                 </div>
 
@@ -692,16 +691,15 @@
 
 {% block js %}
 
-     
     <script type="text/javascript">
     $(function() {
         $('input[name="global_parameters"]').daterangepicker({
             "showDropdowns": true,
             "autoApply":true,
-            "startDate": "28/03/2020",
-            "endDate": "26/06/2020",
+            "startDate": "14/05/2020",
+            "endDate": "14/06/2020",
             "minDate": "28/03/2020",
-            "maxDate": "26/06/2020",
+            "maxDate": {{ last_day|safe }},
             "showCustomRangeLabel":true,
             autoUpdateInput: true,
             locale: {   format: 'DD/MM/YYYY', 
@@ -712,17 +710,16 @@
         });
     });
     </script>
-
 
     <script type="text/javascript">
     $(function() {
         $('input[name="hosp_parameters"]').daterangepicker({
             "showDropdowns": true,
             "autoApply":true,
-            "startDate": "28/03/2020",
-            "endDate": "26/06/2020",
+            "startDate": "14/05/2020",
+            "endDate": "14/06/2020",
             "minDate": "28/03/2020",
-            "maxDate": "26/06/2020",
+            "maxDate": {{ last_day|safe }},   
             "showCustomRangeLabel":true,
             autoUpdateInput: true,
             locale: {   format: 'DD/MM/YYYY', 
@@ -733,9 +730,6 @@
         });
     });
     </script>
-
-
-
 
     <!-- death map regions-->
     <script type="text/javascript">

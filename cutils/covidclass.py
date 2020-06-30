@@ -32,7 +32,6 @@ class CovidFr():
         self.region_base_data = self.region_base_data.sort_index()
 
         self.last_update = ""
-        #self.last_update = CovidFr.last_updated()
 
         self.features = ["dc", "r_dc_rad", "rad", "hosp", "rea"]
    
@@ -41,6 +40,7 @@ class CovidFr():
         Loading dataframes
         """
         self.covid = pd.read_csv(CovidFr.synthesis_covid_url, sep=';').dropna()
+        self.covid['jour'] = pd.to_datetime(self.covid['jour'])
 
         self.covid = CovidFr.regionadd(data=self.covid)
         return self.covid 
@@ -594,7 +594,7 @@ class CovidFr():
                             y=3*max(results["Hotelling"]["t2"])/4,
                             xref="x",
                             yref="y",
-                            text='rpc: {} pc (ev: {}%)<br>normalized data: {}<br>learn {} to {}'.format(pcdim, ((np.trace(np.diag(results["eigenvalues"][:pcdim]))/np.trace(np.diag(results["eigenvalues"])))*100).round(2), normalize, datetime.strptime(start_d_learn, "%Y-%m-%d").strftime("%d/%m/%Y"), datetime.strptime(end_d_learn, "%Y-%m-%d").strftime("%d/%m/%Y") ),
+                            text='rpc: {} pc (ev: {}%)<br>normalized data: {}<br>learn {} to {}'.format(pcdim, ((np.trace(np.diag(results["eigenvalues"][:pcdim]))/np.trace(np.diag(results["eigenvalues"])))*100).round(2), normalize, datetime.strptime(start_d_learn, "%Y-%m-%d").strftime("%d/%m/%Y"), datetime.strptime(end_d_learn, "%Y-%m-%d").strftime("%d/%m/%Y")),
                             showarrow=False,
                             font=dict(
                                 family="Courier New, monospace",

@@ -1,5 +1,6 @@
 from flask import Flask, render_template, request, redirect, url_for
 from datetime import datetime
+import json
 
 from cutils.covidclass import CovidFr
 
@@ -26,6 +27,7 @@ def graphs():
         "graphs.html", 
         graphJSON = charts_and_parameters["graphJSON"],  
         counters = charts_and_parameters["counters"],
+        last_day = json.dumps(charts_and_parameters["counters"]["last_update_fr"]["day"]),
         label = covfr.request_label(department=None, region=None),
 
         overall_departments_data_dc = oddaj_dep["overall_departments_dc_as_json"]['data_dc'],
@@ -76,6 +78,7 @@ def maps():
         "graphs.html", 
         graphJSON = charts_and_parameters["graphJSON"],  
         counters = charts_and_parameters["counters"],
+        last_day = json.dumps(charts_and_parameters["counters"]["last_update_fr"]["day"]),
         label = covfr.request_label(department=None, region=None),
 
         overall_departments_data_dc = oddaj_dep["overall_departments_dc_as_json"]['data_dc'],
@@ -126,6 +129,7 @@ def global_monitoring_settings():
         "graphs.html", 
         graphJSON = charts_and_parameters["graphJSON"],  
         counters = charts_and_parameters["counters"],
+        last_day = json.dumps(charts_and_parameters["counters"]["last_update_fr"]["day"]),
         label = covfr.request_label(department=None, region=None),
 
         overall_departments_data_dc = oddaj_dep["overall_departments_dc_as_json"]['data_dc'],
@@ -176,6 +180,7 @@ def hosp_monitoring_settings():
         "graphs.html", 
         graphJSON = charts_and_parameters["graphJSON"],  
         counters = charts_and_parameters["counters"],
+        last_day = json.dumps(charts_and_parameters["counters"]["last_update_fr"]["day"]),
         label = covfr.request_label(department=None, region=None),
 
         overall_departments_data_dc = oddaj_dep["overall_departments_dc_as_json"]['data_dc'],
@@ -224,6 +229,7 @@ def view_department(department):
         "graphs.html", 
         graphJSON = charts_and_parameters["graphJSON"], 
         counters = charts_and_parameters["counters"],
+        last_day = json.dumps(charts_and_parameters["counters"]["last_update_fr"]["day"]),
         label = label,
         department = department,
 
@@ -273,6 +279,7 @@ def view_region(region):
         "graphs.html", 
         graphJSON = charts_and_parameters["graphJSON"], 
         counters = charts_and_parameters["counters"],
+        last_day = json.dumps(charts_and_parameters["counters"]["last_update_fr"]["day"]),
         label = label,
         region = region,
 
