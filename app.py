@@ -8,15 +8,13 @@ app = Flask(__name__)
 
 covfr = CovidFr()
 if covfr.need_update():
-    covfr.load_df()
+    covid = covfr.load_df()
+    oddaj_dep = covfr.overall_departments_data_as_json()
+    oddaj_reg = covfr.overall_regions_data_as_json()
 
-covid = covfr.load_df()
-oddaj_dep = covfr.overall_departments_data_as_json()
-oddaj_reg = covfr.overall_regions_data_as_json()
-
-daily = covfr.dailycases(data=covid, pca=True)
-#daily_reg = covfr.regiondailycases(data=covid, feature='dc')
-daily_reg = covfr.regiondailycases(data=covid, feature='hosp')
+    daily = covfr.dailycases(data=covid, pca=True)
+    #daily_reg = covfr.regiondailycases(data=covid, feature='dc')
+    daily_reg = covfr.regiondailycases(data=covid, feature='hosp')
 
 @app.route('/', methods=['GET', 'POST'])
 def graphs():
