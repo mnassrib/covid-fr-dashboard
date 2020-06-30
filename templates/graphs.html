@@ -572,44 +572,57 @@
                 <div class="card-body">
                     <h3>Suivi global de la situation épidémique en France</h3>
                     <div class="bootstrap-iso">
-                    <form method="POST" action="{{ url_for('global_monitoring_settings') }}">
-                        <div class="form-row align-items-center">
-                            <div class="col-auto my-1">
-                                <label class="mr-sm-2" for="inlineFormCustomSelect">pc number</label>
-                                <select name="global_parameters" class="custom-select mr-sm-2">
-                                    {% for pc in global_pc %}
-                                        {% if (pc == 2): %}
-                                            <option selected="selected">2</option> 
-                                        {% else %}
-                                            <option value="{{ pc }}">{{ pc }}</option>
-                                        {% endif %}
-                                    {% endfor %}
-                                </select>
-                            </div>
+                        <form method="POST" action="{{ url_for('global_monitoring_settings') }}">
+                            <div class="form-row align-items-center">
+                                <div class="col-auto my-1">
+                                    <label class="mr-sm-2" for="inlineFormCustomSelect">pc number</label>
+                                    <select name="global_parameters" class="custom-select mr-sm-2">
+                                        {% for pc in global_pc %}
+                                            {% if (pc == 2): %}
+                                                <option selected="selected">2</option> 
+                                            {% else %}
+                                                <option value="{{ pc }}">{{ pc }}</option>
+                                            {% endif %}
+                                        {% endfor %}
+                                    </select>
+                                </div>
 
-                            <div class="col-auto my-1">
-                                <label class="mr-sm-2" for="inlineFormCustomSelect">data normalization</label>
-                                <select name="global_parameters" class="custom-select mr-sm-2">
-                                    {% for b in normalize %}
-                                        {% if (b == True): %}
-                                            <option selected="selected">True</option> 
-                                        {% else %}
-                                            <option value="{{ b }}">{{ b }}</option>
-                                        {% endif %}
-                                    {% endfor %}
-                                </select>
-                            </div>
+                                <div class="col-auto my-1">
+                                    <label class="mr-sm-2" for="inlineFormCustomSelect">data normalization</label>
+                                    <select name="global_parameters" class="custom-select mr-sm-2">
+                                        {% for b in normalize %}
+                                            {% if (b == True): %}
+                                                <option selected="selected">True</option> 
+                                            {% else %}
+                                                <option value="{{ b }}">{{ b }}</option>
+                                            {% endif %}
+                                        {% endfor %}
+                                    </select>
+                                </div>
 
-                            <div class="col-auto my-1">
-                                <label class="control-label" for="date">date range (model learning)</label>
-                                <input type="text" class="form-control" data-filter-type="date-range" data-toggle="daterangepicker" name="global_parameters" value="">
-                            </div>
+                                <div class="col-auto my-1">
+                                    <label class="control-label" for="date">date range (model learning)</label>
+                                    <input type="text" class="form-control" data-filter-type="date-range" data-toggle="daterangepicker" name="global_parameters" value="">
+                                </div>
 
-                            <div class="col-auto my-1">
-                              <button type="submit" class="btn btn-primary">Valider</button>
+                                <div class="col-auto my-1">
+                                    <label class="control-label" for="date">smoothing filter</label>
+                                    <select name="global_parameters" class="custom-select mr-sm-2">
+                                        {% for s in alpha_smooth %}
+                                            {% if (s == 0.6): %}
+                                                <option selected="selected">0.6</option> 
+                                            {% else %}
+                                                <option value="{{ s }}">{{ s }}</option>
+                                            {% endif %}
+                                        {% endfor %}
+                                    </select>
+                                </div>
+
+                                <div class="col-auto my-1">
+                                  <button type="submit" class="btn btn-primary">Valider</button>
+                                </div>
                             </div>
-                        </div>
-                    </form> 
+                        </form> 
                     </div>
                 </div>
 
@@ -637,7 +650,6 @@
             <div class="card mb-4 box-shadow">
                 <div class="card-body">
                     <h3>Suivi de la situation épidémique en France en surveillant le nombre d'hospitalisations</h3>
-
                     <div class="bootstrap-iso">
                         <form method="POST" action="{{ url_for('hosp_monitoring_settings') }}">
                             <div class="form-row align-items-center">
@@ -670,6 +682,19 @@
                                 <div class="col-auto my-1">
                                     <label class="control-label" for="date">date range (model learning)</label>
                                     <input type="text" class="form-control" data-filter-type="date-range" data-toggle="daterangepicker" name="hosp_parameters" value="">
+                                </div>
+
+                                <div class="col-auto my-1">
+                                    <label class="control-label" for="date">smoothing filter</label>
+                                    <select name="hosp_parameters" class="custom-select mr-sm-2">
+                                        {% for s in alpha_smooth %}
+                                            {% if (s == 0.6): %}
+                                                <option selected="selected">0.6</option> 
+                                            {% else %}
+                                                <option value="{{ s }}">{{ s }}</option>
+                                            {% endif %}
+                                        {% endfor %}
+                                    </select>
                                 </div>
 
                                 <div class="col-auto my-1">
