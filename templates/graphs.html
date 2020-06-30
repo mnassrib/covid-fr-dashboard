@@ -578,7 +578,11 @@
                                 <label class="mr-sm-2" for="inlineFormCustomSelect">pc number</label>
                                 <select name="global_parameters" class="custom-select mr-sm-2">
                                     {% for pc in global_pc %}
-                                        <option value="{{ pc }}">{{ pc }}</option>
+                                        {% if (pc == 2): %}
+                                            <option selected="selected">2</option> 
+                                        {% else %}
+                                            <option value="{{ pc }}">{{ pc }}</option>
+                                        {% endif %}
                                     {% endfor %}
                                 </select>
                             </div>
@@ -587,7 +591,11 @@
                                 <label class="mr-sm-2" for="inlineFormCustomSelect">data normalization</label>
                                 <select name="global_parameters" class="custom-select mr-sm-2">
                                     {% for b in normalize %}
-                                        <option value="{{ b }}">{{ b }}</option>
+                                        {% if (b == True): %}
+                                            <option selected="selected">True</option> 
+                                        {% else %}
+                                            <option value="{{ b }}">{{ b }}</option>
+                                        {% endif %}
                                     {% endfor %}
                                 </select>
                             </div>
@@ -637,7 +645,11 @@
                                     <label class="mr-sm-2" for="inlineFormCustomSelect">pc number</label>
                                     <select name="hosp_parameters" class="custom-select mr-sm-2">
                                         {% for pc in pc_reg %}
-                                            <option value="{{ pc }}">{{ pc }}</option>
+                                            {% if (pc == 2): %}
+                                                <option selected="selected">2</option> 
+                                            {% else %}
+                                                <option value="{{ pc }}">{{ pc }}</option>
+                                            {% endif %}
                                         {% endfor %}
                                     </select>
                                 </div>
@@ -646,7 +658,11 @@
                                     <label class="mr-sm-2" for="inlineFormCustomSelect">data normalization</label>
                                     <select name="hosp_parameters" class="custom-select mr-sm-2">
                                         {% for b in normalize %}
-                                            <option value="{{ b }}">{{ b }}</option>
+                                            {% if (b == False): %}
+                                                <option selected="selected">False</option> 
+                                            {% else %}
+                                                <option value="{{ b }}">{{ b }}</option>
+                                            {% endif %}
                                         {% endfor %}
                                     </select>
                                 </div>
