@@ -141,7 +141,7 @@
             </div>
         </div>
 
-        <div class="col-md-12" id="maps">
+        <div class="col-md-12" id="map_view">
             <div class="card mb-4 box-shadow">
                 <div class="card-body">
                     <h3>Choix d'un critère à visualiser</h3>
@@ -156,7 +156,7 @@
                                     </select>
                                 </div>
                                 <div class="col-auto my-1">
-                                  <button type="submit" class="btn btn-primary">Valider</button>
+                                  <button type="submit" formaction="{{ url_for('maps') }}#map_view" class="btn btn-primary">Valider</button>
                                 </div>
                             </div>
                         </form> 
@@ -566,7 +566,7 @@
             </div>
         </div>
 
-        <div class="col-md-12" id="global_monitoring">
+        <div class="col-md-12" id="global_monitoring_results">
             <div class="card mb-4 box-shadow">
                 <div class="card-body">
                     <h3>Suivi global de la situation épidémique en France</h3>
@@ -618,7 +618,7 @@
                                 </div>
 
                                 <div class="col-auto my-1">
-                                  <button type="submit" class="btn btn-primary">Valider</button>
+                                  <button type="submit" formaction="{{ url_for('global_monitoring_settings') }}#global_monitoring_results" class="btn btn-primary">Valider</button>
                                 </div>
                             </div>
                         </form> 
@@ -645,7 +645,7 @@
             </div>
         </div>
 
-        <div class="col-md-12" id="hosp_monitoring">
+        <div class="col-md-12" id="hosp_monitoring_results">
             <div class="card mb-4 box-shadow">
                 <div class="card-body">
                     <h3>Suivi de la situation épidémique en France en surveillant le nombre d'hospitalisations</h3>
@@ -697,7 +697,7 @@
                                 </div>
 
                                 <div class="col-auto my-1">
-                                    <button type="submit" class="btn btn-primary">Valider</button>
+                                    <button type="submit" formaction="{{ url_for('hosp_monitoring_settings') }}#hosp_monitoring_results" class="btn btn-primary">Valider</button>
                                 </div>
                             </div>
                         </form> 
