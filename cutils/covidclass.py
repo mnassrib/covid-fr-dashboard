@@ -590,7 +590,7 @@ class CovidFr():
                     annotations=[
                         go.layout.Annotation(
                             #x=max(results["Hotelling"]["dataindex"])-(max(results["Hotelling"]["dataindex"])-min(results["Hotelling"]["dataindex"]))/4,
-                            x=results["Hotelling"]["dataindex"][-10],
+                            x=results["Hotelling"]["dataindex"][-20],
                             y=3*max(results["Hotelling"]["t2"])/4,
                             xref="x",
                             yref="y",
