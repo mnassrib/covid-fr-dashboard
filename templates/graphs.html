@@ -23,7 +23,7 @@
         {% endif %} 
     </h2>
     <div class="row">
-        <div class="col-md-12">		
+        <div class="col-md-12">     
             <div class="card mb-4 box-shadow">
                 <div class="card-body">
                     {% if (label != 'France'): %}
@@ -41,28 +41,30 @@
                                 <div class="card-body">
                                     <div class="row">
                                         <div class="col-md-12">
-                                            <a href="#patients_décédés_quotidiennement">
-                                                <div class="key-indicator-death">
+                                            <div class="col-auto my-1 align-self-end">
+                                                <button onclick="window.location.href='#patients_décédés_quotidiennement';" class="btn btn-primary" style="background-color: #730800;border: 1px solid #730800;width:100%;margin-top:30px;text-align:center;
+                                                    padding:10px;border-radius:8px;">
                                                     <span class="key-value">{{ counters['last_dc'] }}</span>
                                                     {% if (counters['last_dc']>1): %}
                                                         <br /> nouveaux décès
                                                     {% else: %}
                                                         <br /> nouveau décès
                                                     {% endif %}
-                                                </div>
-                                            </a>
+                                                </button>
+                                            </div>
                                         </div>
                                         <div class="col-md-12">
-                                            <a href="#total_patients_décédés">
-                                                <div class="key-indicator-death">
+                                            <div class="col-auto my-1 align-self-end">
+                                                <button onclick="window.location.href='#total_patients_décédés';" class="btn btn-primary" style="background-color: #730800;border: 1px solid #730800;width:100%;margin-top:30px;text-align:center;
+                                                    padding:10px;border-radius:8px;">
                                                     <span class="key-value">{{ counters['all_dc'] }}</span>
                                                     {% if (counters['all_dc']>1): %}
                                                         <br /> décès au total
                                                     {% else: %}
                                                         <br /> décès au total
                                                     {% endif %}
-                                                </div>
-                                            </a>
+                                                </button>
+                                            </div>
                                         </div>
                                     </div>
                                 </div>
@@ -78,28 +80,30 @@
                                 </div>
                                 <div class="row">
                                     <div class="col-md-6">
-                                        <a href="#patients_en_réanimation">
-                                            <div class="key-indicator-resuscitation">
+                                        <div class="col-auto my-1 align-self-end">
+                                            <button onclick="window.location.href='#patients_en_réanimation';" class="btn btn-primary" style="background-color: #ff0000;border: 1px solid #ff0000;width:100%;margin-top:30px;text-align:center;
+                                                padding:10px;border-radius:8px;">
                                                 <span class="key-value">{{ counters['current_rea'] }}</span>
                                                 {% if (counters['current_rea']>1): %}
                                                     <br /> réanimations
                                                 {% else: %}
                                                     <br /> réanimation
                                                 {% endif %}
-                                            </div>
-                                        <a/>
+                                            </button>
+                                        </div>
                                     </div>
                                     <div class="col-md-6">
-                                        <a href="#patients_en_hospitalisation">
-                                            <div class="key-indicator-hospitalized">
+                                        <div class="col-auto my-1 align-self-end">
+                                            <button onclick="window.location.href='#patients_en_hospitalisation';" class="btn btn-primary" style="background-color: #ff7f00;border: 1px solid #ff7f00;width:100%;margin-top:30px;text-align:center;
+                                                padding:10px;border-radius:8px;">
                                                 <span class="key-value">{{ counters['current_hosp'] }}</span>
                                                 {% if (counters['current_hosp']>1): %}
                                                     <br /> hospitalisations
                                                 {% else: %}
                                                     <br /> hospitalisation
                                                 {% endif %}
-                                            </div>
-                                        <a/>
+                                            </button>
+                                        </div>
                                     </div>
                                 </div>
                             </div>
@@ -109,33 +113,35 @@
                                 <div class="card-body">
                                     <div class="row">
                                         <div class="col-md-12">
-                                            <a href="#patients_guéris_quotidiennement">
-                                                <div class="key-indicator-healed">
+                                            <div class="col-auto my-1 align-self-end">
+                                                <button onclick="window.location.href='#patients_guéris_quotidiennement';" class="btn btn-primary" style="background-color: #57d53b;border: 1px solid #57d53b;width:100%;margin-top:30px;text-align:center;
+                                                    padding:10px;border-radius:8px;">
                                                     <span class="key-value">{{ counters['last_rad'] }}</span>
                                                     {% if (counters['last_rad']>1): %}
                                                         <br /> nouvelles guérisons
                                                     {% else: %}
                                                         <br /> nouvelle guérison
                                                     {% endif %}
-                                                </div>
-                                            </a>
+                                                </button>
+                                            </div>
                                         </div>
                                         <div class="col-md-12">
-                                            <a href="#total_patients_guéris">
-                                                <div class="key-indicator-healed">
+                                            <div class="col-auto my-1 align-self-end">
+                                                <button onclick="window.location.href='#total_patients_guéris';" class="btn btn-primary" style="background-color: #57d53b;border: 1px solid #57d53b;width:100%;margin-top:30px;text-align:center;
+                                                    padding:10px;border-radius:8px;">
                                                     <span class="key-value">{{ counters['all_rad'] }}</span>
                                                     {% if (counters['all_rad']>1): %}
                                                         <br /> guérisons au total
                                                     {% else: %}
                                                         <br /> guérison au total
                                                     {% endif %}
-                                                </div>
-                                            </a>
+                                                </button>
+                                            </div>
                                         </div>
                                     </div>
                                 </div>
                             </div>
-                        </div>	
+                        </div>  
                     </div>
                 </div>
             </div>
@@ -722,8 +728,7 @@
                     </div>
                 </div>
             </div>
-        </div>
-
+        </div> 
     </div>
 </div>
 
