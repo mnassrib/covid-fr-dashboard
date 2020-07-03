@@ -21,15 +21,30 @@
 
         <style type="text/css">
         .scroll-pre {
-          height: 65px;
-          width: 100%;
-          background-color: inherit;
+            height: 65px;
+            width: 100%;
+            background-color: inherit;
         }
-        div#titlebox {
-          padding-left: 100px; 
+        .ombres_multiples_diffuses {
+            box-shadow: inset 0 0 0.3em #fff, 0 0 0.3em #ddd;
+            padding: 2px 3px;
+            background-image: linear-gradient(180deg, #fff, #ddd 40%, #ccc);
         }
+        * {
+                margin: 0;
+        }
+        html, body {
+                height: 100%;
+        }
+        .wrapper {
+                min-height: 100%;
+                margin: 0 auto -155px; /* the bottom margin is the negative value of the footer's height */
+        }
+        footer, .push {
+                height: 155px; /* '.push' must be the same height as 'footer' */
+        }
+        /*
         </style>
-
     </head>
 
     <!-- <body> -->
@@ -82,11 +97,9 @@
         </header>
     
         <main role="main" class="container">
-
             <div class="scroll-pre"></div>
-
             <p class="ombres_multiples_diffuses" align="center">    
-                Les données utilsées dans ce site concernent l'épidemie de COVID-19 en France. Elles sont fournies par <a href="https://www.data.gouv.fr/fr/datasets/donnees-hospitalieres-relatives-a-lepidemie-de-covid-19/" target="_blank"><B>Santé publique France</B></a> et collectées auprès du milieu uniquement hospitalier sans compter les EHPAD et EMS. 
+                Les données analysées dans ce site concernent l'épidémie de COVID-19 en France. Elles sont fournies et mises à jour régulièrement par <a href="https://www.data.gouv.fr/fr/datasets/donnees-hospitalieres-relatives-a-lepidemie-de-covid-19/" target="_blank"><B>Santé publique France</B></a>. Ces données sont collectées auprès du milieu uniquement hospitalier sans compter celles issues des EHPAD et EMS.
             </p>
 
             {% block content %}
@@ -95,14 +108,17 @@
 
         </main>
 
-        <footer class="footer">
+        <footer class="sticky-footer" style="width: 100%; height: 60px; line-height: 60px; background-color: #f5f5f5;">
             <div class="container">
-                <p class="float-left">
-                    &copy; <script>document.write(new Date().getFullYear())</script> <a href="https://www.linkedin.com/in/baligh-mnassri/?locale=en_US" target="_blank">Baligh Mnassri</a>
-                </p>
-                <p class="float-right">
+                <!-- Copyright -->
+                <div class="footer-copyright text-left">
+                    &copy; <script>document.write(new Date().getFullYear())</script><a href="https://www.linkedin.com/in/baligh-mnassri/?locale=en_US"> Baligh Mnassri</a>
+
+                    <p class="float-right">
                     <small> <a href="#">Dernière mise à jour des données : {{ counters['last_update_fr']["day_hour"] }}</a></small>
                 </p>
+                </div>
+                <!-- Copyright -->
             </div>
         </footer>
 
@@ -143,7 +159,6 @@
                 return t;
             }(document, "script", "twitter-wjs"));
         </script>
-
 
         <!-- Isolated Version of Bootstrap, not needed if your site already uses Bootstrap -->
         <link rel="stylesheet" href="https://formden.com/static/cdn/bootstrap-iso.css" />

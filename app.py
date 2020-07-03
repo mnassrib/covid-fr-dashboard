@@ -7,11 +7,6 @@ from cutils.covidclass import CovidFr
 
 app = Flask(__name__)
 
-@app.route('/test')
-def test():
-    return render_template("test.html")
-
-
 covfr = CovidFr()
 if covfr.need_update():
     covid = covfr.load_df()
