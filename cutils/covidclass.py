@@ -590,15 +590,15 @@ class CovidFr():
                     annotations=[
                         go.layout.Annotation(
                             #x=max(results["Hotelling"]["dataindex"])-(max(results["Hotelling"]["dataindex"])-min(results["Hotelling"]["dataindex"]))/4,
-                            x=results["Hotelling"]["dataindex"][-20],
+                            x=results["Hotelling"]["dataindex"][-30],
                             y=3*max(results["Hotelling"]["t2"])/4,
                             xref="x",
                             yref="y",
-                            text='rpc: {} pc (ev: {}%)<br>normalized data: {}<br>learn {} to {}<br>smoothing filter: {}'.format(pcdim, ((np.trace(np.diag(results["eigenvalues"][:pcdim]))/np.trace(np.diag(results["eigenvalues"])))*100).round(2), normalize, datetime.strptime(start_d_learn, "%Y-%m-%d").strftime("%d/%m/%Y"), datetime.strptime(end_d_learn, "%Y-%m-%d").strftime("%d/%m/%Y"), alpha),
+                            text='rpc: {} pc (ev: {}%)<br>normalized data: {}<br>model building: {} <br>to {}<br>smoothing filter: {}'.format(pcdim, ((np.trace(np.diag(results["eigenvalues"][:pcdim]))/np.trace(np.diag(results["eigenvalues"])))*100).round(2), normalize, datetime.strptime(start_d_learn, "%Y-%m-%d").strftime("%d/%m/%Y"), datetime.strptime(end_d_learn, "%Y-%m-%d").strftime("%d/%m/%Y"), alpha),
                             showarrow=False,
                             font=dict(
                                 family="Courier New, monospace",
-                                size=11,
+                                size=10,
                                 color="#ffffff",
                                 ),
                             align="left",
@@ -607,7 +607,7 @@ class CovidFr():
                             arrowwidth=2,
                             arrowcolor="#636363",
                             ax=20,
-                            ay=-30,
+                            ay=30,
                             bordercolor="#c7c7c7",
                             borderwidth=2,
                             borderpad=4,
