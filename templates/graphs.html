@@ -41,8 +41,7 @@
                                 <div class="card-body">
                                     <div class="row">
                                         <div class="col-md-12">
-                                            <button onclick="window.location.href='#patients_décédés_quotidiennement';" class="btn btn-primary" style="background-color: #730800;border: 1px solid #730800;width:100%;margin-top:30px;text-align:center;
-                                                padding:10px;border-radius:8px;">
+                                            <button onclick="window.location.href='#total_patients_décédés';" class="key-indicator-death">
                                                 <span class="key-value">{{ counters['last_dc'] }}</span>
                                                 {% if (counters['last_dc']>1): %}
                                                     <br /> nouveaux décès
@@ -52,8 +51,7 @@
                                             </button>
                                         </div>
                                         <div class="col-md-12">  
-                                            <button onclick="window.location.href='#total_patients_décédés';" class="btn btn-primary" style="background-color: #730800;border: 1px solid #730800;width:100%;margin-top:30px;text-align:center;
-                                                padding:10px;border-radius:8px;">
+                                            <button onclick="window.location.href='#total_patients_décédés';" class="key-indicator-death">
                                                 <span class="key-value">{{ counters['all_dc'] }}</span>
                                                 {% if (counters['all_dc']>1): %}
                                                     <br /> décès au total
@@ -76,8 +74,7 @@
                                 </div>
                                 <div class="row">
                                     <div class="col-md-6">
-                                        <button onclick="window.location.href='#patients_en_réanimation';" class="btn btn-primary" style="background-color: #ff0000;border: 1px solid #ff0000;width:100%;margin-top:30px;text-align:center;
-                                            padding:10px;border-radius:8px;">
+                                        <button onclick="window.location.href='#patients_en_réanimation';" class="key-indicator-resuscitation">
                                             <span class="key-value">{{ counters['current_rea'] }}</span>
                                             {% if (counters['current_rea']>1): %}
                                                 <br /> réanimations
@@ -87,8 +84,7 @@
                                         </button>
                                     </div>
                                     <div class="col-md-6">
-                                        <button onclick="window.location.href='#patients_en_hospitalisation';" class="btn btn-primary" style="background-color: #ff7f00;border: 1px solid #ff7f00;width:100%;margin-top:30px;text-align:center;
-                                            padding:10px;border-radius:8px;">
+                                        <button onclick="window.location.href='#patients_en_hospitalisation';" class="key-indicator-hospitalized">
                                             <span class="key-value">{{ counters['current_hosp'] }}</span>
                                             {% if (counters['current_hosp']>1): %}
                                                 <br /> hospitalisations
@@ -105,8 +101,7 @@
                                 <div class="card-body">
                                     <div class="row">
                                         <div class="col-md-12">
-                                            <button onclick="window.location.href='#patients_guéris_quotidiennement';" class="btn btn-primary" style="background-color: #57d53b;border: 1px solid #57d53b;width:100%;margin-top:30px;text-align:center;
-                                                padding:10px;border-radius:8px;">
+                                            <button onclick="window.location.href='#patients_guéris_quotidiennement';" class="key-indicator-healed">
                                                 <span class="key-value">{{ counters['last_rad'] }}</span>
                                                 {% if (counters['last_rad']>1): %}
                                                     <br /> nouvelles guérisons
@@ -116,8 +111,7 @@
                                             </button>
                                         </div>
                                         <div class="col-md-12">
-                                            <button onclick="window.location.href='#total_patients_guéris';" class="btn btn-primary" style="background-color: #57d53b;border: 1px solid #57d53b;width:100%;margin-top:30px;text-align:center;
-                                                padding:10px;border-radius:8px;">
+                                            <button onclick="window.location.href='#total_patients_guéris';" class="key-indicator-healed">
                                                 <span class="key-value">{{ counters['all_rad'] }}</span>
                                                 {% if (counters['all_rad']>1): %}
                                                     <br /> guérisons au total
@@ -180,7 +174,7 @@
                                                     <p>Légende</p>
                                                 </a>
                                                 <div class="areaLegend"></div>
-                                                <p style="color:red">&#x26A0 Niveau national : {{ counters['nat_refs']['nat_dc'] }} décès *</p>
+                                                <p style="color:red">&#x26A0; Niveau national : {{ counters['nat_refs']['nat_dc'] }} décès *</p>
                                                 <p style="color:black"><small>(* : pour 100 000 habitants)</small></p>
                                             </div>
                                         </div>
@@ -209,7 +203,7 @@
                                                     <p>Légende</p>
                                                 </a>
                                                 <div class="areaLegend"></div>
-                                                <p style="color:red">&#x26A0 Niveau national : {{ counters['nat_refs']['nat_dc'] }} décès *</p>
+                                                <p style="color:red">&#x26A0; Niveau national : {{ counters['nat_refs']['nat_dc'] }} décès *</p>
                                                 <p style="color:black"><small>(* : pour 100 000 habitants)</small></p>
                                             </div>
                                         </div>
@@ -240,7 +234,7 @@
                                                     <p>Légende</p>
                                                 </a>
                                                 <div class="areaLegend"></div>
-                                                <p style="color:red">&#x26A0 Taux national : {{ counters['nat_refs']['nat_r_dc_rad'] }}</p>
+                                                <p style="color:red">&#x26A0; Taux national : {{ counters['nat_refs']['nat_r_dc_rad'] }}</p>
                                             </div>
                                         </div>
                                     </div>
@@ -268,7 +262,7 @@
                                                     <p>Légende</p>
                                                 </a>
                                                 <div class="areaLegend"></div>
-                                                <p style="color:red">&#x26A0 Taux national : {{ counters['nat_refs']['nat_r_dc_rad'] }}</p>
+                                                <p style="color:red">&#x26A0; Taux national : {{ counters['nat_refs']['nat_r_dc_rad'] }}</p>
                                             </div>
                                         </div>
                                     </div>
@@ -298,7 +292,7 @@
                                                     <p>Légende</p>
                                                 </a>
                                                 <div class="areaLegend"></div>
-                                                <p style="color:green">&#x26A0 Niveau national : {{ counters['nat_refs']['nat_rad'] }} guérisons *</p>
+                                                <p style="color:green">&#x26A0; Niveau national : {{ counters['nat_refs']['nat_rad'] }} guérisons *</p>
                                                 <p style="color:black"><small>(* : pour 100 000 habitants)</small></p>
                                             </div>
                                         </div>
@@ -327,7 +321,7 @@
                                                     <p>Légende</p>
                                                 </a>
                                                 <div class="areaLegend"></div>
-                                                <p style="color:green">&#x26A0 Niveau national : {{ counters['nat_refs']['nat_rad'] }} guérisons *</p>
+                                                <p style="color:green">&#x26A0; Niveau national : {{ counters['nat_refs']['nat_rad'] }} guérisons *</p>
                                                 <p style="color:black"><small>(* : pour 100 000 habitants)</small></p>
                                             </div>
                                         </div>
@@ -358,7 +352,7 @@
                                                     <p>Légende</p>
                                                 </a>
                                                 <div class="areaLegend"></div>
-                                                <p style="color:red">&#x26A0 Niveau national : {{ counters['nat_refs']['nat_hosp'] }} hospitalisations *</p>
+                                                <p style="color:red">&#x26A0; Niveau national : {{ counters['nat_refs']['nat_hosp'] }} hospitalisations *</p>
                                                 <p style="color:black"><small>(* : pour 100 000 habitants)</small></p>
                                             </div>
                                         </div>
@@ -387,7 +381,7 @@
                                                     <p>Légende</p>
                                                 </a>
                                                 <div class="areaLegend"></div>
-                                                <p style="color:red">&#x26A0 Niveau national : {{ counters['nat_refs']['nat_hosp'] }} hospitalisations *</p>
+                                                <p style="color:red">&#x26A0; Niveau national : {{ counters['nat_refs']['nat_hosp'] }} hospitalisations *</p>
                                                 <p style="color:black"><small>(* : pour 100 000 habitants)</small></p>
                                             </div>
                                         </div>
@@ -418,7 +412,7 @@
                                                     <p>Légende</p>
                                                 </a>
                                                 <div class="areaLegend"></div>
-                                                <p style="color:red">&#x26A0 Niveau national : {{ counters['nat_refs']['nat_rea'] }} réanimations *</p>
+                                                <p style="color:red">&#x26A0; Niveau national : {{ counters['nat_refs']['nat_rea'] }} réanimations *</p>
                                                 <p style="color:black"><small>(* : pour 100 000 habitants)</small></p>
                                             </div>
                                         </div>
@@ -447,7 +441,7 @@
                                                     <p>Légende</p>
                                                 </a>
                                                 <div class="areaLegend"></div>
-                                                <p style="color:red">&#x26A0 Niveau national : {{ counters['nat_refs']['nat_rea'] }} réanimations *</p>
+                                                <p style="color:red">&#x26A0; Niveau national : {{ counters['nat_refs']['nat_rea'] }} réanimations *</p>
                                                 <p style="color:black"><small>(* : pour 100 000 habitants)</small></p>
                                             </div>
                                         </div>
@@ -721,6 +715,7 @@
 </div>
 
 {% endblock %}
+
 
 {% block js %}
 
@@ -1271,7 +1266,7 @@
                     zoom: {
                         enabled: true,
                         maxLevel: 10
-                    },	
+                    },  
                     "defaultArea": {
                         "attrs": {
                             "fill": "#f4f4e8",
@@ -1288,7 +1283,7 @@
                                 "fill": "#000",
                             }
                         }
-                    }	
+                    }   
                 },
                 "legend": {
                     "area": {
@@ -1365,7 +1360,7 @@
                                 "fill": "#000",
                             }
                         }
-                    }	
+                    }   
                 },
                 "legend": {
                     "area": {
@@ -1424,7 +1419,7 @@
                     zoom: {
                         enabled: true,
                         maxLevel: 10
-                    },		
+                    },      
                     "defaultArea": {
                         "attrs": {
                             "fill": "#f4f4e8",
@@ -1441,8 +1436,8 @@
                                 "fill": "#000",
                             }
                         }
-                    }	
-                },			
+                    }   
+                },          
                 "legend": {
                     "area": {
                         "marginBottom": 20,
@@ -1504,7 +1499,7 @@
                     zoom: {
                         enabled: true,
                         maxLevel: 10
-                    },					
+                    },                  
                     "defaultArea": {
                         "attrs": {
                             "fill": "#f4f4e8",
@@ -1521,8 +1516,8 @@
                                 "fill": "#000",
                             }
                         }
-                    }	
-                },	
+                    }   
+                },  
                 "legend": {
                     "area": {
                         "marginBottom": 20,

@@ -41,6 +41,7 @@ class CovidFr():
         """
         self.covid = pd.read_csv(CovidFr.synthesis_covid_url, sep=';').dropna()
         self.covid['jour'] = pd.to_datetime(self.covid['jour'])
+        self.covid = self.covid.drop_duplicates(subset=list(self.covid.columns), keep=False)
 
         self.covid = CovidFr.regionadd(data=self.covid)
         return self.covid 
