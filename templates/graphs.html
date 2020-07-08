@@ -41,7 +41,7 @@
                                 <div class="card-body">
                                     <div class="row">
                                         <div class="col-md-12">
-                                            <button onclick="window.location.href='#total_patients_décédés';" class="key-indicator-death">
+                                            <button onclick="window.location.href='#patients_décédés_quotidiennement';" class="key-indicator-death">
                                                 <span class="key-value">{{ counters['last_dc'] }}</span>
                                                 {% if (counters['last_dc']>1): %}
                                                     <br /> nouveaux décès
@@ -589,7 +589,7 @@
 
                                 <div class="col-auto my-1">
                                     <label class="control-label" for="date">date range (model learning)</label>
-                                    <input type="text" class="form-control" data-filter-type="date-range" data-toggle="daterangepicker" name="global_parameters" value="">
+                                    <input type="text" class="form-control" data-filter-type="date-range" data-toggle="daterangepicker" name="global_parameters">
                                 </div>
 
                                 <div class="col-auto my-1">
@@ -668,7 +668,7 @@
 
                                 <div class="col-auto my-1">
                                     <label class="control-label" for="date">date range (model learning)</label>
-                                    <input type="text" class="form-control" data-filter-type="date-range" data-toggle="daterangepicker" name="hosp_parameters" value="">
+                                    <input type="text" class="form-control" data-filter-type="date-range" data-toggle="daterangepicker" name="hosp_parameters">
                                 </div>
 
                                 <div class="col-auto my-1">
