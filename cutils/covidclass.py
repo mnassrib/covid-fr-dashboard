@@ -302,7 +302,6 @@ class CovidFr():
                 for d in self.covid[self.covid.reg==region].dep.unique():
                     regdep.append(CovidFr.dailycases(data=self.covid[(self.covid.dep == d) & (self.covid.sexe == 0)].groupby(['jour']).sum(), pca=False))
                 cdata = reduce(lambda x, y: x.add(y, fill_value=0), regdep)
-
             else: 
                 regdep = []
                 for d in data[data.reg==region].dep.unique():
