@@ -221,7 +221,6 @@ button.button:hover {
 }
 .button.resuscitation:hover { background-color: /*hsl(39, 100%, 65%)*/  hsl(0, 100%, 70%); }
 
-
 .button.hospitalized {
 	color: 				/*hsl(39, 100%, 30%)*/ hsl(30, 100%, 30%) !important;
 	background-color: 	/*hsl(39, 100%, 50%);*/ hsl(30, 100%, 50%);
@@ -237,7 +236,6 @@ button.button:hover {
 							rgba(0,0,0,0.2) 0 .5em 5px; /* drop shadow */
 }
 .button.hospitalized:hover { background-color: /*hsl(39, 100%, 65%)*/ hsl(30, 100%, 70%); }
-
 
 .button.healed {
 	color: 				/*hsl(39, 100%, 30%)*/ hsl(109, 65%, 30%) !important;
@@ -256,15 +254,11 @@ button.button:hover {
 .button.healed:hover { background-color: /*hsl(39, 100%, 65%)*/ hsl(109, 65%, 70%); }
 
 
-
-
-
 /* -------------- States -------------- */
 
 .button:hover {
 	background-color: 	hsl(0, 0%, 83%);
 }
-
 
 
 .button:active {

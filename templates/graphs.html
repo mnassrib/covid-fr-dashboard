@@ -68,36 +68,36 @@
                                     <p align="center">
                                         Les états de santé et les possibles transitions inter-états pour un patient atteint du virus COVID-19
                                     </p>  
-                                    <div class=conteneur>
+                                    <center>
                                         <img usemap="#etats" src="{{ url_for('static', filename='images/little_transition_fig.png') }}" alt="">
-                                    </div>                               
+                                    </center>                               
                                     <map name="etats">
-                                        <area href="#patients_décédés_quotidiennement" shape="rect" coords="30,0 121,41">
-                                        <area href="#patients_en_réanimation" shape="rect" coords="30,113 121,152">
-                                        <area href="#patients_guéris_quotidiennement" shape="rect" coords="179,0 271,41">
-                                        <area href="#patients_en_hospitalisation" shape="rect" coords="179,113 271,152">
+                                        <area href="#patients_décédés_quotidiennement" shape="rect" coords="27,0 114,38">
+                                        <area href="#patients_en_réanimation" shape="rect" coords="27,106 114,144">
+                                        <area href="#patients_guéris_quotidiennement" shape="rect" coords="169,0 256,38">
+                                        <area href="#patients_en_hospitalisation" shape="rect" coords="169,106 256,144">
                                     </map>
-                                    <div class="row">
-                                        <div class="col-md-6">
-                                            <button onclick="window.location.href='#patients_en_réanimation';" class="button resuscitation">
-                                                <span class="key-value">{{ counters['current_rea'] }}</span>
-                                                {% if (counters['current_rea']>1): %}
-                                                    <br /> réanimations
-                                                {% else: %}
-                                                    <br /> réanimation
-                                                {% endif %}
-                                            </button>
-                                        </div>
-                                        <div class="col-md-6">
-                                            <button onclick="window.location.href='#patients_en_hospitalisation';" class="button hospitalized">
-                                                <span class="key-value">{{ counters['current_hosp'] }}</span>
-                                                {% if (counters['current_hosp']>1): %}
-                                                    <br /> hospitalisations
-                                                {% else: %}
-                                                    <br /> hospitalisation
-                                                {% endif %}
-                                            </button>
-                                        </div>
+                                </div>
+                                <div class="row">
+                                    <div class="col-md-6">
+                                        <button onclick="window.location.href='#patients_en_réanimation';" class="button resuscitation">
+                                            <span class="key-value">{{ counters['current_rea'] }}</span>
+                                            {% if (counters['current_rea']>1): %}
+                                                <br /> réanimations
+                                            {% else: %}
+                                                <br /> réanimation
+                                            {% endif %}
+                                        </button>
+                                    </div>
+                                    <div class="col-md-6">
+                                        <button onclick="window.location.href='#patients_en_hospitalisation';" class="button hospitalized">
+                                            <span class="key-value">{{ counters['current_hosp'] }}</span>
+                                            {% if (counters['current_hosp']>1): %}
+                                                <br /> hospitalisations
+                                            {% else: %}
+                                                <br /> hospitalisation
+                                            {% endif %}
+                                        </button>
                                     </div>
                                 </div>
                             </div>
