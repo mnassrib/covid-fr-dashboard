@@ -104,51 +104,266 @@ h3 {
     color: #343434;
 }
 
-.key-indicator-death {
-    background-color: #730800;
-    border: 1px solid #730800;
-    width:100%;
-    margin-top:30px;
-    text-align:center;
-    padding:10px;
-    border-radius:8px;
-    color:#fff;
-}
-
-.key-indicator-hospitalized {
-    background-color: #ff7f00;
-    border: 1px solid #ff7f00;
-    width:100%;
-    margin-top:30px;
-    text-align:center;
-    padding:10px;
-    border-radius:8px;
-    color:#fff;
-}
-
-.key-indicator-resuscitation {
-    background-color: #ff0000;
-    border: 1px solid #ff0000;
-    width:100%;
-    margin-top:30px;
-    text-align:center;
-    padding:10px;
-    border-radius:8px;
-    color:#fff;
-}
-
-.key-indicator-healed {
-    background-color: #57d53b;
-    border: 1px solid #57d53b;
-    width:100%;
-    margin-top:30px;
-    text-align:center;
-    padding:10px;
-    border-radius:8px;
-    color:#fff;
+.conteneur{
+    text-align: center;
+    display: block;
 }
 
 .key-value {
     font-size: 1.6rem;
     font-weight: bold;
+}
+
+
+@import url(http://fonts.googleapis.com/css?family=Droid+Sans:bold+Lobster);
+@import url(http://fonts.googleapis.com/css?family=Lobster);
+
+
+/* -------------- THE button -------------- */
+.button {
+
+/* text */
+	text-decoration: 		none;
+	/*font: 					24px/1em 'Droid Sans', sans-serif;*/
+	text-align:center;
+	font-weight: 			bold;
+	text-shadow: 			rgba(255,255,255,.5) 0 1px 0;
+	-webkit-user-select: 	none;
+	-moz-user-select: 		none;
+	user-select: 			none;
+	
+/* layout */
+	/*padding:10px;*/
+	padding: 				.5em .6em .4em .6em;
+	width:100%;
+	/*margin: 				.5em;*/
+    margin-top:1em; /*30px;*/
+	display: 				inline-block;
+	position: 				relative;
+	
+	-webkit-border-radius: 	8px;
+	-moz-border-radius: 	8px;
+	border-radius: 	8px;
+	
+/* effects */
+	border-top: 		1px solid rgba(255,255,255,0.8);
+	border-bottom: 		1px solid rgba(0,0,0,0.1);
+	
+	background-image: 	-webkit-gradient(radial, 50% 0, 100, 50% 0, 0, from( rgba(255,255,255,0) ), to( rgba(255,255,255,0.7) )), url(http://iwantaneff.in/t/http://iwantaneff.in/t/noise.png);
+	background-image: 	-moz-radial-gradient(top, ellipse cover, rgba(255,255,255,0.7) 0%, rgba(255,255,255,0) 100%), url(http://iwantaneff.in/t/http://iwantaneff.in/t/noise.png);
+	background-image: 	gradient(radial, 50% 0, 100, 50% 0, 0, from( rgba(255,255,255,0) ), to( rgba(255,255,255,0.7) )), url(http://iwantaneff.in/t/http://iwantaneff.in/t/noise.png);
+
+	-webkit-transition: background .2s ease-in-out;
+	-moz-transition: 	background .2s ease-in-out;
+	transition: 		background .2s ease-in-out;
+	
+/* color */
+	color: 				hsl(0, 0%, 40%) !important;
+	background-color: 	hsl(0, 0%, 75%);
+	
+	-webkit-box-shadow: inset rgba(255,254,255,0.6) 0 0.3em .3em, inset rgba(0,0,0,0.15) 0 -0.1em .3em, /* inner shadow */ 
+						hsl(0, 0%, 60%) 0 .1em 3px, hsl(0, 0%, 45%) 0 .3em 1px, /* color border */
+						rgba(0,0,0,0.2) 0 .5em 5px; /* drop shadow */
+	-moz-box-shadow: 	inset rgba(255,254,255,0.6) 0 0.3em .3em, inset rgba(0,0,0,0.15) 0 -0.1em .3em, /* inner shadow */ 
+						hsl(0, 0%, 60%) 0 .1em 3px, hsl(0, 0%, 45%) 0 .3em 1px, /* color border */
+						rgba(0,0,0,0.2) 0 .5em 5px; /* drop shadow */
+	box-shadow:		 	inset rgba(255,254,255,0.6) 0 0.3em .3em, inset rgba(0,0,0,0.15) 0 -0.1em .3em, /* inner shadow */ 
+						hsl(0, 0%, 60%) 0 .1em 3px, hsl(0, 0%, 45%) 0 .3em 1px, /* color border */
+						rgba(0,0,0,0.2) 0 .5em 5px; /* drop shadow */
+}
+
+/* -------------- button (tag) -------------- */
+button.button {
+	border-left: none;
+	border-right: none;
+}
+button.button:hover {
+	cursor: pointer;
+}
+/* -------------- icon -------------- */
+.button:before {
+	font: 			1.2em/0 'Pictos', sans-serif;
+	content: 		attr(data-icon); /* gets the icon value from the custom data attribute and puts it infront of the button label */
+	/*margin-right: 	0.4em;*/	
+}
+
+
+/* -------------- colour categories-------------- */
+.button.death {
+	color: 				/*hsl(39, 100%, 30%)*/ hsl(4, 100%, 10%) !important;
+	background-color: 	/*hsl(39, 100%, 50%);*/ hsl(4, 100%, 25%);
+
+	-webkit-box-shadow: inset rgba(255,254,255,0.6) 0 0.3em .3em, inset rgba(0,0,0,0.15) 0 -0.1em .3em, /* inner shadow */ 
+							/*hsl(39, 100%, 40%)*/  hsl(4, 100%, 15%) 0 .1em 3px, /*hsl(39, 100%, 30%)*/  hsl(4, 100%, 10%) 0 .3em 1px, /* color border */
+							rgba(0,0,0,0.2) 0 .5em 5px; /* drop shadow */
+	-moz-box-shadow: 	inset rgba(255,254,255,0.6) 0 0.3em .3em, inset rgba(0,0,0,0.15) 0 -0.1em .3em, /* inner shadow */ 
+							/*hsl(39, 100%, 40%)*/  hsl(4, 100%, 15%) 0 .1em 3px, /*hsl(39, 100%, 30%)*/  hsl(4, 100%, 10%) 0 .3em 1px, /* color border */
+							rgba(0,0,0,0.2) 0 .5em 5px; /* drop shadow */
+	box-shadow:		 	inset rgba(255,254,255,0.6) 0 0.3em .3em, inset rgba(0,0,0,0.15) 0 -0.1em .3em, /* inner shadow */ 
+							/*hsl(39, 100%, 40%)*/  hsl(4, 100%, 15%) 0 .1em 3px, /*hsl(39, 100%, 30%)*/  hsl(4, 100%, 10%) 0 .3em 1px, /* color border */
+							rgba(0,0,0,0.2) 0 .5em 5px; /* drop shadow */
+}
+.button.death:hover { background-color: /*hsl(39, 100%, 65%)*/ hsl(4, 100%, 35%); }
+
+.button.resuscitation {
+	color: 				/*hsl(39, 100%, 30%)*/ hsl(0, 100%, 40%) !important;
+	background-color: 	/*hsl(39, 100%, 50%);*/ hsl(0, 100%, 60%);
+
+	-webkit-box-shadow: inset rgba(255,254,255,0.6) 0 0.3em .3em, inset rgba(0,0,0,0.15) 0 -0.1em .3em, /* inner shadow */ 
+							/*hsl(39, 100%, 40%)*/  hsl(0, 100%, 50%) 0 .1em 3px, /*hsl(39, 100%, 30%)*/  hsl(0, 100%, 40%) 0 .3em 1px, /* color border */
+							rgba(0,0,0,0.2) 0 .5em 5px; /* drop shadow */
+	-moz-box-shadow: 	inset rgba(255,254,255,0.6) 0 0.3em .3em, inset rgba(0,0,0,0.15) 0 -0.1em .3em, /* inner shadow */ 
+							/*hsl(39, 100%, 40%)*/   hsl(0, 100%, 50%) 0 .1em 3px, /*hsl(39, 100%, 30%)*/   hsl(0, 100%, 40%) 0 .3em 1px, /* color border */
+							rgba(0,0,0,0.2) 0 .5em 5px; /* drop shadow */
+	box-shadow:		 	inset rgba(255,254,255,0.6) 0 0.3em .3em, inset rgba(0,0,0,0.15) 0 -0.1em .3em, /* inner shadow */ 
+							/*hsl(39, 100%, 40%)*/   hsl(0, 100%, 50%) 0 .1em 3px, /*hsl(39, 100%, 30%)*/   hsl(0, 100%, 40%) 0 .3em 1px, /* color border */
+							rgba(0,0,0,0.2) 0 .5em 5px; /* drop shadow */
+}
+.button.resuscitation:hover { background-color: /*hsl(39, 100%, 65%)*/  hsl(0, 100%, 70%); }
+
+
+.button.hospitalized {
+	color: 				/*hsl(39, 100%, 30%)*/ hsl(30, 100%, 30%) !important;
+	background-color: 	/*hsl(39, 100%, 50%);*/ hsl(30, 100%, 50%);
+
+	-webkit-box-shadow: inset rgba(255,254,255,0.6) 0 0.3em .3em, inset rgba(0,0,0,0.15) 0 -0.1em .3em, /* inner shadow */ 
+							/*hsl(39, 100%, 40%)*/  hsl(30, 100%, 40%) 0 .1em 3px, /*hsl(39, 100%, 30%)*/  hsl(30, 100%, 30%) 0 .3em 1px, /* color border */
+							rgba(0,0,0,0.2) 0 .5em 5px; /* drop shadow */
+	-moz-box-shadow: 	inset rgba(255,254,255,0.6) 0 0.3em .3em, inset rgba(0,0,0,0.15) 0 -0.1em .3em, /* inner shadow */ 
+							/*hsl(39, 100%, 40%)*/  hsl(30, 100%, 40%) 0 .1em 3px, /*hsl(39, 100%, 30%)*/  hsl(30, 100%, 30%) 0 .3em 1px, /* color border */
+							rgba(0,0,0,0.2) 0 .5em 5px; /* drop shadow */
+	box-shadow:		 	inset rgba(255,254,255,0.6) 0 0.3em .3em, inset rgba(0,0,0,0.15) 0 -0.1em .3em, /* inner shadow */ 
+							/*hsl(39, 100%, 40%)*/  hsl(30, 100%, 40%) 0 .1em 3px, /*hsl(39, 100%, 30%)*/  hsl(30, 100%, 30%) 0 .3em 1px, /* color border */
+							rgba(0,0,0,0.2) 0 .5em 5px; /* drop shadow */
+}
+.button.hospitalized:hover { background-color: /*hsl(39, 100%, 65%)*/ hsl(30, 100%, 70%); }
+
+
+.button.healed {
+	color: 				/*hsl(39, 100%, 30%)*/ hsl(109, 65%, 30%) !important;
+	background-color: 	/*hsl(39, 100%, 50%);*/ hsl(109, 65%, 50%);
+
+	-webkit-box-shadow: inset rgba(255,254,255,0.6) 0 0.3em .3em, inset rgba(0,0,0,0.15) 0 -0.1em .3em, /* inner shadow */ 
+							/*hsl(39, 100%, 40%)*/  hsl(109, 65%, 40%) 0 .1em 3px, /*hsl(39, 100%, 30%)*/  hsl(109, 65%, 30%) 0 .3em 1px, /* color border */
+							rgba(0,0,0,0.2) 0 .5em 5px; /* drop shadow */
+	-moz-box-shadow: 	inset rgba(255,254,255,0.6) 0 0.3em .3em, inset rgba(0,0,0,0.15) 0 -0.1em .3em, /* inner shadow */ 
+							/*hsl(39, 100%, 40%)*/  hsl(109, 65%, 40%) 0 .1em 3px, /*hsl(39, 100%, 30%)*/  hsl(109, 65%, 30%) 0 .3em 1px, /* color border */
+							rgba(0,0,0,0.2) 0 .5em 5px; /* drop shadow */
+	box-shadow:		 	inset rgba(255,254,255,0.6) 0 0.3em .3em, inset rgba(0,0,0,0.15) 0 -0.1em .3em, /* inner shadow */ 
+							/*hsl(39, 100%, 40%)*/  hsl(109, 65%, 40%) 0 .1em 3px, /*hsl(39, 100%, 30%)*/  hsl(109, 65%, 30%) 0 .3em 1px, /* color border */
+							rgba(0,0,0,0.2) 0 .5em 5px; /* drop shadow */
+}
+.button.healed:hover { background-color: /*hsl(39, 100%, 65%)*/ hsl(109, 65%, 70%); }
+
+
+
+
+
+/* -------------- States -------------- */
+
+.button:hover {
+	background-color: 	hsl(0, 0%, 83%);
+}
+
+
+
+.button:active {
+	background-image: 	-webkit-gradient(radial, 50% 0, 100, 50% 0, 0, from( rgba(255,255,255,0) ), to( rgba(255,255,255,0) )), url(http://iwantaneff.in/t/noise.png);
+	background-image: 	-moz-gradient(radial, 50% 0, 100, 50% 0, 0, from( rgba(255,255,255,0) ), to( rgba(255,255,255,0) )), url(http://iwantaneff.in/t/noise.png);
+	background-image: 	gradient(radial, 50% 0, 100, 50% 0, 0, from( rgba(255,255,255,0) ), to( rgba(255,255,255,0) )), url(http://iwantaneff.in/t/noise.png);
+
+	-webkit-box-shadow: inset rgba(255,255,255,0.6) 0 0.3em .3em, inset rgba(0,0,0,0.2) 0 -0.1em .3em, /* inner shadow */ 
+							rgba(0,0,0,0.4) 0 .1em 1px, /* border */
+							rgba(0,0,0,0.2) 0 .2em 6px; /* drop shadow */
+	-moz-box-shadow: 	inset rgba(255,255,255,0.6) 0 0.3em .3em, inset rgba(0,0,0,0.2) 0 -0.1em .3em, /* inner shadow */ 
+							rgba(0,0,0,0.4) 0 .1em 1px, /* border */
+							rgba(0,0,0,0.2) 0 .2em 6px; /* drop shadow */
+	box-shadow: 		inset rgba(255,255,255,0.6) 0 0.3em .3em, inset rgba(0,0,0,0.2) 0 -0.1em .3em, /* inner shadow */ 
+							rgba(0,0,0,0.4) 0 .1em 1px, /* border */
+							rgba(0,0,0,0.2) 0 .2em 6px; /* drop shadow */
+
+	-webkit-transform: 	translateY(.2em);
+	-moz-transform: 	translateY(.2em);
+	transform: 			translateY(.2em);
+}
+
+.button:focus {
+	outline: none;
+	color: rgba(254,255,255,0.9) !important;
+	text-shadow: rgba(0,0,0,0.2) 0 1px 2px;
+}
+
+.button[disabled], .button[disabled]:hover, .button.disabled, .button.disabled:hover {
+	opacity: 			.5;
+	cursor: 			default;
+	color: 				rgba(0,0,0,0.2) !important;
+	text-shadow: 		none !important;
+	background-color: 	rgba(0,0,0,0.05);
+	background-image: 	none;
+	border-top: 		none;
+
+	-webkit-box-shadow: inset rgba(255,254,255,0.4) 0 0.3em .3em, inset rgba(0,0,0,0.1) 0 -0.1em .3em, /* inner shadow */ 
+							rgba(0,0,0,0.3) 0 .1em 1px, /* border */
+							rgba(0,0,0,0.2) 0 .2em 6px; /* drop shadow */
+	-moz-box-shadow: 	inset rgba(255,254,255,0.4) 0 0.3em .3em, inset rgba(0,0,0,0.1) 0 -0.1em .3em, /* inner shadow */ 
+							rgba(0,0,0,0.3) 0 .1em 1px, /* border */
+							rgba(0,0,0,0.2) 0 .2em 6px; /* drop shadow */
+	box-shadow: 		inset rgba(255,254,255,0.4) 0 0.3em .3em, inset rgba(0,0,0,0.1) 0 -0.1em .3em, /* inner shadow */ 
+							rgba(0,0,0,0.3) 0 .1em 1px, /* border */
+							rgba(0,0,0,0.2) 0 .2em 6px; /* drop shadow */
+
+	-webkit-transform: 	translateY(5px);
+	-moz-transform: 	translateY(5px);
+	transform: 			translateY(5px);
+}
+
+/* -------------- Fonts -------------- */
+
+.serif { 
+	font-family: 'Lobster', serif;
+	font-weight: 			normal;
+}
+
+
+/* -------------- Sizes -------------- */
+
+.xs { font-size: 16px; }
+.xl { font-size: 32px; }
+
+
+/* -------------- Materials -------------- */
+
+.button.glossy:after, .button.glass:after {
+	content: 	"";
+	position: 	absolute; 
+    width: 		90%;
+    height: 	60%;
+    top: 		0;
+    left: 		5%;    
+    
+    -webkit-border-radius: 	.5em .5em 1em 1em / .5em .5em 2em 2em;    
+    -moz-border-radius: 	.5em .5em 1em 1em / .5em .5em 2em 2em;
+    border-radius: 			.5em .5em 1em 1em / .5em .5em 2em 2em;
+    
+    background-image: 		-webkit-gradient(linear, 0% 0, 100% 0, from( rgba(255,255,255,.55) ), to( rgba(255,255,255,.5) ),
+    							color-stop(.5, rgba(255,255,255,0)), color-stop(.8, rgba(255,255,255,0)) );	
+    background-image: 		-moz-linear-gradient(left, rgba(255,255,255,.55), rgba(255,255,255,0) 50%, rgba(255,255,255,0) 80%, rgba(255,255,255,.5) );	
+    background-image: 		gradient(linear, 0% 0, 100% 0, from( rgba(255,255,255,.55) ), to( rgba(255,255,255,.5) ),
+    							color-stop(.5, rgba(255,255,255,0)), color-stop(.8, rgba(255,255,255,0)) );	
+}
+.button.glossy:active:after,
+.button.glass:active:after,
+.button.disabled:after,
+.button[disabled]:after
+ { opacity: .6; }
+
+.button.icon.glossy:after,
+.button.icon.glass:after { height: 75% ; }
+
+/* -------------- Glass + Transparent -------------- */
+.button.glass {
+	text-shadow: rgba(255,255,255,.5) 0 -1px 0, rgba(0,0,0,0.18) 0 .18em .15em;
+}
+.button.glass:active {
+	text-shadow: rgba(255,255,255,.3) 0 1px 0, rgba(0,0,0,0.15) 0 .18em .15em;
 }
