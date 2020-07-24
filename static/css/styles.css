@@ -53,6 +53,19 @@ h3 {
     font-weight: bold;
 }
 
+h4 {
+    font-size: 0.92rem;
+    font-weight: bold;
+}
+
+.arr {
+	background-image: url("/static/images/little_app.png");
+	background-position: center center;
+	background-repeat: no-repeat;
+	background-size: cover;
+	opacity: 0.85; 
+}
+
 /* For all zoom buttons */
 .mapael .zoomButton {
     background-color: #fff;

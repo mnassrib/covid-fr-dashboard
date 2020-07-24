@@ -286,27 +286,33 @@ class CovidFr():
             if data is None:
                 cdata = self.covid[self.covid.sexe == 0].groupby(['jour']).sum().copy()
                 cdata = CovidFr.dailycases(data=cdata, pca=False)
+                cpop = self.department_base_data["population"].sum()
             else: 
                 cdata = data[data.sexe == 0].groupby(['jour']).sum().copy()
                 cdata = CovidFr.dailycases(data=cdata, pca=False)
+                cpop = self.department_base_data["population"].sum()
         elif region is None and not department is None:
             if data is None:
                 cdata = self.covid[(self.covid.dep == department) & (self.covid.sexe == 0)].groupby(['jour']).sum().copy()
                 cdata = CovidFr.dailycases(data=cdata, pca=False)
+                cpop = self.department_base_data.at[department, 'population']
             else: 
                 cdata = data[(data.dep == department) & (data.sexe == 0)].groupby(['jour']).sum().copy()
                 cdata = CovidFr.dailycases(data=cdata, pca=False)
+                cpop = self.department_base_data.at[department, 'population']
         elif not region is None and department is None:
             if data is None:
                 regdep = []
                 for d in self.covid[self.covid.reg==region].dep.unique():
                     regdep.append(CovidFr.dailycases(data=self.covid[(self.covid.dep == d) & (self.covid.sexe == 0)].groupby(['jour']).sum(), pca=False))
                 cdata = reduce(lambda x, y: x.add(y, fill_value=0), regdep)
+                cpop = self.region_base_data.at[region, 'population']
             else: 
                 regdep = []
                 for d in data[data.reg==region].dep.unique():
                     regdep.append(CovidFr.dailycases(data=data[(data.dep == d) & (data.sexe == 0)].groupby(['jour']).sum(), pca=False))
                 cdata = reduce(lambda x, y: x.add(y, fill_value=0), regdep)
+                cpop = self.region_base_data.at[region, 'population']
 
         graphs = [
             dict(
@@ -448,6 +454,14 @@ class CovidFr():
                         "all_rad": cdata.at[datetime.strptime(self.last_update, "%Y-%m-%dT%H:%M:%S.%f").strftime("%Y-%m-%d"), 'rad_rectif'],          
                         "current_hosp": cdata.at[datetime.strptime(self.last_update, "%Y-%m-%dT%H:%M:%S.%f").strftime("%Y-%m-%d"), 'hosp'],
                         "current_rea": cdata.at[datetime.strptime(self.last_update, "%Y-%m-%dT%H:%M:%S.%f").strftime("%Y-%m-%d"), 'rea'], 
+
+                        "rates": {
+                                    "dc": ((cdata.at[datetime.strptime(self.last_update, "%Y-%m-%dT%H:%M:%S.%f").strftime("%Y-%m-%d"), 'dc_rectif'] / cpop) * 100000).round(2),
+                                    "rea": ((cdata.at[datetime.strptime(self.last_update, "%Y-%m-%dT%H:%M:%S.%f").strftime("%Y-%m-%d"), 'rea'] / cpop) * 100000).round(2),
+                                    "hosp": ((cdata.at[datetime.strptime(self.last_update, "%Y-%m-%dT%H:%M:%S.%f").strftime("%Y-%m-%d"), 'hosp'] / cpop) * 100000).round(2),
+                                    "rad": ((cdata.at[datetime.strptime(self.last_update, "%Y-%m-%dT%H:%M:%S.%f").strftime("%Y-%m-%d"), 'rad_rectif'] / cpop) * 100000).round(2),
+                                    "r_dc_rad": ((cdata.at[datetime.strptime(self.last_update, "%Y-%m-%dT%H:%M:%S.%f").strftime("%Y-%m-%d"), 'dc_rectif'] / (cdata.at[datetime.strptime(self.last_update, "%Y-%m-%dT%H:%M:%S.%f").strftime("%Y-%m-%d"), 'dc_rectif'] + cdata.at[datetime.strptime(self.last_update, "%Y-%m-%dT%H:%M:%S.%f").strftime("%Y-%m-%d"), 'rad_rectif']))*100).round(2),
+                                },
                     
                         "nat_refs": {
                                     "nat_dc": ((fdata.at[datetime.strptime(self.last_update, "%Y-%m-%dT%H:%M:%S.%f").strftime("%Y-%m-%d"), 'dc'] / popfr) * 100000).round(2),

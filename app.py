@@ -235,7 +235,7 @@ def view_department(department):
     """Department page of the app"""
     charts_and_parameters = covfr.charts(data=None, department=department, region=None)
     label = covfr.request_label(department=department, region=None)
-
+    
     return render_template(
         "graphs.html", 
         graphJSON = charts_and_parameters["graphJSON"], 
