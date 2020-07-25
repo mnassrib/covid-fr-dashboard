@@ -129,11 +129,25 @@
                             </div>
                         </div>  
                     </div>
+                </div>
+            </div>
+        </div>
 
+        <div class="col-md-12">     
+            <div class="card mb-4 box-shadow">
+                <div class="card-body">
+                    {% if (label != 'France'): %}
+                        {% if (label['type'] == 'department'): %}
+                            <h3>Taux clés pour 100 000 habitants au {{ label['prefix'] }} {{ label['name'] }} (FR-{{ department }})</h3>
+                        {% else : %}
+                            <h3>Taux clés pour 100 000 habitants à la {{ label['prefix'] }} {{ label['name'] }} (FR-{{ region }})</h3>
+                        {% endif %}
+                    {% else : %}
+                        <h3>Taux clés pour 100 000 habitants en {{ label }}</h3> 
+                    {% endif %}
                     <div class="row">
                         <div class="col-md-12">
-                            <div class="card mb-4 box-shadow arr">
-                                <h4>Taux pour 100 000 habitants</h4>
+                            <div class="card mb-4 box-shadow back">
                                 <div class="row">
                                     <div class="col-md-3">
                                         <button onclick="window.location.href='#map_view';" class="button death">
