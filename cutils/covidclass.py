@@ -314,6 +314,13 @@ class CovidFr():
                 cdata = reduce(lambda x, y: x.add(y, fill_value=0), regdep)
                 cpop = self.region_base_data.at[region, 'population']
 
+        ratedf = self.covid[(self.covid.sexe == 0) & (self.covid.jour == datetime.strptime(self.last_update, "%Y-%m-%dT%H:%M:%S.%f").strftime("%Y-%m-%d"))].groupby(['dep']).sum().copy()
+        ratedf = ratedf.drop(['sexe',], axis=1)
+        ratedf = (ratedf[['hosp', 'rea', 'rad', 'dc']].div(self.department_base_data['population'], axis=0) * 100000).round(2)
+        ratedf = pd.concat([ratedf, self.department_base_data], axis=1)
+        ratedf.sort_values(by=['hosp'], inplace=True, ascending=False)
+        ratedf['note'] = np.where(ratedf['hosp']>1, 'hospitalisations', 'hospitalisation')
+
         graphs = [
             dict(
                 id= "Nombre de personnes actuellement hospitalisées",
@@ -423,6 +430,32 @@ class CovidFr():
                                     line=dict(color='#57d53b', width=1),
                                     opacity=0.8,
                                     )
+                        ),
+                    ],
+                layout=dict(
+                            #title="Nombre de personnes retournées par jour à domicile",
+                            margin=dict(l=30, r=10, b=30, t=30),
+                            barmode='overlay',
+                            linemode='overlay',
+                            legend_orientation="h",
+                            )
+                ),
+                dict(
+                id="Nombre hospitalisations pour 100 000 habitants par département",
+                data=[
+                    dict(
+                        x=ratedf.label,
+                        y=ratedf['hosp'],
+                        type='bar',
+                        marker=dict(
+                                    color='#ff7f00',
+                                    line=dict(color='#ff7f00', width=1),
+                                    opacity=0.8,
+                                    ),
+                        hovertemplate =
+                        '<b>%{y:.2f}</b> hospitalisations<br>'+
+                        'dépt. <b>%{x} (FR-%{text})</b><extra></extra>',
+                        text = [i for i in ratedf.index],
                         ),
                     ],
                 layout=dict(
