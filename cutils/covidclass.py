@@ -319,8 +319,7 @@ class CovidFr():
         ratedf = (ratedf[['hosp', 'rea', 'rad', 'dc']].div(self.department_base_data['population'], axis=0) * 100000).round(2)
         ratedf = pd.concat([ratedf, self.department_base_data], axis=1)
         ratedf.sort_values(by=['hosp'], inplace=True, ascending=False)
-        ratedf['note'] = np.where(ratedf['hosp']>1, 'hospitalisations', 'hospitalisation')
-
+       
         graphs = [
             dict(
                 id= "Nombre de personnes actuellement hospitalisées",
