@@ -445,6 +445,7 @@ class CovidFr():
                     dict(
                         x=ratedf.label,
                         y=ratedf['hosp'],
+                        name="hospitalisations",
                         type='bar',
                         marker=dict(
                                     color='#ff7f00',
@@ -456,11 +457,41 @@ class CovidFr():
                         'dépt. <b>%{x} (FR-%{text})</b><extra></extra>',
                         text = [i for i in ratedf.index],
                         ),
+                        dict(
+                        x=ratedf.label,
+                        y=ratedf['dc'],
+                        name="décès",
+                        type='bar',
+                        marker=dict(
+                                    color='#730800',
+                                    line=dict(color='#730800', width=1),
+                                    opacity=0.8,
+                                    ),
+                        hovertemplate =
+                        '<b>%{y:.2f}</b> décès<br>'+
+                        'dépt. <b>%{x} (FR-%{text})</b><extra></extra>',
+                        text = [i for i in ratedf.index],
+                        ),
+                        dict(
+                        x=ratedf.label,
+                        y=ratedf['rea'],
+                        name="réanimations",
+                        type='bar',
+                        marker=dict(
+                                    color='#ff0000',
+                                    line=dict(color='#ff0000', width=1),
+                                    opacity=0.8,
+                                    ),
+                        hovertemplate =
+                        '<b>%{y:.2f}</b> réanimations<br>'+
+                        'dépt. <b>%{x} (FR-%{text})</b><extra></extra>',
+                        text = [i for i in ratedf.index],
+                        ),
                     ],
                 layout=dict(
-                            #title="Nombre de personnes retournées par jour à domicile",
                             margin=dict(l=30, r=10, b=30, t=30),
-                            barmode='overlay',
+                            #barmode='overlay',
+                            barmode='group',
                             linemode='overlay',
                             legend_orientation="h",
                             )
