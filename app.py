@@ -17,6 +17,11 @@ if covfr.need_update():
     #daily_reg = covfr.regiondailycases(data=covid, feature='dc')
     daily_reg = covfr.regiondailycases(data=covid, feature='hosp')
 
+start_d_learn = '2020-05-15'
+end_d_learn = '2020-08-25'
+default_start_date = json.dumps(datetime.strptime(start_d_learn, '%Y-%m-%d').strftime("%d/%m/%Y"))
+default_end_date = json.dumps(datetime.strptime(end_d_learn, '%Y-%m-%d').strftime("%d/%m/%Y"))
+
 @app.route('/', methods=['GET', 'POST'])
 def graphs():
     """Country page of the app"""
@@ -26,6 +31,8 @@ def graphs():
         "graphs.html", 
         graphJSON = charts_and_parameters["graphJSON"],  
         counters = charts_and_parameters["counters"],
+        default_start_date = default_start_date,
+        default_end_date = default_end_date,
         first_day = json.dumps(covid["jour"][0].strftime("%d/%m/%Y")),
         last_day = json.dumps(charts_and_parameters["counters"]["last_update_fr"]["day"]),
         label = covfr.request_label(department=None, region=None),
@@ -62,9 +69,8 @@ def graphs():
 
         mapchoice = ["Nombre de décès", "Taux décès / (décès + guérisons)", "Nombre de guérisons", "Nombre d'hospitalisations le "+covfr.charts()["counters"]["last_update_fr"]["day"], "Nombre de réanimations le "+covfr.charts()["counters"]["last_update_fr"]["day"]],
 
-        graphJSONquadratics = covfr.pca_charts(data=daily, pcdim=2, normalize=True),
-
-        graphJSONquadratics_reg = covfr.pca_charts(data=daily_reg, pcdim=2, normalize=False),
+        graphJSONquadratics = covfr.pca_charts(data=daily, pcdim=2, normalize=True, start_d_learn=start_d_learn, end_d_learn=end_d_learn),
+        graphJSONquadratics_reg = covfr.pca_charts(data=daily_reg, pcdim=2, normalize=False, start_d_learn=start_d_learn, end_d_learn=end_d_learn),
 
         map_select = "Nombre de décès",
     )
@@ -80,6 +86,8 @@ def maps():
         "graphs.html", 
         graphJSON = charts_and_parameters["graphJSON"],  
         counters = charts_and_parameters["counters"],
+        default_start_date = default_start_date,
+        default_end_date = default_end_date,
         first_day = json.dumps(covid["jour"][0].strftime("%d/%m/%Y")),
         last_day = json.dumps(charts_and_parameters["counters"]["last_update_fr"]["day"]),
         label = covfr.request_label(department=None, region=None),
@@ -116,9 +124,8 @@ def maps():
 
         mapchoice = ["Nombre de décès", "Taux décès / (décès + guérisons)", "Nombre de guérisons", "Nombre d'hospitalisations le "+covfr.charts()["counters"]["last_update_fr"]["day"], "Nombre de réanimations le "+covfr.charts()["counters"]["last_update_fr"]["day"]],
 
-        graphJSONquadratics = covfr.pca_charts(data=daily, pcdim=2, normalize=True),
-
-        graphJSONquadratics_reg = covfr.pca_charts(data=daily_reg, pcdim=2, normalize=False),
+        graphJSONquadratics = covfr.pca_charts(data=daily, pcdim=2, normalize=True, start_d_learn=start_d_learn, end_d_learn=end_d_learn),
+        graphJSONquadratics_reg = covfr.pca_charts(data=daily_reg, pcdim=2, normalize=False, start_d_learn=start_d_learn, end_d_learn=end_d_learn),
 
         map_select = map_select,
     )
@@ -134,6 +141,8 @@ def global_monitoring_settings():
         "graphs.html", 
         graphJSON = charts_and_parameters["graphJSON"],  
         counters = charts_and_parameters["counters"],
+        default_start_date = default_start_date,
+        default_end_date = default_end_date,
         first_day = json.dumps(covid["jour"][0].strftime("%d/%m/%Y")),
         last_day = json.dumps(charts_and_parameters["counters"]["last_update_fr"]["day"]),
         label = covfr.request_label(department=None, region=None),
@@ -171,8 +180,7 @@ def global_monitoring_settings():
         mapchoice = ["Nombre de décès", "Taux décès / (décès + guérisons)", "Nombre de guérisons", "Nombre d'hospitalisations le "+covfr.charts()["counters"]["last_update_fr"]["day"], "Nombre de réanimations le "+covfr.charts()["counters"]["last_update_fr"]["day"]],
 
         graphJSONquadratics = covfr.pca_charts(data=daily, pcdim=int(global_select[0]), normalize=eval(global_select[1]), start_d_learn=datetime.strptime(global_select[2].split(" - ")[0], "%d/%m/%Y").strftime("%Y-%m-%d"), end_d_learn=datetime.strptime(global_select[2].split(" - ")[1], "%d/%m/%Y").strftime("%Y-%m-%d"), alpha=global_select[3]),
-
-        graphJSONquadratics_reg = covfr.pca_charts(data=daily_reg, pcdim=2, normalize=False),
+        graphJSONquadratics_reg = covfr.pca_charts(data=daily_reg, pcdim=2, normalize=False, start_d_learn=start_d_learn, end_d_learn=end_d_learn),
 
         map_select = "Nombre de décès",
     )
@@ -188,6 +196,8 @@ def hosp_monitoring_settings():
         "graphs.html", 
         graphJSON = charts_and_parameters["graphJSON"],  
         counters = charts_and_parameters["counters"],
+        default_start_date = default_start_date,
+        default_end_date = default_end_date,
         first_day = json.dumps(covid["jour"][0].strftime("%d/%m/%Y")),
         last_day = json.dumps(charts_and_parameters["counters"]["last_update_fr"]["day"]),
         label = covfr.request_label(department=None, region=None),
@@ -224,7 +234,7 @@ def hosp_monitoring_settings():
 
         mapchoice = ["Nombre de décès", "Taux décès / (décès + guérisons)", "Nombre de guérisons", "Nombre d'hospitalisations le "+covfr.charts()["counters"]["last_update_fr"]["day"], "Nombre de réanimations le "+covfr.charts()["counters"]["last_update_fr"]["day"]],
 
-        graphJSONquadratics = covfr.pca_charts(data=daily, pcdim=2, normalize=True),
+        graphJSONquadratics = covfr.pca_charts(data=daily, pcdim=2, normalize=True, start_d_learn=start_d_learn, end_d_learn=end_d_learn),
         graphJSONquadratics_reg = covfr.pca_charts(data=daily_reg, pcdim=int(hosp_select[0]), normalize=eval(hosp_select[1]), start_d_learn=datetime.strptime(hosp_select[2].split(" - ")[0], "%d/%m/%Y").strftime("%Y-%m-%d"), end_d_learn=datetime.strptime(hosp_select[2].split(" - ")[1], "%d/%m/%Y").strftime("%Y-%m-%d"), alpha=hosp_select[3]),
 
         map_select = "Nombre de décès",
@@ -240,6 +250,8 @@ def view_department(department):
         "graphs.html", 
         graphJSON = charts_and_parameters["graphJSON"], 
         counters = charts_and_parameters["counters"],
+        default_start_date = default_start_date,
+        default_end_date = default_end_date,
         first_day = json.dumps(covid["jour"][0].strftime("%d/%m/%Y")),
         last_day = json.dumps(charts_and_parameters["counters"]["last_update_fr"]["day"]),
         label = label,
@@ -277,8 +289,8 @@ def view_department(department):
 
         mapchoice = ["Nombre de décès", "Taux décès / (décès + guérisons)", "Nombre de guérisons", "Nombre d'hospitalisations le "+covfr.charts()["counters"]["last_update_fr"]["day"], "Nombre de réanimations le "+covfr.charts()["counters"]["last_update_fr"]["day"]],
 
-        graphJSONquadratics = covfr.pca_charts(data=daily, pcdim=2, normalize=True),
-        graphJSONquadratics_reg = covfr.pca_charts(data=daily_reg, pcdim=2, normalize=False),
+        graphJSONquadratics = covfr.pca_charts(data=daily, pcdim=2, normalize=True, start_d_learn=start_d_learn, end_d_learn=end_d_learn),
+        graphJSONquadratics_reg = covfr.pca_charts(data=daily_reg, pcdim=2, normalize=False, start_d_learn=start_d_learn, end_d_learn=end_d_learn),
 
         map_select = "Nombre de décès",
     )
@@ -293,6 +305,8 @@ def view_region(region):
         "graphs.html", 
         graphJSON = charts_and_parameters["graphJSON"], 
         counters = charts_and_parameters["counters"],
+        default_start_date = default_start_date,
+        default_end_date = default_end_date,
         first_day = json.dumps(covid["jour"][0].strftime("%d/%m/%Y")),
         last_day = json.dumps(charts_and_parameters["counters"]["last_update_fr"]["day"]),
         label = label,
@@ -330,8 +344,8 @@ def view_region(region):
 
         mapchoice = ["Nombre de décès", "Taux décès / (décès + guérisons)", "Nombre de guérisons", "Nombre d'hospitalisations le "+covfr.charts()["counters"]["last_update_fr"]["day"], "Nombre de réanimations le "+covfr.charts()["counters"]["last_update_fr"]["day"]],
 
-        graphJSONquadratics = covfr.pca_charts(data=daily, pcdim=2, normalize=True),
-        graphJSONquadratics_reg = covfr.pca_charts(data=daily_reg, pcdim=2, normalize=False),
+        graphJSONquadratics = covfr.pca_charts(data=daily, pcdim=2, normalize=True, start_d_learn=start_d_learn, end_d_learn=end_d_learn),
+        graphJSONquadratics_reg = covfr.pca_charts(data=daily_reg, pcdim=2, normalize=False, start_d_learn=start_d_learn, end_d_learn=end_d_learn),
 
         map_select = "Nombre de décès",
     )

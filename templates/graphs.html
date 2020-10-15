@@ -50,7 +50,7 @@
                                                 {% endif %}
                                             </button>
                                             <button onclick="window.location.href='#total_patients_décédés';" class="button death">
-                                                <span class="key-value">{{ counters['all_dc'] }}</span>
+                                                <span class="key-value" style="font-size:23px">{{ counters['all_dc'] }}</span>
                                                 {% if (counters['all_dc']>1): %}
                                                     <br /> décès au total
                                                 {% else: %}
@@ -116,7 +116,7 @@
                                                 {% endif %}
                                             </button>
                                             <button onclick="window.location.href='#total_patients_guéris';" class="button healed">
-                                                <span class="key-value">{{ counters['all_rad'] }}</span>
+                                                <span class="key-value" style="font-size:23px">{{ counters['all_rad'] }}</span>
                                                 {% if (counters['all_rad']>1): %}
                                                     <br /> guérisons au total
                                                 {% else: %}
@@ -812,12 +812,12 @@
         $(function() {
             $('input[name="global_parameters"]').daterangepicker({
                 "showDropdowns": true,
-                "autoApply":true,
-                "startDate": "14/05/2020",
-                "endDate": "14/06/2020",
+                "autoApply": true,
+                "startDate": {{ default_start_date|safe }},
+                "endDate": {{ default_end_date|safe }},
                 "minDate": {{ first_day|safe }},
                 "maxDate": {{ last_day|safe }},
-                "showCustomRangeLabel":true,
+                "showCustomRangeLabel": true,
                 autoUpdateInput: true,
                 locale: {   format: 'DD/MM/YYYY', 
                             daysOfWeek: ['Dim', 'Lun', 'Mar', 'Mer', 'Jeu', 'Ven', 'Sam'],
@@ -832,12 +832,12 @@
         $(function() {
             $('input[name="hosp_parameters"]').daterangepicker({
                 "showDropdowns": true,
-                "autoApply":true,
-                "startDate": "14/05/2020",
-                "endDate": "14/06/2020",
+                "autoApply": true,
+                "startDate": {{ start_date|safe }},
+                "endDate": {{ end_date|safe }},
                 "minDate": {{ first_day|safe }},
                 "maxDate": {{ last_day|safe }},   
-                "showCustomRangeLabel":true,
+                "showCustomRangeLabel": true,
                 autoUpdateInput: true,
                 locale: {   format: 'DD/MM/YYYY', 
                             daysOfWeek: ['Dim', 'Lun', 'Mar', 'Mer', 'Jeu', 'Ven', 'Sam'],

@@ -552,7 +552,7 @@ class CovidFr():
             return ""
         return "France"
 
-    def pca_charts(self, data, pcdim, q=0.975, normalize=False, start_d_learn='2020-05-14', end_d_learn='2020-06-14', alpha=1-0.4):
+    def pca_charts(self, data, pcdim, q=0.975, normalize=False, start_d_learn='2020-05-15', end_d_learn='2020-08-20', alpha=1-0.4):
         
         results = CovidFr.pca(data, pcdim, q, normalize, start_d_learn, end_d_learn, alpha)
 
