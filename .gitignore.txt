@@ -1,6 +1,0 @@
-.vscode/*
-.ipynb_checkpoints/*
-__pycache__/*
-cutils/__pycache__/*
-futils/*
-*.ipynb
