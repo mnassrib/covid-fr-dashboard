@@ -505,7 +505,8 @@ class CovidFr():
         popfr = self.department_base_data["population"].sum()
 
         last_day = datetime.strptime(self.last_update, "%Y-%m-%dT%H:%M:%S.%f").strftime("%Y-%m-%d")
-        before_last_day = (datetime.strptime(self.last_update, "%Y-%m-%dT%H:%M:%S.%f") - timedelta(days=1)).strftime("%Y-%m-%d")
+        #before_last_day = (datetime.strptime(self.last_update, "%Y-%m-%dT%H:%M:%S.%f") - timedelta(days=1)).strftime("%Y-%m-%d")
+        before_last_day = cdata.index[-2].strftime("%Y-%m-%d")
 
         self.counters = {
                         "last_update_fr": {
