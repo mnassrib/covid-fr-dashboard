@@ -526,13 +526,13 @@ class CovidFr():
 
                         "rates": {
                                     "dc": ((cdata.at[last_day, 'dc_rectif'] / cpop) * 100000).round(2),
-                                    "d_dc": (((cdata.at[last_day, 'dc_j'] - cdata.at[before_last_day, 'dc_j']) / cpop) * 100000).round(2),
+                                    "d_dc": (((cdata.at[last_day, 'dc_rectif'] - cdata.at[before_last_day, 'dc_rectif']) / cpop) * 100000).round(2),
                                     "rea": ((cdata.at[last_day, 'rea'] / cpop) * 100000).round(2),
                                     "d_rea": (((cdata.at[last_day, 'rea'] - cdata.at[before_last_day, 'rea']) / cpop) * 100000).round(2),
                                     "hosp": ((cdata.at[last_day, 'hosp'] / cpop) * 100000).round(2),
                                     "d_hosp": (((cdata.at[last_day, 'hosp'] - cdata.at[before_last_day, 'hosp']) / cpop) * 100000).round(2),
                                     "rad": ((cdata.at[last_day, 'rad_rectif'] / cpop) * 100000).round(2),
-                                    "d_rad": (((cdata.at[last_day, 'rad_j'] - cdata.at[before_last_day, 'rad_j']) / cpop) * 100000).round(2),
+                                    "d_rad": (((cdata.at[last_day, 'rad_rectif'] - cdata.at[before_last_day, 'rad_rectif']) / cpop) * 100000).round(2),
                                     "r_dc_rad": ((cdata.at[last_day, 'dc_rectif'] / (cdata.at[last_day, 'dc_rectif'] + cdata.at[last_day, 'rad_rectif']))*100).round(2),
                                     "d_r_dc_rad": ((cdata.at[last_day, 'dc_rectif'] / (cdata.at[last_day, 'dc_rectif'] + cdata.at[last_day, 'rad_rectif']))*100 - (cdata.at[before_last_day, 'dc_rectif'] / (cdata.at[before_last_day, 'dc_rectif'] + cdata.at[before_last_day, 'rad_rectif']))*100).round(2),
                                 },
