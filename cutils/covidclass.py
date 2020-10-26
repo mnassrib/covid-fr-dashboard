@@ -5,7 +5,7 @@ import plotly
 import os
 
 import urllib.request
-from datetime import datetime
+from datetime import datetime, timedelta
 
 from sklearn.preprocessing import StandardScaler
 from scipy.stats import chi2
@@ -503,34 +503,46 @@ class CovidFr():
 
         fdata = self.covid[self.covid.sexe == 0].groupby(['jour']).sum().copy()
         popfr = self.department_base_data["population"].sum()
-        
+
+        last_day = datetime.strptime(self.last_update, "%Y-%m-%dT%H:%M:%S.%f").strftime("%Y-%m-%d")
+        before_last_day = (datetime.strptime(self.last_update, "%Y-%m-%dT%H:%M:%S.%f") - timedelta(days=1)).strftime("%Y-%m-%d")
+
         self.counters = {
                         "last_update_fr": {
                                            "day": datetime.strptime(self.last_update, "%Y-%m-%dT%H:%M:%S.%f").strftime("%d/%m/%Y"),
                                            "day_hour": datetime.strptime(self.last_update, "%Y-%m-%dT%H:%M:%S.%f").strftime("%d/%m/%Y à %Hh%M")
                                            },
                                     
-                        "last_dc": cdata.at[datetime.strptime(self.last_update, "%Y-%m-%dT%H:%M:%S.%f").strftime("%Y-%m-%d"), 'dc_j'],
-                        "all_dc": cdata.at[datetime.strptime(self.last_update, "%Y-%m-%dT%H:%M:%S.%f").strftime("%Y-%m-%d"), 'dc_rectif'],
-                        "last_rad": cdata.at[datetime.strptime(self.last_update, "%Y-%m-%dT%H:%M:%S.%f").strftime("%Y-%m-%d"), 'rad_j'],
-                        "all_rad": cdata.at[datetime.strptime(self.last_update, "%Y-%m-%dT%H:%M:%S.%f").strftime("%Y-%m-%d"), 'rad_rectif'],          
-                        "current_hosp": cdata.at[datetime.strptime(self.last_update, "%Y-%m-%dT%H:%M:%S.%f").strftime("%Y-%m-%d"), 'hosp'],
-                        "current_rea": cdata.at[datetime.strptime(self.last_update, "%Y-%m-%dT%H:%M:%S.%f").strftime("%Y-%m-%d"), 'rea'], 
+                        "last_dc": cdata.at[last_day, 'dc_j'],
+                        "diff_dc": cdata.at[last_day, 'dc_j'] - cdata.at[before_last_day, 'dc_j'],
+                        "all_dc": cdata.at[last_day, 'dc_rectif'],
+                        "last_rad": cdata.at[last_day, 'rad_j'],
+                        "diff_rad": cdata.at[last_day, 'rad_j'] - cdata.at[before_last_day, 'rad_j'],
+                        "all_rad": cdata.at[last_day, 'rad_rectif'],          
+                        "current_hosp": cdata.at[last_day, 'hosp'],
+                        "diff_hosp": cdata.at[last_day, 'hosp'] - cdata.at[before_last_day, 'hosp'],
+                        "current_rea": cdata.at[last_day, 'rea'], 
+                        "diff_rea": cdata.at[last_day, 'rea'] - cdata.at[before_last_day, 'rea'],
 
                         "rates": {
-                                    "dc": ((cdata.at[datetime.strptime(self.last_update, "%Y-%m-%dT%H:%M:%S.%f").strftime("%Y-%m-%d"), 'dc_rectif'] / cpop) * 100000).round(2),
-                                    "rea": ((cdata.at[datetime.strptime(self.last_update, "%Y-%m-%dT%H:%M:%S.%f").strftime("%Y-%m-%d"), 'rea'] / cpop) * 100000).round(2),
-                                    "hosp": ((cdata.at[datetime.strptime(self.last_update, "%Y-%m-%dT%H:%M:%S.%f").strftime("%Y-%m-%d"), 'hosp'] / cpop) * 100000).round(2),
-                                    "rad": ((cdata.at[datetime.strptime(self.last_update, "%Y-%m-%dT%H:%M:%S.%f").strftime("%Y-%m-%d"), 'rad_rectif'] / cpop) * 100000).round(2),
-                                    "r_dc_rad": ((cdata.at[datetime.strptime(self.last_update, "%Y-%m-%dT%H:%M:%S.%f").strftime("%Y-%m-%d"), 'dc_rectif'] / (cdata.at[datetime.strptime(self.last_update, "%Y-%m-%dT%H:%M:%S.%f").strftime("%Y-%m-%d"), 'dc_rectif'] + cdata.at[datetime.strptime(self.last_update, "%Y-%m-%dT%H:%M:%S.%f").strftime("%Y-%m-%d"), 'rad_rectif']))*100).round(2),
+                                    "dc": ((cdata.at[last_day, 'dc_rectif'] / cpop) * 100000).round(2),
+                                    "d_dc": (((cdata.at[last_day, 'dc_j'] - cdata.at[before_last_day, 'dc_j']) / cpop) * 100000).round(2),
+                                    "rea": ((cdata.at[last_day, 'rea'] / cpop) * 100000).round(2),
+                                    "d_rea": (((cdata.at[last_day, 'rea'] - cdata.at[before_last_day, 'rea']) / cpop) * 100000).round(2),
+                                    "hosp": ((cdata.at[last_day, 'hosp'] / cpop) * 100000).round(2),
+                                    "d_hosp": (((cdata.at[last_day, 'hosp'] - cdata.at[before_last_day, 'hosp']) / cpop) * 100000).round(2),
+                                    "rad": ((cdata.at[last_day, 'rad_rectif'] / cpop) * 100000).round(2),
+                                    "d_rad": (((cdata.at[last_day, 'rad_j'] - cdata.at[before_last_day, 'rad_j']) / cpop) * 100000).round(2),
+                                    "r_dc_rad": ((cdata.at[last_day, 'dc_rectif'] / (cdata.at[last_day, 'dc_rectif'] + cdata.at[last_day, 'rad_rectif']))*100).round(2),
+                                    "d_r_dc_rad": ((cdata.at[last_day, 'dc_rectif'] / (cdata.at[last_day, 'dc_rectif'] + cdata.at[last_day, 'rad_rectif']))*100 - (cdata.at[before_last_day, 'dc_rectif'] / (cdata.at[before_last_day, 'dc_rectif'] + cdata.at[before_last_day, 'rad_rectif']))*100).round(2),
                                 },
                     
                         "nat_refs": {
-                                    "nat_dc": ((fdata.at[datetime.strptime(self.last_update, "%Y-%m-%dT%H:%M:%S.%f").strftime("%Y-%m-%d"), 'dc'] / popfr) * 100000).round(2),
-                                    "nat_r_dc_rad": (fdata.at[datetime.strptime(self.last_update, "%Y-%m-%dT%H:%M:%S.%f").strftime("%Y-%m-%d"), 'dc'] / (fdata.at[datetime.strptime(self.last_update, "%Y-%m-%dT%H:%M:%S.%f").strftime("%Y-%m-%d"), 'dc'] + fdata.at[datetime.strptime(self.last_update, "%Y-%m-%dT%H:%M:%S.%f").strftime("%Y-%m-%d"), 'rad'])).round(2),
-                                    "nat_rad": ((fdata.at[datetime.strptime(self.last_update, "%Y-%m-%dT%H:%M:%S.%f").strftime("%Y-%m-%d"), 'rad'] / popfr) * 100000).round(2),
-                                    "nat_hosp": ((fdata.at[datetime.strptime(self.last_update, "%Y-%m-%dT%H:%M:%S.%f").strftime("%Y-%m-%d"), 'hosp'] / popfr) * 100000).round(2),
-                                    "nat_rea": ((fdata.at[datetime.strptime(self.last_update, "%Y-%m-%dT%H:%M:%S.%f").strftime("%Y-%m-%d"), 'rea'] / popfr) * 100000).round(2),
+                                    "nat_dc": ((fdata.at[last_day, 'dc'] / popfr) * 100000).round(2),
+                                    "nat_r_dc_rad": (fdata.at[last_day, 'dc'] / (fdata.at[last_day, 'dc'] + fdata.at[last_day, 'rad'])).round(2),
+                                    "nat_rad": ((fdata.at[last_day, 'rad'] / popfr) * 100000).round(2),
+                                    "nat_hosp": ((fdata.at[last_day, 'hosp'] / popfr) * 100000).round(2),
+                                    "nat_rea": ((fdata.at[last_day, 'rea'] / popfr) * 100000).round(2),
                                     },
                         }
         return {"graphJSON": self.graphJSON, 

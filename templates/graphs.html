@@ -43,6 +43,11 @@
                                         <div class="col-md-12">
                                             <button onclick="window.location.href='#patients_décédés_quotidiennement';" class="button death">
                                                 <span class="key-value">{{ counters['last_dc'] }}</span>
+                                                {% if (counters['diff_dc'] < 0): %}
+                                                    <br /> <font size="2">({{ counters['diff_dc'] }})</font>
+                                                {% else: %}
+                                                    <br /> <font size="2">(+{{ counters['diff_dc'] }})</font>
+                                                {% endif %}
                                                 {% if (counters['last_dc']>1): %}
                                                     <br /> nouveaux décès
                                                 {% else: %}
@@ -82,6 +87,11 @@
                                     <div class="col-md-6">
                                         <button onclick="window.location.href='#patients_en_réanimation';" class="button resuscitation">
                                             <span class="key-value">{{ counters['current_rea'] }}</span>
+                                            {% if (counters['diff_rea'] < 0): %}
+                                                <br /> <font size="2">({{ counters['diff_rea'] }})</font>
+                                            {% else: %}
+                                                <br /> <font size="2">(+{{ counters['diff_rea'] }})</font>
+                                            {% endif %}
                                             {% if (counters['current_rea']>1): %}
                                                 <br /> réanimations
                                             {% else: %}
@@ -92,6 +102,11 @@
                                     <div class="col-md-6">
                                         <button onclick="window.location.href='#patients_en_hospitalisation';" class="button hospitalized">
                                             <span class="key-value">{{ counters['current_hosp'] }}</span>
+                                            {% if (counters['diff_hosp'] < 0): %}
+                                                <br /> <font size="2">({{ counters['diff_hosp'] }})</font>
+                                            {% else: %}
+                                                <br /> <font size="2">(+{{ counters['diff_hosp'] }})</font>
+                                            {% endif %}
                                             {% if (counters['current_hosp']>1): %}
                                                 <br /> hospitalisations
                                             {% else: %}
@@ -109,6 +124,11 @@
                                         <div class="col-md-12">
                                             <button onclick="window.location.href='#patients_guéris_quotidiennement';" class="button healed">
                                                 <span class="key-value">{{ counters['last_rad'] }}</span>
+                                                {% if (counters['diff_rad'] < 0): %}
+                                                    <br /> <font size="2">({{ counters['diff_rad'] }})</font>
+                                                {% else: %}
+                                                    <br /> <font size="2">(+{{ counters['diff_rad'] }})</font>
+                                                {% endif %}
                                                 {% if (counters['last_rad']>1): %}
                                                     <br /> nouvelles guérisons
                                                 {% else: %}
@@ -152,6 +172,11 @@
                                     <div class="col-md-3">
                                         <button onclick="window.location.href='#map_view';" class="button death">
                                             <span class="key-value">{{ counters['rates']['dc'] }}</span>
+                                            {% if (counters['rates']['d_dc'] < 0): %}
+                                                <br /> <font size="2">({{ counters['rates']['d_dc'] }})</font>
+                                            {% else: %}
+                                                <br /> <font size="2">({{ counters['rates']['d_dc'] }})</font>
+                                            {% endif %}
                                             {% if (counters['rates']['dc']>1): %}
                                                 <br /> décès
                                             {% else: %}
@@ -162,6 +187,11 @@
                                     <div class="col-md-3">
                                         <button onclick="window.location.href='#map_view';" class="button resuscitation">
                                             <span class="key-value">{{ counters['rates']['rea'] }}</span>
+                                            {% if (counters['rates']['d_rea'] < 0): %}
+                                                <br /> <font size="2">({{ counters['rates']['d_rea'] }})</font>
+                                            {% else: %}
+                                                <br /> <font size="2">(+{{ counters['rates']['d_rea'] }})</font>
+                                            {% endif %}
                                             {% if (counters['rates']['rea']>1): %}
                                                 <br /> réanimations
                                             {% else: %}
@@ -172,6 +202,11 @@
                                     <div class="col-md-3">
                                         <button onclick="window.location.href='#map_view';" class="button hospitalized">
                                             <span class="key-value">{{ counters['rates']['hosp'] }}</span>
+                                            {% if (counters['rates']['d_hosp'] < 0): %}
+                                                <br /> <font size="2">({{ counters['rates']['d_hosp'] }})</font>
+                                            {% else: %}
+                                                <br /> <font size="2">({{ counters['rates']['d_hosp'] }})</font>
+                                            {% endif %}
                                             {% if (counters['rates']['hosp']>1): %}
                                                 <br /> hospitalisations
                                             {% else: %}
@@ -182,6 +217,11 @@
                                     <div class="col-md-3">
                                         <button onclick="window.location.href='#map_view';" class="button healed">
                                             <span class="key-value">{{ counters['rates']['rad'] }}</span>
+                                            {% if (counters['rates']['d_rad'] < 0): %}
+                                                <br /> <font size="2">({{ counters['rates']['d_rad'] }})</font>
+                                            {% else: %}
+                                                <br /> <font size="2">({{ counters['rates']['d_rad'] }})</font>
+                                            {% endif %}
                                             {% if (counters['rates']['rad']>1): %}
                                                 <br /> guérisons
                                             {% else: %}
@@ -196,6 +236,11 @@
                                     <div class="col-md-4">
                                         <button onclick="window.location.href='#map_view';" class="button">
                                             <span class="key-value">{{ counters['rates']['r_dc_rad'] }}%</span>
+                                            {% if (counters['rates']['d_r_dc_rad'] < 0): %}
+                                                <br /> <font size="2">({{ counters['rates']['d_r_dc_rad'] }}%)</font>
+                                            {% else: %}
+                                                <br /> <font size="2">({{ counters['rates']['d_r_dc_rad'] }}%)</font>
+                                            {% endif %}
                                                 <br /> décès/guérisons
                                         </button>
                                     </div>
