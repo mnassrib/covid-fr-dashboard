@@ -44,6 +44,9 @@ class CovidFr():
         self.covid = self.covid.drop_duplicates()
 
         self.covid = CovidFr.regionadd(data=self.covid)
+
+        self.last_day = self.covid.jour.max().strftime("%Y-%m-%d")
+        
         return self.covid 
 
     def need_update(self):
@@ -95,7 +98,7 @@ class CovidFr():
                 data_feature = data_feature.loc[:, ['label', feature, feature+'_par_habitants', 'insee']]
 
                 q_feature = np.mean(data_feature[feature+'_par_habitants'].to_numpy() \
-                    <= ((nat_data.at[datetime.strptime(self.last_update, "%Y-%m-%dT%H:%M:%S.%f").strftime("%Y-%m-%d"), feature] / self.department_base_data["population"].sum()) * 100000))
+                    <= ((nat_data.at[self.last_day, feature] / self.department_base_data["population"].sum()) * 100000))
 
                 q_feature_list = [0.1, 0.1+(q_feature-0.1)/2, q_feature, q_feature+(.949-q_feature)/2, .949]
              
@@ -135,7 +138,7 @@ class CovidFr():
 
             elif feature == "hosp" or feature == "rea":
                 ### For hosp and or rea case map
-                dep_data_j = self.covid[(self.covid['sexe'] == 0) & (self.covid['jour'] == datetime.strptime(self.last_update, "%Y-%m-%dT%H:%M:%S.%f").strftime("%Y-%m-%d"))]
+                dep_data_j = self.covid[(self.covid['sexe'] == 0) & (self.covid['jour'] == self.last_day)]
                 dep_data_j = dep_data_j \
                     .drop(['reg', 'jour', 'sexe'], axis=1) \
                     .groupby('dep') \
@@ -151,7 +154,7 @@ class CovidFr():
                 data_feature = data_feature.loc[:, ['label', feature, feature+'_par_habitants', 'insee']]
 
                 q_feature = np.mean(data_feature[feature+'_par_habitants'].to_numpy() \
-                    <= ((nat_data.at[datetime.strptime(self.last_update, "%Y-%m-%dT%H:%M:%S.%f").strftime("%Y-%m-%d"), feature] / self.department_base_data["population"].sum()) * 100000))
+                    <= ((nat_data.at[self.last_day, feature] / self.department_base_data["population"].sum()) * 100000))
 
                 q_feature_list = [0.1, 0.1+(q_feature-0.1)/2, q_feature, q_feature+(.949-q_feature)/2, .949]
 
@@ -207,7 +210,7 @@ class CovidFr():
                 data_feature = data_feature.loc[:, ['label', feature, feature+'_par_habitants', 'insee']]
 
                 q_feature = np.mean(data_feature[feature+'_par_habitants'].to_numpy() \
-                    <= ((nat_data.at[datetime.strptime(self.last_update, "%Y-%m-%dT%H:%M:%S.%f").strftime("%Y-%m-%d"), feature] / self.region_base_data["population"].sum()) * 100000))
+                    <= ((nat_data.at[self.last_day, feature] / self.region_base_data["population"].sum()) * 100000))
 
                 q_feature_list = [0.1, 0.1+(q_feature-0.1)/2, q_feature, q_feature+(.949-q_feature)/2, .949]
                              
@@ -247,7 +250,7 @@ class CovidFr():
 
             elif feature == "hosp" or feature == "rea":
                 ### For hosp and or rea case map
-                reg_data_j = self.covid[(self.covid['sexe'] == 0) & (self.covid['jour'] == datetime.strptime(self.last_update, "%Y-%m-%dT%H:%M:%S.%f").strftime("%Y-%m-%d"))]
+                reg_data_j = self.covid[(self.covid['sexe'] == 0) & (self.covid['jour'] == self.last_day)]
                 
                 reg_data_j = reg_data_j \
                     .drop(['dep', 'jour', 'sexe'], axis=1) \
@@ -265,7 +268,7 @@ class CovidFr():
                 data_feature = data_feature.loc[:, ['label', feature, feature+'_par_habitants', 'insee']]
 
                 q_feature = np.mean(data_feature[feature+'_par_habitants'].to_numpy() \
-                    <= ((nat_data.at[datetime.strptime(self.last_update, "%Y-%m-%dT%H:%M:%S.%f").strftime("%Y-%m-%d"), feature] / self.region_base_data["population"].sum()) * 100000))
+                    <= ((nat_data.at[self.last_day, feature] / self.region_base_data["population"].sum()) * 100000))
 
                 q_feature_list = [0.1, 0.1+(q_feature-0.1)/2, q_feature, q_feature+(.949-q_feature)/2, .949]
 
@@ -314,7 +317,7 @@ class CovidFr():
                 cdata = reduce(lambda x, y: x.add(y, fill_value=0), regdep)
                 cpop = self.region_base_data.at[region, 'population']
 
-        ratedf = self.covid[(self.covid.sexe == 0) & (self.covid.jour == datetime.strptime(self.last_update, "%Y-%m-%dT%H:%M:%S.%f").strftime("%Y-%m-%d"))].groupby(['dep']).sum().copy()
+        ratedf = self.covid[(self.covid.sexe == 0) & (self.covid.jour == self.last_day)].groupby(['dep']).sum().copy()
         ratedf = ratedf.drop(['sexe',], axis=1)
         ratedf = (ratedf[['hosp', 'rea', 'rad', 'dc']].div(self.department_base_data['population'], axis=0) * 100000).round(2)
         ratedf = pd.concat([ratedf, self.department_base_data], axis=1)
@@ -496,54 +499,51 @@ class CovidFr():
                             )
                 ),
         ]
-        # Convert the figures to JSON
-        # PlotlyJSONEncoder appropriately converts pandas, datetime, etc
-        # objects to their JSON equivalents
+
         self.graphJSON = json.dumps(graphs, cls=plotly.utils.PlotlyJSONEncoder)
 
         fdata = self.covid[self.covid.sexe == 0].groupby(['jour']).sum().copy()
         popfr = self.department_base_data["population"].sum()
 
-        last_day = datetime.strptime(self.last_update, "%Y-%m-%dT%H:%M:%S.%f").strftime("%Y-%m-%d")
-        #before_last_day = (datetime.strptime(self.last_update, "%Y-%m-%dT%H:%M:%S.%f") - timedelta(days=1)).strftime("%Y-%m-%d")
         before_last_day = cdata.index[-2].strftime("%Y-%m-%d")
 
         self.counters = {
                         "last_update_fr": {
-                                           "day": datetime.strptime(self.last_update, "%Y-%m-%dT%H:%M:%S.%f").strftime("%d/%m/%Y"),
+                                           #"day": datetime.strptime(self.last_update, "%Y-%m-%dT%H:%M:%S.%f").strftime("%d/%m/%Y"),
+                                           "day": datetime.strptime(self.last_day, "%Y-%m-%d").strftime("%d/%m/%Y"),
                                            "day_hour": datetime.strptime(self.last_update, "%Y-%m-%dT%H:%M:%S.%f").strftime("%d/%m/%Y à %Hh%M")
                                            },
                                     
-                        "last_dc": cdata.at[last_day, 'dc_j'],
-                        "diff_dc": cdata.at[last_day, 'dc_j'] - cdata.at[before_last_day, 'dc_j'],
-                        "all_dc": cdata.at[last_day, 'dc_rectif'],
-                        "last_rad": cdata.at[last_day, 'rad_j'],
-                        "diff_rad": cdata.at[last_day, 'rad_j'] - cdata.at[before_last_day, 'rad_j'],
-                        "all_rad": cdata.at[last_day, 'rad_rectif'],          
-                        "current_hosp": cdata.at[last_day, 'hosp'],
-                        "diff_hosp": cdata.at[last_day, 'hosp'] - cdata.at[before_last_day, 'hosp'],
-                        "current_rea": cdata.at[last_day, 'rea'], 
-                        "diff_rea": cdata.at[last_day, 'rea'] - cdata.at[before_last_day, 'rea'],
+                        "last_dc": cdata.at[self.last_day, 'dc_j'],
+                        "diff_dc": cdata.at[self.last_day, 'dc_j'] - cdata.at[before_last_day, 'dc_j'],
+                        "all_dc": cdata.at[self.last_day, 'dc_rectif'],
+                        "last_rad": cdata.at[self.last_day, 'rad_j'],
+                        "diff_rad": cdata.at[self.last_day, 'rad_j'] - cdata.at[before_last_day, 'rad_j'],
+                        "all_rad": cdata.at[self.last_day, 'rad_rectif'],          
+                        "current_hosp": cdata.at[self.last_day, 'hosp'],
+                        "diff_hosp": cdata.at[self.last_day, 'hosp'] - cdata.at[before_last_day, 'hosp'],
+                        "current_rea": cdata.at[self.last_day, 'rea'], 
+                        "diff_rea": cdata.at[self.last_day, 'rea'] - cdata.at[before_last_day, 'rea'],
 
                         "rates": {
-                                    "dc": ((cdata.at[last_day, 'dc_rectif'] / cpop) * 100000).round(2),
-                                    "d_dc": (((cdata.at[last_day, 'dc_rectif'] - cdata.at[before_last_day, 'dc_rectif']) / cpop) * 100000).round(2),
-                                    "rea": ((cdata.at[last_day, 'rea'] / cpop) * 100000).round(2),
-                                    "d_rea": (((cdata.at[last_day, 'rea'] - cdata.at[before_last_day, 'rea']) / cpop) * 100000).round(2),
-                                    "hosp": ((cdata.at[last_day, 'hosp'] / cpop) * 100000).round(2),
-                                    "d_hosp": (((cdata.at[last_day, 'hosp'] - cdata.at[before_last_day, 'hosp']) / cpop) * 100000).round(2),
-                                    "rad": ((cdata.at[last_day, 'rad_rectif'] / cpop) * 100000).round(2),
-                                    "d_rad": (((cdata.at[last_day, 'rad_rectif'] - cdata.at[before_last_day, 'rad_rectif']) / cpop) * 100000).round(2),
-                                    "r_dc_rad": ((cdata.at[last_day, 'dc_rectif'] / (cdata.at[last_day, 'dc_rectif'] + cdata.at[last_day, 'rad_rectif']))*100).round(2),
-                                    "d_r_dc_rad": ((cdata.at[last_day, 'dc_rectif'] / (cdata.at[last_day, 'dc_rectif'] + cdata.at[last_day, 'rad_rectif']))*100 - (cdata.at[before_last_day, 'dc_rectif'] / (cdata.at[before_last_day, 'dc_rectif'] + cdata.at[before_last_day, 'rad_rectif']))*100).round(2),
+                                    "dc": ((cdata.at[self.last_day, 'dc_rectif'] / cpop) * 100000).round(2),
+                                    "d_dc": (((cdata.at[self.last_day, 'dc_rectif'] - cdata.at[before_last_day, 'dc_rectif']) / cpop) * 100000).round(2),
+                                    "rea": ((cdata.at[self.last_day, 'rea'] / cpop) * 100000).round(2),
+                                    "d_rea": (((cdata.at[self.last_day, 'rea'] - cdata.at[before_last_day, 'rea']) / cpop) * 100000).round(2),
+                                    "hosp": ((cdata.at[self.last_day, 'hosp'] / cpop) * 100000).round(2),
+                                    "d_hosp": (((cdata.at[self.last_day, 'hosp'] - cdata.at[before_last_day, 'hosp']) / cpop) * 100000).round(2),
+                                    "rad": ((cdata.at[self.last_day, 'rad_rectif'] / cpop) * 100000).round(2),
+                                    "d_rad": (((cdata.at[self.last_day, 'rad_rectif'] - cdata.at[before_last_day, 'rad_rectif']) / cpop) * 100000).round(2),
+                                    "r_dc_rad": ((cdata.at[self.last_day, 'dc_rectif'] / (cdata.at[self.last_day, 'dc_rectif'] + cdata.at[self.last_day, 'rad_rectif']))*100).round(2),
+                                    "d_r_dc_rad": ((cdata.at[self.last_day, 'dc_rectif'] / (cdata.at[self.last_day, 'dc_rectif'] + cdata.at[self.last_day, 'rad_rectif']))*100 - (cdata.at[before_last_day, 'dc_rectif'] / (cdata.at[before_last_day, 'dc_rectif'] + cdata.at[before_last_day, 'rad_rectif']))*100).round(2),
                                 },
                     
                         "nat_refs": {
-                                    "nat_dc": ((fdata.at[last_day, 'dc'] / popfr) * 100000).round(2),
-                                    "nat_r_dc_rad": (fdata.at[last_day, 'dc'] / (fdata.at[last_day, 'dc'] + fdata.at[last_day, 'rad'])).round(2),
-                                    "nat_rad": ((fdata.at[last_day, 'rad'] / popfr) * 100000).round(2),
-                                    "nat_hosp": ((fdata.at[last_day, 'hosp'] / popfr) * 100000).round(2),
-                                    "nat_rea": ((fdata.at[last_day, 'rea'] / popfr) * 100000).round(2),
+                                    "nat_dc": ((fdata.at[self.last_day, 'dc'] / popfr) * 100000).round(2),
+                                    "nat_r_dc_rad": (fdata.at[self.last_day, 'dc'] / (fdata.at[self.last_day, 'dc'] + fdata.at[self.last_day, 'rad'])).round(2),
+                                    "nat_rad": ((fdata.at[self.last_day, 'rad'] / popfr) * 100000).round(2),
+                                    "nat_hosp": ((fdata.at[self.last_day, 'hosp'] / popfr) * 100000).round(2),
+                                    "nat_rea": ((fdata.at[self.last_day, 'rea'] / popfr) * 100000).round(2),
                                     },
                         }
         return {"graphJSON": self.graphJSON, 
@@ -707,9 +707,7 @@ class CovidFr():
                 )
             ),
         ]
-        # Convert the figures to JSON
-        # PlotlyJSONEncoder appropriately converts pandas, datetime, etc
-        # objects to their JSON equivalents
+
         graphJSON = json.dumps(graphs, cls=plotly.utils.PlotlyJSONEncoder)
 
         return {'graphJSON': graphJSON,
