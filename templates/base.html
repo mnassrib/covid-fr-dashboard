@@ -29,7 +29,7 @@
             <nav class="navbar navbar-expand-lg navbar-dark bg-dark fixed-top" id="mainNav">		
                 <a class="navbar-brand" href="/" > 
                     <img src="{{ url_for('static', filename='images/little_logo.png') }}" alt="">
-                    Suivi COVID-19 - France
+                    Suivi de COVID-19 en France
                 </a>
                         
                 <button class="navbar-toggler navbar-toggler-right" type="button" data-toggle="collapse" data-target="#navbarCollapse" aria-controls="navbarCollapse" aria-expanded="false" aria-label="Toggle navigation">
@@ -41,7 +41,7 @@
                         <li class="nav-item active">
                             <a class="nav-link" href="/">
                                 <i class="fa fa-fw fa-dashboard"></i>
-                                Dashboard 									
+                                dashboard - 
                                 {% if (label != 'France'): %}
                                     {% if (label['type'] == 'department'): %}
                                         {{ label['prefix'] }} {{ label['name'] }} (FR-{{ department }})
@@ -74,7 +74,7 @@
         <main role="main" class="container">
             <div class="scroll-pre"></div>
             <p class="ombres_multiples_diffuses" align="justify">    
-                Les données analysées dans ce site concernent l'épidémie de COVID-19 en France. Elles sont fournies et mises à jour régulièrement par <a href="https://www.data.gouv.fr/fr/datasets/donnees-hospitalieres-relatives-a-lepidemie-de-covid-19/" target="_blank"><B>Santé publique France</B></a>. Ces données sont collectées auprès du milieu uniquement hospitalier sans compter les EHPAD et EMS.
+                Les données analysées dans ce site concernent l'épidémie de COVID-19 en France. Elles sont fournies et mises à jour régulièrement par <a href="https://www.data.gouv.fr/fr/organizations/sante-publique-france/" target="_blank"><B>Santé publique France</B></a>. Ces données sont collectées auprès du milieu uniquement hospitalier sans compter les EHPAD et EMS.
             </p>
 
             {% block content %}
@@ -87,11 +87,9 @@
             <div class="container">
                 <!-- Copyright -->
                 <div class="footer-copyright text-left">
-
                     &copy; <script>document.write(new Date().getFullYear())</script><a> </a><a href="https://www.linkedin.com/in/baligh-mnassri/?locale=en_US">Baligh Mnassri</a>
-
                     <p class="float-right">
-                    <small> <a href="#">Dernière mise à jour des données : {{ counters['last_update_fr']["day_hour"] }}</a></small>
+                    <small> <a href="https://www.data.gouv.fr/fr/datasets/donnees-hospitalieres-relatives-a-lepidemie-de-covid-19/">Dernière mise à jour des données par Santé publique France : {{ counters['last_update_fr']["day_hour"] }}</a></small>
                     </p>
                 </div>
                 <!-- Copyright -->
