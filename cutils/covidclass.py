@@ -46,7 +46,11 @@ class CovidFr():
         self.covid = CovidFr.regionadd(data=self.covid)
 
         self.last_day = self.covid.jour.max().strftime("%Y-%m-%d")
-        
+
+        #self.dep_data_norm = {department: CovidFr.dailycases(data=((self.covid[(self.covid.dep == department) & (self.covid.sexe == 0)].groupby(['jour']).sum() / self.department_base_data.at[department, 'population']) * 100000).round(2), pca=False) for department in self.department_base_data.insee}
+        self.dep_data_norm = {department: ((self.covid[(self.covid.dep == department) & (self.covid.sexe == 0)].groupby(['jour']).sum() / self.department_base_data.at[department, 'population']) * 100000).round(2) for department in self.department_base_data.insee}
+        self.dep_data_norm_col = CovidFr.normrate(ddn=self.dep_data_norm, cdu=list(self.covid.dep.unique()))
+
         return self.covid 
 
     def need_update(self):
@@ -284,7 +288,7 @@ class CovidFr():
 
         return overall_reg_data_as_json_dict
 
-    def charts(self, data=None, department=None, region=None): 
+    def charts(self, data=None, department=None, region=None, top_number=7): 
         if region is None and department is None:
             if data is None:
                 cdata = self.covid[self.covid.sexe == 0].groupby(['jour']).sum().copy()
@@ -322,7 +326,7 @@ class CovidFr():
         ratedf = (ratedf[['hosp', 'rea', 'rad', 'dc']].div(self.department_base_data['population'], axis=0) * 100000).round(2)
         ratedf = pd.concat([ratedf, self.department_base_data], axis=1)
         ratedf.sort_values(by=['hosp'], inplace=True, ascending=False)
-       
+
         graphs = [
             dict(
                 id= "Nombre de personnes actuellement hospitalisées",
@@ -494,6 +498,24 @@ class CovidFr():
                 layout=dict(
                             margin=dict(l=30, r=10, b=30, t=30),
                             barmode='group',
+                            linemode='overlay',
+                            legend_orientation="h",
+                            )
+                ),
+                dict(
+                id="Nombre d'hospitalisations pour 100 000 habitants",
+                data = CovidFr.dataviz(data=self.dep_data_norm_col["hosp"], data_dep=self.department_base_data, categor="hospitalisations", top=True, date=self.last_day, top_number=top_number, threshold=65),
+                layout=dict(
+                            margin=dict(l=30, r=10, b=30, t=30),
+                            linemode='overlay',
+                            legend_orientation="h",
+                            )
+                ),
+                dict(
+                id="Nombre de réanimations pour 100 000 habitants",
+                data = CovidFr.dataviz(data=self.dep_data_norm_col["rea"], data_dep=self.department_base_data, categor="réanimations", top=True, date=self.last_day, top_number=top_number, threshold=65),
+                layout=dict(
+                            margin=dict(l=30, r=10, b=30, t=30),
                             linemode='overlay',
                             legend_orientation="h",
                             )
@@ -725,6 +747,16 @@ class CovidFr():
                }
 
     @staticmethod
+    def normrate(ddn, cdu):
+        dep_data_norm_col = {}
+        for col in ['hosp', 'rea', 'rad', 'dc']:
+            data = []
+            for dep in cdu:
+                data.append(ddn[dep][col])
+            dep_data_norm_col.update({col: pd.concat(data, axis=1, keys=cdu)})
+        return dep_data_norm_col
+
+    @staticmethod
     def regionadd(data):
         regions = {
             "01": {"Guadeloupe": ['971']},
@@ -751,7 +783,7 @@ class CovidFr():
                 data.loc[data.loc[data['dep'].isin(v)].index, 'reg'] = key
         data = data[["reg", "dep", "sexe", "jour", "hosp", "rea", "rad", "dc"]]
         return data
- 
+    
     @staticmethod
     def dailycases(data=None, pca=False):
         cdata = data[data.sexe == 0].groupby(['jour']).sum().copy()
@@ -773,10 +805,10 @@ class CovidFr():
                 dc_j.append(max(cdata.dc[0:i+1]) - max(cdata.dc[0:i]))
                 rad_j.append(max(cdata.rad[0:i+1]) - max(cdata.rad[0:i]))
 
-        cdata["dc_rectif"] = dc_rectif
         cdata["rad_rectif"] = rad_rectif
-        cdata["dc_j"] = dc_j
+        cdata["dc_rectif"] = dc_rectif
         cdata["rad_j"] = rad_j
+        cdata["dc_j"] = dc_j
 
         if pca is True:
             cdata = cdata[['hosp', 'rea', 'rad_j', 'dc_j']]
@@ -789,20 +821,6 @@ class CovidFr():
         """
         Calculates the exponential moving average over a vector.
         Will fail for large inputs.
-        :param data: Input data
-        :param alpha: scalar float in range (0,1)
-            The alpha parameter for the moving average.
-        :param offset: optional
-            The offset for the moving average, scalar. Defaults to data[0].
-        :param dtype: optional
-            Data type used for calculations. Defaults to float64 unless
-            data.dtype is float32, then it will use float32.
-        :param order: {'C', 'F', 'A'}, optional
-            Order to use when flattening the data. Defaults to 'C'.
-        :param out: ndarray, or None, optional
-            A location into which the result is stored. If provided, it must have
-            the same shape as the input. If not provided or `None`,
-            a freshly-allocated array is returned.
         """
         data = np.array(data, copy=False)
 
@@ -917,3 +935,27 @@ class CovidFr():
                 data_reg['reg-{}'.format(r)] = reduce(lambda x, y: x.add(y, fill_value=0), dep_reg)
             data_reg["jour"] = pd.unique(data.jour)
             return data_reg.groupby("jour").max()
+    
+    @staticmethod
+    def dataviz(data, data_dep, categor, top, date, top_number, threshold):
+        if top:
+            df = data.sort_values(by=date, axis=1, ascending=False)
+            select_dep_data_norm_col = df[df.columns[:top_number]]
+        else:
+            select_dep_data_norm_col = data[data.columns[[item for elem in (data[-1:] > threshold).values.tolist() for item in elem]]]
+
+        datacol = []
+        for dep in list(select_dep_data_norm_col.columns.unique()):
+            datacol.append(
+                dict(
+                    x=select_dep_data_norm_col.index,
+                    y=select_dep_data_norm_col[dep],
+                    name=data_dep.at[dep, "label"],
+                    text=[data_dep.at[dep, "label"] + " (FR-" + dep + ")"]*len(select_dep_data_norm_col.index),
+                    type='Scatter',
+                    hovertemplate =
+                    '<b>%{y:.2f} </b>' + categor + '<br>' +
+                    'dépt. %{text} <extra></extra>',
+                )
+            )
+        return datacol

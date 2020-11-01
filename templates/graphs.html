@@ -591,6 +591,55 @@
             </div>
         </div>
 
+        <div class="col-md-12" id="top_criteria_results">
+            <div class="card mb-4 box-shadow">
+                <div class="card-body">
+                    <h3>Les départements les plus touchés au {{ counters['last_update_fr']["day"] }}</h3>
+                    <div class="bootstrap-iso">
+                        <form method="POST" action="{{ url_for('top_criteria_settings') }}">
+                            <div class="form-row align-items-center">
+                                <div class="col-auto my-1">
+                                    <label class="mr-sm-2" for="inlineFormCustomSelect">nombre de départements à visualiser</label>
+                                    <select name="top_dep" class="custom-select mr-sm-2">
+                                        {% for t in topn %}
+                                            {% if (t == top_select): %}
+                                                <option selected="selected">{{ top_select }}</option> 
+                                            {% else %}
+                                                <option value="{{ t }}">{{ t }}</option>
+                                            {% endif %}
+                                        {% endfor %}
+                                    </select>
+                                </div>
+
+                                <div class="col-auto my-1 align-self-end">
+                                    <button type="submit" formaction="{{ url_for('top_criteria_settings') }}#top_criteria_results" class="btn btn-primary">Valider</button>
+                                </div>
+                            </div>
+                        </form> 
+                    </div>
+                </div>
+
+                <div class="col-md-12" id="">
+                    <div class="card mb-4 box-shadow">
+                        <div class="card-body">
+                            <h3 id="patients_quotidiennement">Top {{ top_select }} des départements selon le nombre d'hospitalisations pour 100 000 habitants au {{ counters['last_update_fr']["day"] }}</h3>
+                            <div id="Nombre d'hospitalisations pour 100 000 habitants"></div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="col-md-12" id="">
+                    <div class="card mb-4 box-shadow">
+                        <div class="card-body">
+                            <h3 id="patients_quotidiennement">Top {{ top_select }} des départements selon le nombre de réanimations pour 100 000 habitants au {{ counters['last_update_fr']["day"] }}</h3>
+                            <div id="Nombre de réanimations pour 100 000 habitants"></div>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+        </div> 
+
         <div class="col-md-6">
             <div class="card mb-4 box-shadow">
                 <div class="card-body">
