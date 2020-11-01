@@ -288,7 +288,7 @@ class CovidFr():
 
         return overall_reg_data_as_json_dict
 
-    def charts(self, data=None, department=None, region=None, top_number=7): 
+    def charts(self, data=None, department=None, region=None, top_number=None): 
         if region is None and department is None:
             if data is None:
                 cdata = self.covid[self.covid.sexe == 0].groupby(['jour']).sum().copy()
@@ -530,11 +530,8 @@ class CovidFr():
         before_last_day = cdata.index[-2].strftime("%Y-%m-%d")
 
         self.counters = {
-                        "last_update_fr": {
-                                           #"day": datetime.strptime(self.last_update, "%Y-%m-%dT%H:%M:%S.%f").strftime("%d/%m/%Y"),
-                                           "day": datetime.strptime(self.last_day, "%Y-%m-%d").strftime("%d/%m/%Y"),
-                                           "day_hour": datetime.strptime(self.last_update, "%Y-%m-%dT%H:%M:%S.%f").strftime("%d/%m/%Y à %Hh%M")
-                                           },
+                        "last_day_fr": datetime.strptime(self.last_day, "%Y-%m-%d").strftime("%d/%m/%Y"),
+                        "last_update_fr": datetime.strptime(self.last_update, "%Y-%m-%dT%H:%M:%S.%f").strftime("%d/%m/%Y à %Hh%M"),
                                     
                         "last_dc": cdata.at[self.last_day, 'dc_j'],
                         "diff_dc": cdata.at[self.last_day, 'dc_j'] - cdata.at[before_last_day, 'dc_j'],
