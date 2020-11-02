@@ -257,14 +257,18 @@
         <div class="col-md-12" id="map_view">
             <div class="card mb-4 box-shadow">
                 <div class="card-body">
-                    <h3>Choix d'un critère à visualiser</h3>
+                    <h3>Sélection d'un critère à visualiser</h3>
                     <div class="bootstrap-iso">
                         <form method="POST" action="{{ url_for('maps') }}">
                             <div class="form-row align-items-center">
                                 <div class="col-auto my-1">
                                     <select name="map_select" class="custom-select mr-sm-2">
                                         {% for m in mapchoice %}
-                                            <option value="{{ m }}">{{ m }}</option>
+                                            {% if (m == map_select): %}
+                                            <option selected="selected">{{ map_select }}</option> 
+                                            {% else %}
+                                                <option value="{{ m }}">{{ m }}</option>
+                                            {% endif %}
                                         {% endfor %}
                                     </select>
                                 </div>
@@ -599,7 +603,7 @@
                         <form method="POST" action="{{ url_for('top_criteria_settings') }}">
                             <div class="form-row align-items-center">
                                 <div class="col-auto my-1">
-                                    <label class="mr-sm-2" for="inlineFormCustomSelect">nombre de départements à visualiser</label>
+                                    <label class="mr-sm-2" for="inlineFormCustomSelect">Sélection du nombre de dépt. à visualiser</label>
                                     <select name="top_dep" class="custom-select mr-sm-2">
                                         {% for t in topn %}
                                             {% if (t == top_select): %}
@@ -748,8 +752,8 @@
                                     <label class="mr-sm-2" for="inlineFormCustomSelect">pc number</label>
                                     <select name="global_parameters" class="custom-select mr-sm-2">
                                         {% for pc in global_pc %}
-                                            {% if (pc == 2): %}
-                                                <option selected="selected">2</option> 
+                                            {% if (pc == pcdim): %}
+                                                <option selected="selected">{{ pcdim }}</option>
                                             {% else %}
                                                 <option value="{{ pc }}">{{ pc }}</option>
                                             {% endif %}
@@ -760,9 +764,9 @@
                                 <div class="col-auto my-1">
                                     <label class="mr-sm-2" for="inlineFormCustomSelect">data normalization</label>
                                     <select name="global_parameters" class="custom-select mr-sm-2">
-                                        {% for b in normalize %}
-                                            {% if (b == True): %}
-                                                <option selected="selected">True</option> 
+                                        {% for b in normalize_states %}
+                                            {% if (b == normalize): %}
+                                                <option selected="selected">{{ normalize }}</option> 
                                             {% else %}
                                                 <option value="{{ b }}">{{ b }}</option>
                                             {% endif %}
@@ -776,11 +780,11 @@
                                 </div>
 
                                 <div class="col-auto my-1">
-                                    <label class="control-label" for="date">smoothing filter</label>
+                                    <label class="mr-sm-2" for="inlineFormCustomSelect">smoothing filter</label>
                                     <select name="global_parameters" class="custom-select mr-sm-2">
                                         {% for s in alpha_smooth %}
-                                            {% if (s == 0.6): %}
-                                                <option selected="selected">0.6</option> 
+                                            {% if (s == alpha): %}
+                                                <option selected="selected">{{ alpha }}</option> 
                                             {% else %}
                                                 <option value="{{ s }}">{{ s }}</option>
                                             {% endif %}
@@ -839,7 +843,7 @@
                                 <div class="col-auto my-1">
                                     <label class="mr-sm-2" for="inlineFormCustomSelect">data normalization</label>
                                     <select name="hosp_parameters" class="custom-select mr-sm-2">
-                                        {% for b in normalize %}
+                                        {% for b in normalize_states %}
                                             {% if (b == False): %}
                                                 <option selected="selected">False</option> 
                                             {% else %}
