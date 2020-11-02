@@ -595,19 +595,19 @@
             </div>
         </div>
 
-        <div class="col-md-12" id="top_criteria_results">
+        <div class="col-md-12" id="top_dep_results">
             <div class="card mb-4 box-shadow">
                 <div class="card-body">
                     <h3>Départements les plus touchés au {{ counters['last_day_fr'] }}</h3>
                     <div class="bootstrap-iso">
-                        <form method="POST" action="{{ url_for('top_criteria_settings') }}">
+                        <form method="POST" action="{{ url_for('top_dep_settings') }}">
                             <div class="form-row align-items-center">
                                 <div class="col-auto my-1">
                                     <label class="mr-sm-2" for="inlineFormCustomSelect">Sélection du nombre de dépt. à visualiser</label>
                                     <select name="top_dep" class="custom-select mr-sm-2">
-                                        {% for t in topn %}
-                                            {% if (t == top_select): %}
-                                                <option selected="selected">{{ top_select }}</option> 
+                                        {% for t in number_all_dep %}
+                                            {% if (t == top_dep): %}
+                                                <option selected="selected">{{ top_dep }}</option> 
                                             {% else %}
                                                 <option value="{{ t }}">{{ t }}</option>
                                             {% endif %}
@@ -616,7 +616,7 @@
                                 </div>
 
                                 <div class="col-auto my-1 align-self-end">
-                                    <button type="submit" formaction="{{ url_for('top_criteria_settings') }}#top_criteria_results" class="btn btn-primary">Valider</button>
+                                    <button type="submit" formaction="{{ url_for('top_dep_settings') }}#top_dep_results" class="btn btn-primary">Valider</button>
                                 </div>
                             </div>
                         </form> 
@@ -626,7 +626,7 @@
                 <div class="col-md-12" id="">
                     <div class="card mb-4 box-shadow">
                         <div class="card-body">
-                            <h3 id="patients_quotidiennement">Top {{ top_select }} des départements selon le nombre d'hospitalisations pour 100 000 habitants au {{ counters['last_day_fr'] }}</h3>
+                            <h3 id="patients_quotidiennement">Top {{ top_dep }} des départements selon le nombre d'hospitalisations pour 100 000 habitants au {{ counters['last_day_fr'] }}</h3>
                             <div id="Nombre d'hospitalisations pour 100 000 habitants"></div>
                         </div>
                     </div>
@@ -635,7 +635,7 @@
                 <div class="col-md-12" id="">
                     <div class="card mb-4 box-shadow">
                         <div class="card-body">
-                            <h3 id="patients_quotidiennement">Top {{ top_select }} des départements selon le nombre de réanimations pour 100 000 habitants au {{ counters['last_day_fr'] }}</h3>
+                            <h3 id="patients_quotidiennement">Top {{ top_dep }} des départements selon le nombre de réanimations pour 100 000 habitants au {{ counters['last_day_fr'] }}</h3>
                             <div id="Nombre de réanimations pour 100 000 habitants"></div>
                         </div>
                     </div>
@@ -831,8 +831,8 @@
                                     <label class="mr-sm-2" for="inlineFormCustomSelect">pc number</label>
                                     <select name="hosp_parameters" class="custom-select mr-sm-2">
                                         {% for pc in pc_reg %}
-                                            {% if (pc == 2): %}
-                                                <option selected="selected">2</option> 
+                                            {% if (pc == pcdim_reg): %}
+                                                <option selected="selected">{{ pcdim_reg }}</option> 
                                             {% else %}
                                                 <option value="{{ pc }}">{{ pc }}</option>
                                             {% endif %}
@@ -844,8 +844,8 @@
                                     <label class="mr-sm-2" for="inlineFormCustomSelect">data normalization</label>
                                     <select name="hosp_parameters" class="custom-select mr-sm-2">
                                         {% for b in normalize_states %}
-                                            {% if (b == False): %}
-                                                <option selected="selected">False</option> 
+                                            {% if (b == normalize_reg): %}
+                                                <option selected="selected">{{ normalize_reg }}</option>
                                             {% else %}
                                                 <option value="{{ b }}">{{ b }}</option>
                                             {% endif %}
@@ -859,11 +859,11 @@
                                 </div>
 
                                 <div class="col-auto my-1">
-                                    <label class="control-label" for="date">smoothing filter</label>
+                                    <label class="mr-sm-2" for="inlineFormCustomSelect">smoothing filter</label>
                                     <select name="hosp_parameters" class="custom-select mr-sm-2">
                                         {% for s in alpha_smooth %}
-                                            {% if (s == 0.6): %}
-                                                <option selected="selected">0.6</option> 
+                                            {% if (s == alpha_reg): %}
+                                                <option selected="selected">{{ alpha_reg }}</option> 
                                             {% else %}
                                                 <option value="{{ s }}">{{ s }}</option>
                                             {% endif %}
@@ -911,8 +911,8 @@
             $('input[name="global_parameters"]').daterangepicker({
                 "showDropdowns": true,
                 "autoApply": true,
-                "startDate": {{ default_start_date|safe }},
-                "endDate": {{ default_end_date|safe }},
+                "startDate": {{ start_date|safe }},
+                "endDate": {{ end_date|safe }},
                 "minDate": {{ first_day|safe }},
                 "maxDate": {{ last_day|safe }},
                 "showCustomRangeLabel": true,
@@ -931,8 +931,8 @@
             $('input[name="hosp_parameters"]').daterangepicker({
                 "showDropdowns": true,
                 "autoApply": true,
-                "startDate": {{ default_start_date|safe }},
-                "endDate": {{ default_end_date|safe }},
+                "startDate": {{ start_date_reg|safe }},
+                "endDate": {{ end_date_reg|safe }},
                 "minDate": {{ first_day|safe }},
                 "maxDate": {{ last_day|safe }},   
                 "showCustomRangeLabel": true,
