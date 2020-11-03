@@ -885,7 +885,7 @@ class CovidFr():
         output = dict(
             x = x,
             y = y,
-            name = name,
+            name = label, #name,
             type = curve_type,
             marker = dict(
                 color = color,
