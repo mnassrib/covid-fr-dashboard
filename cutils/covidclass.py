@@ -329,94 +329,45 @@ class CovidFr():
 
         graphs = [
             dict(
-                id= "Nombre de personnes actuellement hospitalisées",
-                data=[
-                    dict(
-                        x=cdata.index,
-                        y=cdata['hosp'],
-                        type='line',
-                        marker=dict(
-                                    color='#ff7f00',
-                                    line=dict(color='#ff7f00', width=3)
-                                    )
-                        ),
-                    ],
-                layout=dict(
+                id = "Nombre de personnes actuellement hospitalisées",
+                data = [CovidFr.dataviz(x=cdata.index, y=cdata['hosp'], curve_type='line', color='#ff7f00', width=3)],
+                layout = dict(
                             #title="Nombre de personnes actuellement hospitalisées",
                             margin=dict(l=30, r=30, b=30, t=30),
                             )
-                ),            
+                ),   
+
             dict(
-                id="Nombre de personnes actuellement en réanimation",
-                data=[
-                    dict(
-                        x=cdata.index,
-                        y=cdata['rea'],
-                        type='line',
-                        marker=dict(
-                                    color='#ff0000',
-                                    line=dict(color='#ff0000', width=3)
-                                    )
-                        ),
-                    ],
-                layout=dict(
+                id = "Nombre de personnes actuellement en réanimation",
+                data = [CovidFr.dataviz(x=cdata.index, y=cdata['rea'], curve_type='line', color='#ff0000', width=3)],
+                layout = dict(
                             #title="Nombre de personnes actuellement en réanimation ou soins intensifs",
                             margin=dict(l=30, r=30, b=30, t=30),
                             )
-                ),            
+                ),   
+
             dict(
-                id="Nombre cumulé de personnes décédées à l'hôpital",
-                data=[
-                    dict(
-                        x=cdata.index,
-                        y=cdata['dc_rectif'],#cdata['dc'],
-                        type='line',
-                        marker=dict(
-                                    color='#730800',
-                                    line=dict(color='#730800', width=3)
-                                    )
-                        ),
-                    ],
-                layout=dict(
+                id = "Nombre cumulé de personnes décédées à l'hôpital",
+                data = [CovidFr.dataviz(x=cdata.index, y=cdata['dc_rectif'], curve_type='line', color='#730800', width=3)],
+                layout = dict(
                             #title="Nombre cumulé de personnes décédées à l'hôpital",
                             margin=dict(l=30, r=30, b=30, t=30),
                             )
                 ),
+
             dict(
-                id="Nombre cumulé de personnes retournées à domicile",
-                data=[
-                    dict(
-                        x=cdata.index,
-                        y=cdata['rad_rectif'],#cdata['rad'],
-                        type='line',
-                        marker=dict(
-                                    color='#57d53b',
-                                    line=dict(color='#57d53b', width=3)
-                                    )
-                        ),
-                    ],
-                layout=dict(
+                id = "Nombre cumulé de personnes retournées à domicile",
+                data = [CovidFr.dataviz(x=cdata.index, y=cdata['rad_rectif'], curve_type='line', color='#57d53b', width=3)],
+                layout = dict(
                             #title="Nombre cumulé de personnes retournées à domicile",
-                            #autosize=False,
-                            #width=600,
-                            #height=600,
                             margin=dict(l=30, r=30, b=30, t=30),
                             )
                 ),
+
             dict(
-                id="Nombre de personnes décédées par jour à l'hôpital",
-                data=[
-                    dict(
-                        x=cdata.index,
-                        y=cdata['dc_j'],
-                        type='bar',
-                        marker=dict(
-                                    color='#730800',
-                                    line=dict(color='#730800', width=1)
-                                    )
-                        ),
-                    ],
-                layout=dict(
+                id = "Nombre de personnes décédées par jour à l'hôpital",
+                data = [CovidFr.dataviz(x=cdata.index, y=cdata['dc_j'], curve_type='bar', color='#730800', width=1)],
+                layout = dict(
                             #title="Nombre de personnes décédées par jour à l'hôpital",
                             margin=dict(l=30, r=10, b=30, t=30),
                             barmode='overlay',
@@ -424,21 +375,11 @@ class CovidFr():
                             legend_orientation="h",
                             )
                 ),
+
             dict(
-                id="Nombre de personnes retournées par jour à domicile",
-                data=[
-                    dict(
-                        x=cdata.index,
-                        y=cdata['rad_j'],
-                        type='bar',
-                        marker=dict(
-                                    color='#57d53b',
-                                    line=dict(color='#57d53b', width=1),
-                                    opacity=0.8,
-                                    )
-                        ),
-                    ],
-                layout=dict(
+                id = "Nombre de personnes retournées par jour à domicile",
+                data = [CovidFr.dataviz(x=cdata.index, y=cdata['rad_j'], curve_type='bar', color='#57d53b', width=1, opacity=0.8)],
+                layout = dict(
                             #title="Nombre de personnes retournées par jour à domicile",
                             margin=dict(l=30, r=10, b=30, t=30),
                             barmode='overlay',
@@ -446,54 +387,15 @@ class CovidFr():
                             legend_orientation="h",
                             )
                 ),
-                dict(
-                id="Nombre de patients pour 100 000 habitants par département",
-                data=[
-                    dict(
-                        x=ratedf.label,
-                        y=ratedf['hosp'],
-                        name="hospitalisations",
-                        type='bar',
-                        marker=dict(
-                                    color='#ff7f00',
-                                    line=dict(color='#ff7f00', width=1),
-                                    opacity=0.9,
-                                    ),
-                        hovertemplate =
-                        '<b>%{y:.2f}</b> hospitalisations<br>'+
-                        'dépt. <b>%{x} (FR-%{text})</b><extra></extra>',
-                        text = [i for i in ratedf.index],
-                        ),
-                        dict(
-                        x=ratedf.label,
-                        y=ratedf['dc'],
-                        name="décès",
-                        type='bar',
-                        marker=dict(
-                                    color='#730800',
-                                    line=dict(color='#730800', width=1),
-                                    opacity=0.9,
-                                    ),
-                        hovertemplate =
-                        '<b>%{y:.2f}</b> décès<br>'+
-                        'dépt. <b>%{x} (FR-%{text})</b><extra></extra>',
-                        text = [i for i in ratedf.index],
-                        ),
-                        dict(
-                        x=ratedf.label,
-                        y=ratedf['rea'],
-                        name="réanimations",
-                        type='bar',
-                        marker=dict(
-                                    color='#ff0000',
-                                    line=dict(color='#ff0000', width=1),
-                                    opacity=0.9,
-                                    ),
-                        hovertemplate =
-                        '<b>%{y:.2f}</b> réanimations<br>'+
-                        'dépt. <b>%{x} (FR-%{text})</b><extra></extra>',
-                        text = [i for i in ratedf.index],
-                        ),
+
+            dict(
+                id = "Nombre de patients pour 100 000 habitants par département",
+                data = [
+                    CovidFr.hovertemp(x=ratedf.label, y=ratedf['hosp'], curve_type='bar', color='#ff7f00', width=1, dataindex=ratedf.index, label='hospitalisations', opacity=0.9),
+
+                    CovidFr.hovertemp(x=ratedf.label, y=ratedf['dc'], curve_type='bar', color='#730800', width=1, dataindex=ratedf.index, label='décès', opacity=0.9),
+
+                    CovidFr.hovertemp(x=ratedf.label, y=ratedf['rea'], curve_type='bar', color='#ff0000', width=1, dataindex=ratedf.index, label='réanimations', opacity=0.9),
                     ],
                 layout=dict(
                             margin=dict(l=30, r=10, b=30, t=30),
@@ -502,18 +404,20 @@ class CovidFr():
                             legend_orientation="h",
                             )
                 ),
-                dict(
+
+            dict(
                 id="Nombre d'hospitalisations pour 100 000 habitants",
-                data = CovidFr.dataviz(data=self.dep_data_norm_col["hosp"], data_dep=self.department_base_data, categor="hospitalisations", top=True, date=self.last_day, top_number=top_number, threshold=65),
+                data = CovidFr.topdepviz(data=self.dep_data_norm_col["hosp"], data_dep=self.department_base_data, categor="hospitalisations", top=True, date=self.last_day, top_number=top_number, threshold=65),
                 layout=dict(
                             margin=dict(l=30, r=10, b=30, t=30),
                             linemode='overlay',
                             legend_orientation="h",
                             )
                 ),
-                dict(
+
+            dict(
                 id="Nombre de réanimations pour 100 000 habitants",
-                data = CovidFr.dataviz(data=self.dep_data_norm_col["rea"], data_dep=self.department_base_data, categor="réanimations", top=True, date=self.last_day, top_number=top_number, threshold=65),
+                data = CovidFr.topdepviz(data=self.dep_data_norm_col["rea"], data_dep=self.department_base_data, categor="réanimations", top=True, date=self.last_day, top_number=top_number, threshold=65),
                 layout=dict(
                             margin=dict(l=30, r=10, b=30, t=30),
                             linemode='overlay',
@@ -934,7 +838,7 @@ class CovidFr():
             return data_reg.groupby("jour").max()
     
     @staticmethod
-    def dataviz(data, data_dep, categor, top, date, top_number, threshold):
+    def topdepviz(data, data_dep, categor, top, date, top_number, threshold):
         if top:
             df = data.sort_values(by=date, axis=1, ascending=False)
             select_dep_data_norm_col = df[df.columns[:top_number]]
@@ -956,3 +860,41 @@ class CovidFr():
                 )
             )
         return datacol
+    
+    @staticmethod
+    def dataviz(x, y, curve_type, color, width, opacity=None, name=None, hovertemplate=None):
+        output = dict(
+            x = x,
+            y = y,
+            name = name,
+            type = curve_type,
+            marker = dict(
+                color = color,
+                line = dict(
+                    color = color, 
+                    width = width,
+                ),
+                opacity = opacity,
+            ),
+            hovertemplate = hovertemplate,
+        )
+        return output
+
+    @staticmethod
+    def hovertemp(x, y, curve_type, color, width, dataindex, label, opacity=None, name=None):
+        output = dict(
+            x = x,
+            y = y,
+            name = name,
+            type = curve_type,
+            marker = dict(
+                color = color,
+                line = dict(
+                    color = color, 
+                    width = width,
+                ),
+                opacity = opacity,
+            ),
+            hovertemplate = '<b>%{y:.2f} </b>'+label+'<br>'+'dépt. <b>%{x} (FR-%{text})</b><extra></extra>', text = [i for i in dataindex],
+        )
+        return output
