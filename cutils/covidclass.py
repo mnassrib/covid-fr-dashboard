@@ -329,66 +329,6 @@ class CovidFr():
 
         graphs = [
             dict(
-                id = "Nombre de personnes actuellement hospitalisées",
-                data = [CovidFr.dataviz(x=cdata.index, y=cdata['hosp'], curve_type='line', color='#ff7f00', width=3)],
-                layout = dict(
-                    #title="Nombre de personnes actuellement hospitalisées",
-                    margin=dict(l=30, r=30, b=30, t=30),
-                    )
-            ),   
-
-            dict(
-                id = "Nombre de personnes actuellement en réanimation",
-                data = [CovidFr.dataviz(x=cdata.index, y=cdata['rea'], curve_type='line', color='#ff0000', width=3)],
-                layout = dict(
-                    #title="Nombre de personnes actuellement en réanimation ou soins intensifs",
-                    margin=dict(l=30, r=30, b=30, t=30),
-                    )
-            ),   
-
-            dict(
-                id = "Nombre cumulé de personnes décédées à l'hôpital",
-                data = [CovidFr.dataviz(x=cdata.index, y=cdata['dc_rectif'], curve_type='line', color='#730800', width=3)],
-                layout = dict(
-                    #title="Nombre cumulé de personnes décédées à l'hôpital",
-                    margin=dict(l=30, r=30, b=30, t=30),
-                    )
-            ),
-
-            dict(
-                id = "Nombre cumulé de personnes retournées à domicile",
-                data = [CovidFr.dataviz(x=cdata.index, y=cdata['rad_rectif'], curve_type='line', color='#57d53b', width=3)],
-                layout = dict(
-                    #title="Nombre cumulé de personnes retournées à domicile",
-                    margin=dict(l=30, r=30, b=30, t=30),
-                    )
-            ),
-
-            dict(
-                id = "Nombre de personnes décédées par jour à l'hôpital",
-                data = [CovidFr.dataviz(x=cdata.index, y=cdata['dc_j'], curve_type='bar', color='#730800', width=1)],
-                layout = dict(
-                    #title="Nombre de personnes décédées par jour à l'hôpital",
-                    margin=dict(l=30, r=10, b=30, t=30),
-                    barmode='overlay',
-                    linemode='overlay',
-                    legend_orientation="h",
-                    )
-                ),
-
-            dict(
-                id = "Nombre de personnes retournées par jour à domicile",
-                data = [CovidFr.dataviz(x=cdata.index, y=cdata['rad_j'], curve_type='bar', color='#57d53b', width=1, opacity=0.8)],
-                layout = dict(
-                    #title="Nombre de personnes retournées par jour à domicile",
-                    margin=dict(l=30, r=10, b=30, t=30),
-                    barmode='overlay',
-                    linemode='overlay',
-                    legend_orientation="h",
-                    )
-                ),
-
-            dict(
                 id = "Nombre de patients pour 100 000 habitants par département",
                 data = [
                     CovidFr.dataviz(x=ratedf.label, y=ratedf['hosp'], curve_type='bar', color='#ff7f00', width=1, name="Nbre d'hospitalisations", opacity=0.9, text = [i for i in ratedf.index], hovertemplate = '<b>%{y:.2f}</b> hospitalisations<br>dépt. <b>%{x} (FR-%{text})</b><extra></extra>'), 
@@ -397,33 +337,56 @@ class CovidFr():
 
                     CovidFr.dataviz(x=ratedf.label, y=ratedf['rea'], curve_type='bar', color='#ff0000', width=1, name="Nbre de réanimations", opacity=0.9, text = [i for i in ratedf.index], hovertemplate = '<b>%{y:.2f}</b> réanimations<br>dépt. <b>%{x} (FR-%{text})</b><extra></extra>'),
                     ],
-                layout = dict(
-                    margin=dict(l=30, r=10, b=30, t=30),
-                    barmode='group',
-                    linemode='overlay',
-                    legend_orientation="h",
-                    )
-                ),
+                layout = CovidFr.layoutoption(margin=dict(l=30, r=10, b=30, t=30), barmode='group', linemode='overlay', legend_orientation="h"),
+            ),
 
             dict(
                 id = "Nombre d'hospitalisations pour 100 000 habitants",
                 data = CovidFr.topdepviz(data=self.dep_data_norm_col["hosp"], data_dep=self.department_base_data, categor="hospitalisations", top=True, top_number=top_number, threshold=65),
-                layout = dict(
-                    margin=dict(l=30, r=10, b=30, t=30),
-                    linemode='overlay',
-                    legend_orientation="h",
-                    )
-                ),
+                layout = CovidFr.layoutoption(margin=dict(l=30, r=10, b=30, t=30), linemode='overlay', legend_orientation="h"),
+            ),
 
             dict(
                 id = "Nombre de réanimations pour 100 000 habitants",
                 data = CovidFr.topdepviz(data=self.dep_data_norm_col["rea"], data_dep=self.department_base_data, categor="réanimations", top=True, top_number=top_number, threshold=65),
-                layout = dict(
-                    margin=dict(l=30, r=10, b=30, t=30),
-                    linemode='overlay',
-                    legend_orientation="h",
-                    )
-                ),
+                layout = CovidFr.layoutoption(margin=dict(l=30, r=10, b=30, t=30), linemode='overlay', legend_orientation="h"),
+            ),
+            
+            dict(
+                id = "Nombre de personnes actuellement hospitalisées",
+                data = [CovidFr.dataviz(x=cdata.index, y=cdata['hosp'], curve_type='line', color='#ff7f00', width=3)],
+                layout = CovidFr.layoutoption(margin=dict(l=30, r=30, b=30, t=30)),
+            ),   
+
+            dict(
+                id = "Nombre de personnes actuellement en réanimation",
+                data = [CovidFr.dataviz(x=cdata.index, y=cdata['rea'], curve_type='line', color='#ff0000', width=3)],
+                layout = CovidFr.layoutoption(margin=dict(l=30, r=30, b=30, t=30)),
+            ),   
+
+            dict(
+                id = "Nombre cumulé de personnes décédées à l'hôpital",
+                data = [CovidFr.dataviz(x=cdata.index, y=cdata['dc_rectif'], curve_type='line', color='#730800', width=3)],
+                layout = CovidFr.layoutoption(margin=dict(l=30, r=30, b=30, t=30)),
+            ),
+
+            dict(
+                id = "Nombre cumulé de personnes retournées à domicile",
+                data = [CovidFr.dataviz(x=cdata.index, y=cdata['rad_rectif'], curve_type='line', color='#57d53b', width=3)],
+                layout = CovidFr.layoutoption(margin=dict(l=30, r=30, b=30, t=30)),
+            ),
+
+            dict(
+                id = "Nombre de personnes décédées par jour à l'hôpital",
+                data = [CovidFr.dataviz(x=cdata.index, y=cdata['dc_j'], curve_type='bar', color='#730800', width=1)],
+                layout = CovidFr.layoutoption(margin=dict(l=30, r=15, b=30, t=30), barmode='overlay',linemode='overlay', legend_orientation="h"),
+            ),
+
+            dict(
+                id = "Nombre de personnes retournées par jour à domicile",
+                data = [CovidFr.dataviz(x=cdata.index, y=cdata['rad_j'], curve_type='bar', color='#57d53b', width=1, opacity=0.8)],
+                layout = CovidFr.layoutoption(margin=dict(l=30, r=15, b=30, t=30), barmode='overlay',linemode='overlay', legend_orientation="h"),
+            ),
         ]
 
         self.graphJSON = json.dumps(graphs, cls=plotly.utils.PlotlyJSONEncoder)
@@ -492,6 +455,35 @@ class CovidFr():
         
         results = CovidFr.pca(data, pcdim, q, normalize, start_d_learn, end_d_learn, alpha)
 
+        annotations = [
+            go.layout.Annotation(
+                #x = max(results["Hotelling"]["dataindex"])-(max(results["Hotelling"]["dataindex"])-min(results["Hotelling"]["dataindex"]))/4,
+                x = results["Hotelling"]["dataindex"][-30],
+                y = 3*max(results["Hotelling"]["t2"])/4,
+                xref = "x",
+                yref = "y",
+                text = 'rpc: {} pc (ev: {}%)<br>normalized data: {}<br>model building: {} <br>to {}<br>smoothing filter: {}'.format(pcdim, ((np.trace(np.diag(results["eigenvalues"][:pcdim]))/np.trace(np.diag(results["eigenvalues"])))*100).round(2), normalize, datetime.strptime(start_d_learn, "%Y-%m-%d").strftime("%d/%m/%Y"), datetime.strptime(end_d_learn, "%Y-%m-%d").strftime("%d/%m/%Y"), alpha),
+                showarrow = False,
+                font = dict(
+                    family = "Courier New, monospace",
+                    size = 10,
+                    color = "#ffffff",
+                    ),
+                align = "left",
+                arrowhead = 2,
+                arrowsize = 1,
+                arrowwidth = 2,
+                arrowcolor = "#636363",
+                ax = 20,
+                ay = 30,
+                bordercolor = "#c7c7c7",
+                borderwidth = 2,
+                borderpad = 4,
+                bgcolor = '#000080',
+                opacity = 0.3,
+            )
+        ]
+
         graphs = [
             dict(
                 id = 'Hotelling',
@@ -502,40 +494,7 @@ class CovidFr():
 
                     CovidFr.dataviz(x=results["Hotelling"]["dataindex"], y=np.repeat(results["Hotelling"]["threshold"], results["Hotelling"]["t2"].shape[0]), curve_type='line', color='#ff0000', name='seuil', width=3, text=['seuil' for i in range(len(results["Hotelling"]["dataindex"]))], hovertemplate='<b>%{text}</b><extra></extra>', showlegend = False),
                 ],
-                layout=dict(
-                    #title="Indice Hotelling",
-                    legend=dict(orientation="h"),
-                    linemode='overlay',
-                    margin=dict(l=30, r=30, b=30, t=30), 
-                    annotations=[
-                        go.layout.Annotation(
-                            #x = max(results["Hotelling"]["dataindex"])-(max(results["Hotelling"]["dataindex"])-min(results["Hotelling"]["dataindex"]))/4,
-                            x = results["Hotelling"]["dataindex"][-30],
-                            y = 3*max(results["Hotelling"]["t2"])/4,
-                            xref = "x",
-                            yref = "y",
-                            text = 'rpc: {} pc (ev: {}%)<br>normalized data: {}<br>model building: {} <br>to {}<br>smoothing filter: {}'.format(pcdim, ((np.trace(np.diag(results["eigenvalues"][:pcdim]))/np.trace(np.diag(results["eigenvalues"])))*100).round(2), normalize, datetime.strptime(start_d_learn, "%Y-%m-%d").strftime("%d/%m/%Y"), datetime.strptime(end_d_learn, "%Y-%m-%d").strftime("%d/%m/%Y"), alpha),
-                            showarrow = False,
-                            font = dict(
-                                family = "Courier New, monospace",
-                                size = 10,
-                                color = "#ffffff",
-                                ),
-                            align = "left",
-                            arrowhead = 2,
-                            arrowsize = 1,
-                            arrowwidth = 2,
-                            arrowcolor = "#636363",
-                            ax = 20,
-                            ay = 30,
-                            bordercolor = "#c7c7c7",
-                            borderwidth = 2,
-                            borderpad = 4,
-                            bgcolor = '#000080',
-                            opacity = 0.3,
-                        )
-                    ],     
-                )
+                layout = CovidFr.layoutoption(margin=dict(l=30, r=30, b=30, t=30), linemode='overlay', legend=dict(orientation="h"), annotations=annotations),
             ),
 
             dict(
@@ -547,12 +506,7 @@ class CovidFr():
 
                     CovidFr.dataviz(x=results["SPE"]["dataindex"], y=np.repeat(results["SPE"]["threshold"], results["SPE"]["spe"].shape[0]), curve_type='line', color='#ff0000', name='seuil', width=3, text=['seuil' for i in range(len(results["SPE"]["dataindex"]))], hovertemplate='<b>%{text}</b><extra></extra>', showlegend = False),
                 ],
-                layout=dict(
-                    #title="Indice SPE",
-                    legend = dict(orientation="h"),
-                    linemode = 'overlay',
-                    margin = dict(l=30, r=30, b=30, t=30),      
-                )
+                layout = CovidFr.layoutoption(margin=dict(l=30, r=30, b=30, t=30), linemode='overlay', legend=dict(orientation="h")),
             ),
         ]
 
@@ -812,3 +766,44 @@ class CovidFr():
             showlegend = showlegend,
         )
         return output
+
+    @staticmethod
+    def layoutoption(**kwargs):
+        title = kwargs.get('title', None)
+        barmode = kwargs.get('barmode', None)
+        linemode = kwargs.get('linemode', None)
+        legend_orientation = kwargs.get('legend_orientation', None)
+        legend = kwargs.get('legend', None)
+        margin = kwargs.get('margin', None)
+        annotations = kwargs.get('annotations', None)
+
+        if not legend is None:
+            orientation = legend.get('orientation', None)
+        else:
+            orientation = None
+
+        if not margin is None:
+            l = margin.get('l', None)
+            r = margin.get('r', None)
+            b = margin.get('b', None)
+            t = margin.get('t', None)
+        else:
+            l, r, b, t = None, None, None, None
+
+        output = dict(
+            title = title,
+            barmode = barmode,
+            linemode = linemode,
+            legend_orientation = legend_orientation,
+            legend = dict(
+                orientation = orientation,
+            ),
+            margin = dict(
+                l = l,
+                r = r,
+                b = b,
+                t = t,
+            ),
+            annotations = annotations,
+        )
+        return output 
