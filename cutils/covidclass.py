@@ -47,8 +47,8 @@ class CovidFr():
 
         self.last_day = self.covid.jour.max().strftime("%Y-%m-%d")
 
-        #self.dep_data_norm = {department: CovidFr.dailycases(data=((self.covid[(self.covid.dep == department) & (self.covid.sexe == 0)].groupby(['jour']).sum() / self.department_base_data.at[department, 'population']) * 100000).round(2), pca=False) for department in self.department_base_data.insee}
         self.dep_data_norm = {department: ((self.covid[(self.covid.dep == department) & (self.covid.sexe == 0)].groupby(['jour']).sum() / self.department_base_data.at[department, 'population']) * 100000).round(2) for department in self.department_base_data.insee}
+        
         self.dep_data_norm_col = CovidFr.normrate(ddn=self.dep_data_norm, cdu=list(self.covid.dep.unique()))
 
         return self.covid 
@@ -332,97 +332,97 @@ class CovidFr():
                 id = "Nombre de personnes actuellement hospitalisées",
                 data = [CovidFr.dataviz(x=cdata.index, y=cdata['hosp'], curve_type='line', color='#ff7f00', width=3)],
                 layout = dict(
-                            #title="Nombre de personnes actuellement hospitalisées",
-                            margin=dict(l=30, r=30, b=30, t=30),
-                            )
-                ),   
+                    #title="Nombre de personnes actuellement hospitalisées",
+                    margin=dict(l=30, r=30, b=30, t=30),
+                    )
+            ),   
 
             dict(
                 id = "Nombre de personnes actuellement en réanimation",
                 data = [CovidFr.dataviz(x=cdata.index, y=cdata['rea'], curve_type='line', color='#ff0000', width=3)],
                 layout = dict(
-                            #title="Nombre de personnes actuellement en réanimation ou soins intensifs",
-                            margin=dict(l=30, r=30, b=30, t=30),
-                            )
-                ),   
+                    #title="Nombre de personnes actuellement en réanimation ou soins intensifs",
+                    margin=dict(l=30, r=30, b=30, t=30),
+                    )
+            ),   
 
             dict(
                 id = "Nombre cumulé de personnes décédées à l'hôpital",
                 data = [CovidFr.dataviz(x=cdata.index, y=cdata['dc_rectif'], curve_type='line', color='#730800', width=3)],
                 layout = dict(
-                            #title="Nombre cumulé de personnes décédées à l'hôpital",
-                            margin=dict(l=30, r=30, b=30, t=30),
-                            )
-                ),
+                    #title="Nombre cumulé de personnes décédées à l'hôpital",
+                    margin=dict(l=30, r=30, b=30, t=30),
+                    )
+            ),
 
             dict(
                 id = "Nombre cumulé de personnes retournées à domicile",
                 data = [CovidFr.dataviz(x=cdata.index, y=cdata['rad_rectif'], curve_type='line', color='#57d53b', width=3)],
                 layout = dict(
-                            #title="Nombre cumulé de personnes retournées à domicile",
-                            margin=dict(l=30, r=30, b=30, t=30),
-                            )
-                ),
+                    #title="Nombre cumulé de personnes retournées à domicile",
+                    margin=dict(l=30, r=30, b=30, t=30),
+                    )
+            ),
 
             dict(
                 id = "Nombre de personnes décédées par jour à l'hôpital",
                 data = [CovidFr.dataviz(x=cdata.index, y=cdata['dc_j'], curve_type='bar', color='#730800', width=1)],
                 layout = dict(
-                            #title="Nombre de personnes décédées par jour à l'hôpital",
-                            margin=dict(l=30, r=10, b=30, t=30),
-                            barmode='overlay',
-                            linemode='overlay',
-                            legend_orientation="h",
-                            )
+                    #title="Nombre de personnes décédées par jour à l'hôpital",
+                    margin=dict(l=30, r=10, b=30, t=30),
+                    barmode='overlay',
+                    linemode='overlay',
+                    legend_orientation="h",
+                    )
                 ),
 
             dict(
                 id = "Nombre de personnes retournées par jour à domicile",
                 data = [CovidFr.dataviz(x=cdata.index, y=cdata['rad_j'], curve_type='bar', color='#57d53b', width=1, opacity=0.8)],
                 layout = dict(
-                            #title="Nombre de personnes retournées par jour à domicile",
-                            margin=dict(l=30, r=10, b=30, t=30),
-                            barmode='overlay',
-                            linemode='overlay',
-                            legend_orientation="h",
-                            )
+                    #title="Nombre de personnes retournées par jour à domicile",
+                    margin=dict(l=30, r=10, b=30, t=30),
+                    barmode='overlay',
+                    linemode='overlay',
+                    legend_orientation="h",
+                    )
                 ),
 
             dict(
                 id = "Nombre de patients pour 100 000 habitants par département",
                 data = [
-                    CovidFr.hovertemp(x=ratedf.label, y=ratedf['hosp'], curve_type='bar', color='#ff7f00', width=1, dataindex=ratedf.index, label='hospitalisations', opacity=0.9),
+                    CovidFr.dataviz(x=ratedf.label, y=ratedf['hosp'], curve_type='bar', color='#ff7f00', width=1, name="Nbre d'hospitalisations", opacity=0.9, text = [i for i in ratedf.index], hovertemplate = '<b>%{y:.2f}</b> hospitalisations<br>dépt. <b>%{x} (FR-%{text})</b><extra></extra>'), 
 
-                    CovidFr.hovertemp(x=ratedf.label, y=ratedf['dc'], curve_type='bar', color='#730800', width=1, dataindex=ratedf.index, label='décès', opacity=0.9),
+                    CovidFr.dataviz(x=ratedf.label, y=ratedf['dc'], curve_type='bar', color='#730800', width=1, name="Nbre de décès", opacity=0.9, text = [i for i in ratedf.index], hovertemplate = '<b>%{y:.2f}</b> décès<br>dépt. <b>%{x} (FR-%{text})</b><extra></extra>'), 
 
-                    CovidFr.hovertemp(x=ratedf.label, y=ratedf['rea'], curve_type='bar', color='#ff0000', width=1, dataindex=ratedf.index, label='réanimations', opacity=0.9),
+                    CovidFr.dataviz(x=ratedf.label, y=ratedf['rea'], curve_type='bar', color='#ff0000', width=1, name="Nbre de réanimations", opacity=0.9, text = [i for i in ratedf.index], hovertemplate = '<b>%{y:.2f}</b> réanimations<br>dépt. <b>%{x} (FR-%{text})</b><extra></extra>'),
                     ],
-                layout=dict(
-                            margin=dict(l=30, r=10, b=30, t=30),
-                            barmode='group',
-                            linemode='overlay',
-                            legend_orientation="h",
-                            )
+                layout = dict(
+                    margin=dict(l=30, r=10, b=30, t=30),
+                    barmode='group',
+                    linemode='overlay',
+                    legend_orientation="h",
+                    )
                 ),
 
             dict(
-                id="Nombre d'hospitalisations pour 100 000 habitants",
-                data = CovidFr.topdepviz(data=self.dep_data_norm_col["hosp"], data_dep=self.department_base_data, categor="hospitalisations", top=True, date=self.last_day, top_number=top_number, threshold=65),
-                layout=dict(
-                            margin=dict(l=30, r=10, b=30, t=30),
-                            linemode='overlay',
-                            legend_orientation="h",
-                            )
+                id = "Nombre d'hospitalisations pour 100 000 habitants",
+                data = CovidFr.topdepviz(data=self.dep_data_norm_col["hosp"], data_dep=self.department_base_data, categor="hospitalisations", top=True, top_number=top_number, threshold=65),
+                layout = dict(
+                    margin=dict(l=30, r=10, b=30, t=30),
+                    linemode='overlay',
+                    legend_orientation="h",
+                    )
                 ),
 
             dict(
-                id="Nombre de réanimations pour 100 000 habitants",
-                data = CovidFr.topdepviz(data=self.dep_data_norm_col["rea"], data_dep=self.department_base_data, categor="réanimations", top=True, date=self.last_day, top_number=top_number, threshold=65),
-                layout=dict(
-                            margin=dict(l=30, r=10, b=30, t=30),
-                            linemode='overlay',
-                            legend_orientation="h",
-                            )
+                id = "Nombre de réanimations pour 100 000 habitants",
+                data = CovidFr.topdepviz(data=self.dep_data_norm_col["rea"], data_dep=self.department_base_data, categor="réanimations", top=True, top_number=top_number, threshold=65),
+                layout = dict(
+                    margin=dict(l=30, r=10, b=30, t=30),
+                    linemode='overlay',
+                    legend_orientation="h",
+                    )
                 ),
         ]
 
@@ -494,105 +494,13 @@ class CovidFr():
 
         graphs = [
             dict(
-                id = 'SPE',
-                data=[
-                    dict(
-                        x = results["SPE"]["dataindex"],
-                        y = results["SPE"]["spe"],
-                        type='line',
-                        name='score s',
-                        marker=dict(
-                        color='#02056D',
-                        line=dict(color='#02056D', width=3)
-                        ),
-                        hovertemplate =
-                            #'<b>Score</b>: %{y:.2f}<br>'+
-                            '<b>%{text}</b><extra></extra>',
-                            text = ['situation anormale' if results["SPE"]["spe"][i]>results["SPE"]["threshold"] else 'situation normale' for i in range(len(results["SPE"]["dataindex"]))],
-                    ),
-                    dict(
-                        x = results["SPE"]["dataindex"],
-                        y = results["SPE"]["smoothed_spe"],
-                        type='line',
-                        name="score s filtré",
-                        marker=dict(
-                        color='#026D2F',
-                        line=dict(color='#026D2F', width=3)
-                        ),
-                        hovertemplate =
-                            #'<b>Score</b>: %{y:.2f}<br>'+
-                            '<b>%{text}</b><extra></extra>',
-                            text = ['situation anormale' if results["SPE"]["smoothed_spe"][i]>results["SPE"]["threshold"] else 'situation normale' for i in range(len(results["SPE"]["dataindex"]))],
-                    ),
-                    dict(
-                        x = results["SPE"]["dataindex"],
-                        y = np.repeat(results["SPE"]["threshold"], results["SPE"]["spe"].shape[0]),
-                        type='line',
-                        name='seuil',
-                        marker=dict(
-                        color='#ff0000',
-                        line=dict(color='#ff0000', width=3)
-                        ),
-                        hovertemplate =
-                            #'<b>Score</b>: %{y:.2f}<br>'+
-                            '<b>%{text}</b><extra></extra>',
-                            text = ['seuil' for i in range(len(results["SPE"]["dataindex"]))],
-                        showlegend = False,
-                    ),
-                ],
-                layout=dict(
-                    #title="Indice SPE",
-                    legend=dict(orientation="h"),
-                    linemode='overlay',
-                    margin=dict(l=30, r=30, b=30, t=30),      
-                )
-            ),
-            dict(
                 id = 'Hotelling',
                 data=[
-                    dict(
-                        x = results["Hotelling"]["dataindex"],
-                        y = results["Hotelling"]["t2"],
-                        type='line',
-                        name='score t',
-                        marker=dict(
-                        color='#02056D',
-                        line=dict(color='#02056D', width=3)
-                        ),
-                        hovertemplate =
-                            #'<b>Score</b>: %{y:.2f}<br>'+
-                            '<b>%{text}</b><extra></extra>',
-                            text = ['situation anormale' if results["Hotelling"]["t2"][i]>results["Hotelling"]["threshold"] else 'situation normale' for i in range(len(results["Hotelling"]["dataindex"]))],
-                    ),
-                    dict(
-                        x = results["Hotelling"]["dataindex"],
-                        y = results["Hotelling"]["smoothed_t2"],
-                        type='line',
-                        name="score t filtré",
-                        marker=dict(
-                        color='#026D2F',
-                        line=dict(color='#026D2F', width=3)
-                        ),
-                        hovertemplate =
-                            #'<b>Score</b>: %{y:.2f}<br>'+
-                            '<b>%{text}</b><extra></extra>',
-                            text = ['situation anormale' if results["Hotelling"]["smoothed_t2"][i]>results["Hotelling"]["threshold"] else 'situation normale' for i in range(len(results["Hotelling"]["dataindex"]))],
-                    ),
-                    dict(
-                        x = results["Hotelling"]["dataindex"],
-                        y = np.repeat(results["Hotelling"]["threshold"], results["Hotelling"]["t2"].shape[0]),
-                        type='line',
-                        name='seuil',
-                        marker=dict(
-                        color='#ff0000',
-                        line=dict(color='#ff0000', width=3)
-                        ),
-                        hovertemplate =
-                            #'<b>Score</b>: %{y:.2f}<br>'+
-                            '<b>%{text}</b><extra></extra>',
-                            text = ['seuil' for i in range(len(results["Hotelling"]["dataindex"]))],
-                        showlegend = False,
-                    ),
+                    CovidFr.dataviz(x=results["Hotelling"]["dataindex"], y=results["Hotelling"]["t2"], curve_type='line', color='#02056D', name='score t', width=3, text=['situation anormale' if results["Hotelling"]["t2"][i]>results["Hotelling"]["threshold"] else 'situation normale' for i in range(len(results["Hotelling"]["dataindex"]))], hovertemplate='<b>%{text}</b><extra></extra>'),
+
+                    CovidFr.dataviz(x=results["Hotelling"]["dataindex"], y=results["Hotelling"]["smoothed_t2"], curve_type='line', color='#026D2F', name='score t filtré', width=3, text=['situation anormale' if results["Hotelling"]["smoothed_t2"][i]>results["Hotelling"]["threshold"] else 'situation normale' for i in range(len(results["Hotelling"]["dataindex"]))], hovertemplate='<b>%{text}</b><extra></extra>'),
+
+                    CovidFr.dataviz(x=results["Hotelling"]["dataindex"], y=np.repeat(results["Hotelling"]["threshold"], results["Hotelling"]["t2"].shape[0]), curve_type='line', color='#ff0000', name='seuil', width=3, text=['seuil' for i in range(len(results["Hotelling"]["dataindex"]))], hovertemplate='<b>%{text}</b><extra></extra>', showlegend = False),
                 ],
                 layout=dict(
                     #title="Indice Hotelling",
@@ -601,32 +509,49 @@ class CovidFr():
                     margin=dict(l=30, r=30, b=30, t=30), 
                     annotations=[
                         go.layout.Annotation(
-                            #x=max(results["Hotelling"]["dataindex"])-(max(results["Hotelling"]["dataindex"])-min(results["Hotelling"]["dataindex"]))/4,
-                            x=results["Hotelling"]["dataindex"][-30],
-                            y=3*max(results["Hotelling"]["t2"])/4,
-                            xref="x",
-                            yref="y",
-                            text='rpc: {} pc (ev: {}%)<br>normalized data: {}<br>model building: {} <br>to {}<br>smoothing filter: {}'.format(pcdim, ((np.trace(np.diag(results["eigenvalues"][:pcdim]))/np.trace(np.diag(results["eigenvalues"])))*100).round(2), normalize, datetime.strptime(start_d_learn, "%Y-%m-%d").strftime("%d/%m/%Y"), datetime.strptime(end_d_learn, "%Y-%m-%d").strftime("%d/%m/%Y"), alpha),
-                            showarrow=False,
-                            font=dict(
-                                family="Courier New, monospace",
-                                size=10,
-                                color="#ffffff",
+                            #x = max(results["Hotelling"]["dataindex"])-(max(results["Hotelling"]["dataindex"])-min(results["Hotelling"]["dataindex"]))/4,
+                            x = results["Hotelling"]["dataindex"][-30],
+                            y = 3*max(results["Hotelling"]["t2"])/4,
+                            xref = "x",
+                            yref = "y",
+                            text = 'rpc: {} pc (ev: {}%)<br>normalized data: {}<br>model building: {} <br>to {}<br>smoothing filter: {}'.format(pcdim, ((np.trace(np.diag(results["eigenvalues"][:pcdim]))/np.trace(np.diag(results["eigenvalues"])))*100).round(2), normalize, datetime.strptime(start_d_learn, "%Y-%m-%d").strftime("%d/%m/%Y"), datetime.strptime(end_d_learn, "%Y-%m-%d").strftime("%d/%m/%Y"), alpha),
+                            showarrow = False,
+                            font = dict(
+                                family = "Courier New, monospace",
+                                size = 10,
+                                color = "#ffffff",
                                 ),
-                            align="left",
-                            arrowhead=2,
-                            arrowsize=1,
-                            arrowwidth=2,
-                            arrowcolor="#636363",
-                            ax=20,
-                            ay=30,
-                            bordercolor="#c7c7c7",
-                            borderwidth=2,
-                            borderpad=4,
-                            bgcolor='#000080',
-                            opacity=0.3,
+                            align = "left",
+                            arrowhead = 2,
+                            arrowsize = 1,
+                            arrowwidth = 2,
+                            arrowcolor = "#636363",
+                            ax = 20,
+                            ay = 30,
+                            bordercolor = "#c7c7c7",
+                            borderwidth = 2,
+                            borderpad = 4,
+                            bgcolor = '#000080',
+                            opacity = 0.3,
                         )
                     ],     
+                )
+            ),
+
+            dict(
+                id = 'SPE',
+                data=[
+                    CovidFr.dataviz(x=results["SPE"]["dataindex"], y=results["SPE"]["spe"], curve_type='line', color='#02056D', name='score s', width=3, text=['situation anormale' if results["SPE"]["spe"][i]>results["SPE"]["threshold"] else 'situation normale' for i in range(len(results["SPE"]["dataindex"]))], hovertemplate='<b>%{text}</b><extra></extra>'),
+
+                    CovidFr.dataviz(x=results["SPE"]["dataindex"], y=results["SPE"]["smoothed_spe"], curve_type='line', color='#026D2F', name='score s filtré', width=3, text=['situation anormale' if results["SPE"]["smoothed_spe"][i]>results["SPE"]["threshold"] else 'situation normale' for i in range(len(results["SPE"]["dataindex"]))], hovertemplate='<b>%{text}</b><extra></extra>'),
+
+                    CovidFr.dataviz(x=results["SPE"]["dataindex"], y=np.repeat(results["SPE"]["threshold"], results["SPE"]["spe"].shape[0]), curve_type='line', color='#ff0000', name='seuil', width=3, text=['seuil' for i in range(len(results["SPE"]["dataindex"]))], hovertemplate='<b>%{text}</b><extra></extra>', showlegend = False),
+                ],
+                layout=dict(
+                    #title="Indice SPE",
+                    legend = dict(orientation="h"),
+                    linemode = 'overlay',
+                    margin = dict(l=30, r=30, b=30, t=30),      
                 )
             ),
         ]
@@ -751,7 +676,6 @@ class CovidFr():
             offset = data[0]
 
         alpha = np.array(alpha, copy=False).astype(dtype, copy=False)
-
         # scaling_factors -> 0 as len(data) gets large
         # this leads to divide-by-zeros below
         scaling_factors = np.power(1. - alpha, np.arange(data.size + 1, dtype=dtype),
@@ -760,10 +684,8 @@ class CovidFr():
         np.multiply(data, (alpha * scaling_factors[-2]) / scaling_factors[:-1],
                     dtype=dtype, out=out)
         np.cumsum(out, dtype=dtype, out=out)
-
         # cumsums / scaling
         out /= scaling_factors[-2::-1]
-
         if offset != 0:
             offset = np.array(offset, copy=False).astype(dtype, copy=False)
             # add offsets
@@ -838,9 +760,13 @@ class CovidFr():
             return data_reg.groupby("jour").max()
     
     @staticmethod
-    def topdepviz(data, data_dep, categor, top, date, top_number, threshold):
+    def topdepviz(data, data_dep, categor, **kwargs):
+        top = kwargs.get('top', False)
+        top_number = kwargs.get('top_number', None)
+        threshold = kwargs.get('threshold', None)
+
         if top:
-            df = data.sort_values(by=date, axis=1, ascending=False)
+            df = data.sort_values(by=data.index.max(), axis=1, ascending=False)
             select_dep_data_norm_col = df[df.columns[:top_number]]
         else:
             select_dep_data_norm_col = data[data.columns[[item for elem in (data[-1:] > threshold).values.tolist() for item in elem]]]
@@ -849,25 +775,30 @@ class CovidFr():
         for dep in list(select_dep_data_norm_col.columns.unique()):
             datacol.append(
                 dict(
-                    x=select_dep_data_norm_col.index,
-                    y=select_dep_data_norm_col[dep],
-                    name=data_dep.at[dep, "label"],
-                    text=[data_dep.at[dep, "label"] + " (FR-" + dep + ")"]*len(select_dep_data_norm_col.index),
-                    type='Scatter',
-                    hovertemplate =
-                    '<b>%{y:.2f} </b>' + categor + '<br>' +
-                    'dépt. %{text} <extra></extra>',
+                    x = select_dep_data_norm_col.index,
+                    y = select_dep_data_norm_col[dep],
+                    name = data_dep.at[dep, "label"],
+                    type = 'Scatter',
+                    text = [data_dep.at[dep, "label"] + " (FR-" + dep + ")"]*len(select_dep_data_norm_col.index),
+                    hovertemplate = '<b>%{y:.2f} </b>' + categor + '<br>' + 'dépt. %{text}<extra></extra>',
                 )
             )
         return datacol
     
     @staticmethod
-    def dataviz(x, y, curve_type, color, width, opacity=None, name=None, hovertemplate=None):
+    def dataviz(x, y, curve_type, color, **kwargs):
+        name = kwargs.get('name', None)
+        width = kwargs.get('width', None)
+        opacity = kwargs.get('opacity', None)
+        hovertemplate = kwargs.get('hovertemplate', None)
+        text = kwargs.get('text', None)
+        showlegend = kwargs.get('showlegend', None)
+
         output = dict(
             x = x,
             y = y,
-            name = name,
             type = curve_type,
+            name = name,
             marker = dict(
                 color = color,
                 line = dict(
@@ -877,24 +808,7 @@ class CovidFr():
                 opacity = opacity,
             ),
             hovertemplate = hovertemplate,
-        )
-        return output
-
-    @staticmethod
-    def hovertemp(x, y, curve_type, color, width, dataindex, label, opacity=None, name=None):
-        output = dict(
-            x = x,
-            y = y,
-            name = label, #name,
-            type = curve_type,
-            marker = dict(
-                color = color,
-                line = dict(
-                    color = color, 
-                    width = width,
-                ),
-                opacity = opacity,
-            ),
-            hovertemplate = '<b>%{y:.2f} </b>'+label+'<br>'+'dépt. <b>%{x} (FR-%{text})</b><extra></extra>', text = [i for i in dataindex],
+            text = text,
+            showlegend = showlegend,
         )
         return output

@@ -17,11 +17,24 @@ if covfr.need_update():
     #daily_reg = covfr.regiondailycases(data=covid, feature='dc')
     daily_reg = covfr.regiondailycases(data=covid, feature='hosp')
 
+###############################
+# required processing settings
+###############################
+mapchoice = ["Nombre de décès", "Taux décès / (décès + guérisons)", "Nombre de guérisons", "Nombre d'hospitalisations le "+covfr.charts()["counters"]["last_day_fr"], "Nombre de réanimations le "+covfr.charts()["counters"]["last_day_fr"]]
+number_all_dep = list(range(1, covfr.department_base_data.shape[0]+1))
+global_pc = list(range(1, daily.shape[1]+1))
+normalize_states = [True, False]
+alpha_smooth = list(np.arange(0.1, 1, 0.05).round(2))
+pc_reg = list(range(1, covfr.regiondailycases(data=covid, feature='hosp').shape[1]+1))
+
+first_day = json.dumps(covid["jour"][0].strftime("%d/%m/%Y"))
+last_day = json.dumps(datetime.strptime(covfr.last_day, "%Y-%m-%d").strftime("%d/%m/%Y"))
+
 ####################
 # default settings
 ####################
 #-- default selected map
-default_map_select = "Nombre d'hospitalisations le " + covfr.charts()["counters"]["last_day_fr"]
+default_map_select = mapchoice[3]
 ## default selected number of top departments
 default_top_dep = 10
 #-- default settings for pca-based global monitoring
@@ -40,19 +53,6 @@ default_end_d_learn_reg = '2020-08-25'
 default_alpha_reg = 0.7
 default_start_d_learn_fr_reg = json.dumps(datetime.strptime(default_start_d_learn_reg, '%Y-%m-%d').strftime("%d/%m/%Y"))
 default_end_d_learn_fr_reg = json.dumps(datetime.strptime(default_end_d_learn_reg, '%Y-%m-%d').strftime("%d/%m/%Y"))
-
-###############################
-# required processing settings
-###############################
-mapchoice = ["Nombre de décès", "Taux décès / (décès + guérisons)", "Nombre de guérisons", "Nombre d'hospitalisations le "+covfr.charts()["counters"]["last_day_fr"], "Nombre de réanimations le "+covfr.charts()["counters"]["last_day_fr"]]
-number_all_dep = list(range(1, covfr.department_base_data.shape[0]+1))
-global_pc = list(range(1, daily.shape[1]+1))
-normalize_states = [True, False]
-alpha_smooth = list(np.arange(0.1, 1, 0.05).round(2))
-pc_reg = list(range(1, covfr.regiondailycases(data=covid, feature='hosp').shape[1]+1))
-
-first_day = json.dumps(covid["jour"][0].strftime("%d/%m/%Y"))
-last_day = json.dumps(datetime.strptime(covfr.last_day, "%Y-%m-%d").strftime("%d/%m/%Y"))
 
 ###############################
 # required html page variables
