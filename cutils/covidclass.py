@@ -717,32 +717,6 @@ class CovidFr():
             return data_reg.groupby("jour").max()
     
     @staticmethod
-    def topdepviz(data, data_dep, feature_label, **kwargs):
-        top = kwargs.get('top', False)
-        top_number = kwargs.get('top_number', None)
-        threshold = kwargs.get('threshold', None)
-
-        if top:
-            df = data.sort_values(by=data.index.max(), axis=1, ascending=False)
-            select_dep_data_norm_col = df[df.columns[:top_number]]
-        else:
-            select_dep_data_norm_col = data[data.columns[[item for elem in (data[-1:] > threshold).values.tolist() for item in elem]]]
-
-        data_fearture = []
-        for dep in list(select_dep_data_norm_col.columns.unique()):
-            data_fearture.append(
-                dict(
-                    x = select_dep_data_norm_col.index,
-                    y = select_dep_data_norm_col[dep],
-                    name = data_dep.at[dep, "label"],
-                    type = 'Scatter',
-                    text = [data_dep.at[dep, "label"] + " (FR-" + dep + ")"]*len(select_dep_data_norm_col.index),
-                    hovertemplate = '<b>%{y:.2f} </b>' + feature_label + '<br>' + 'dépt. %{text}<extra></extra>',
-                )
-            )
-        return data_fearture
-    
-    @staticmethod
     def topdepdataviz(data, **kwargs):
         top = kwargs.get('top', False)
         top_number = kwargs.get('top_number', None)
