@@ -327,6 +327,9 @@ class CovidFr():
         ratedf = pd.concat([ratedf, self.department_base_data], axis=1)
         ratedf.sort_values(by=['hosp'], inplace=True, ascending=False)
 
+        tddv_hosp = CovidFr.topdepdataviz(data=self.dep_data_norm_col["hosp"], top=True, top_number=top_number, threshold=65)
+        tddv_rea = CovidFr.topdepdataviz(data=self.dep_data_norm_col["rea"], top=True, top_number=top_number, threshold=65)
+
         graphs = [
             dict(
                 id = "Nombre de patients pour 100 000 habitants par département",
@@ -336,22 +339,22 @@ class CovidFr():
                     CovidFr.dataviz(x=ratedf.label, y=ratedf['dc'], curve_type='bar', color='#730800', width=1, name="Nbre de décès", opacity=0.9, text = [i for i in ratedf.index], hovertemplate = '<b>%{y:.2f}</b> décès<br>dépt. <b>%{x} (FR-%{text})</b><extra></extra>'), 
 
                     CovidFr.dataviz(x=ratedf.label, y=ratedf['rea'], curve_type='bar', color='#ff0000', width=1, name="Nbre de réanimations", opacity=0.9, text = [i for i in ratedf.index], hovertemplate = '<b>%{y:.2f}</b> réanimations<br>dépt. <b>%{x} (FR-%{text})</b><extra></extra>'),
-                    ],
+                ],
                 layout = CovidFr.layoutoption(margin=dict(l=30, r=10, b=30, t=30), barmode='group', linemode='overlay', legend_orientation="h"),
             ),
 
             dict(
                 id = "Nombre d'hospitalisations pour 100 000 habitants",
-                data = CovidFr.topdepviz(data=self.dep_data_norm_col["hosp"], data_dep=self.department_base_data, categor="hospitalisations", top=True, top_number=top_number, threshold=65),
+                data = [CovidFr.dataviz(x=tddv_hosp.index, y=tddv_hosp[dep], curve_type='Scatter', name=self.department_base_data.at[dep, "label"], text=[self.department_base_data.at[dep, "label"]+" (FR-"+dep+")"]*len(tddv_hosp.index), hovertemplate='<b>%{y:.2f}</b> '+'réanimations'+'<br>'+'dépt. %{text}<extra></extra>') for dep in list(tddv_hosp.columns.unique())],
                 layout = CovidFr.layoutoption(margin=dict(l=30, r=10, b=30, t=30), linemode='overlay', legend_orientation="h"),
             ),
 
             dict(
                 id = "Nombre de réanimations pour 100 000 habitants",
-                data = CovidFr.topdepviz(data=self.dep_data_norm_col["rea"], data_dep=self.department_base_data, categor="réanimations", top=True, top_number=top_number, threshold=65),
+                data = [CovidFr.dataviz(x=tddv_rea.index, y=tddv_rea[dep], curve_type='Scatter', name=self.department_base_data.at[dep, "label"], text=[self.department_base_data.at[dep, "label"]+" (FR-"+dep+")"]*len(tddv_rea.index), hovertemplate='<b>%{y:.2f}</b> '+'hospitalisations'+'<br>'+'dépt. %{text}<extra></extra>') for dep in list(tddv_rea.columns.unique())],
                 layout = CovidFr.layoutoption(margin=dict(l=30, r=10, b=30, t=30), linemode='overlay', legend_orientation="h"),
             ),
-            
+
             dict(
                 id = "Nombre de personnes actuellement hospitalisées",
                 data = [CovidFr.dataviz(x=cdata.index, y=cdata['hosp'], curve_type='line', color='#ff7f00', width=3)],
@@ -714,7 +717,7 @@ class CovidFr():
             return data_reg.groupby("jour").max()
     
     @staticmethod
-    def topdepviz(data, data_dep, categor, **kwargs):
+    def topdepviz(data, data_dep, feature_label, **kwargs):
         top = kwargs.get('top', False)
         top_number = kwargs.get('top_number', None)
         threshold = kwargs.get('threshold', None)
@@ -725,23 +728,38 @@ class CovidFr():
         else:
             select_dep_data_norm_col = data[data.columns[[item for elem in (data[-1:] > threshold).values.tolist() for item in elem]]]
 
-        datacol = []
+        data_fearture = []
         for dep in list(select_dep_data_norm_col.columns.unique()):
-            datacol.append(
+            data_fearture.append(
                 dict(
                     x = select_dep_data_norm_col.index,
                     y = select_dep_data_norm_col[dep],
                     name = data_dep.at[dep, "label"],
                     type = 'Scatter',
                     text = [data_dep.at[dep, "label"] + " (FR-" + dep + ")"]*len(select_dep_data_norm_col.index),
-                    hovertemplate = '<b>%{y:.2f} </b>' + categor + '<br>' + 'dépt. %{text}<extra></extra>',
+                    hovertemplate = '<b>%{y:.2f} </b>' + feature_label + '<br>' + 'dépt. %{text}<extra></extra>',
                 )
             )
-        return datacol
+        return data_fearture
     
     @staticmethod
-    def dataviz(x, y, curve_type, color, **kwargs):
+    def topdepdataviz(data, **kwargs):
+        top = kwargs.get('top', False)
+        top_number = kwargs.get('top_number', None)
+        threshold = kwargs.get('threshold', None)
+
+        if top:
+            df = data.sort_values(by=data.index.max(), axis=1, ascending=False)
+            select_dep_data_norm_col = df[df.columns[:top_number]]
+        else:
+            select_dep_data_norm_col = data[data.columns[[item for elem in (data[-1:] > threshold).values.tolist() for item in elem]]]
+
+        return select_dep_data_norm_col
+    
+    @staticmethod
+    def dataviz(x, y, curve_type, **kwargs):
         name = kwargs.get('name', None)
+        color = kwargs.get('color', None)
         width = kwargs.get('width', None)
         opacity = kwargs.get('opacity', None)
         hovertemplate = kwargs.get('hovertemplate', None)
@@ -777,33 +795,13 @@ class CovidFr():
         margin = kwargs.get('margin', None)
         annotations = kwargs.get('annotations', None)
 
-        if not legend is None:
-            orientation = legend.get('orientation', None)
-        else:
-            orientation = None
-
-        if not margin is None:
-            l = margin.get('l', None)
-            r = margin.get('r', None)
-            b = margin.get('b', None)
-            t = margin.get('t', None)
-        else:
-            l, r, b, t = None, None, None, None
-
         output = dict(
             title = title,
             barmode = barmode,
             linemode = linemode,
             legend_orientation = legend_orientation,
-            legend = dict(
-                orientation = orientation,
-            ),
-            margin = dict(
-                l = l,
-                r = r,
-                b = b,
-                t = t,
-            ),
+            legend = legend,
+            margin = margin,
             annotations = annotations,
         )
         return output 
