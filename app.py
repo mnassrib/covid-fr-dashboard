@@ -59,6 +59,8 @@ default_end_d_learn_reg = '2020-08-25'
 default_alpha_reg = 0.7
 default_start_d_learn_fr_reg = json.dumps(datetime.strptime(default_start_d_learn_reg, '%Y-%m-%d').strftime("%d/%m/%Y"))
 default_end_d_learn_fr_reg = json.dumps(datetime.strptime(default_end_d_learn_reg, '%Y-%m-%d').strftime("%d/%m/%Y"))
+department = None
+region = None
 
 ###############################
 # required html page variables
@@ -134,6 +136,8 @@ def graphs():
         first_day = first_day,
         last_day = last_day,
         label = label,
+        department = department,
+        region = region,
 
         mapchoice = mapchoice,
         criterion_choice = criterion_choice,
@@ -206,6 +210,8 @@ def maps():
         first_day = first_day,
         last_day = last_day,
         label = label,
+        department = department,
+        region = region,
         
         mapchoice = mapchoice,
         criterion_choice = criterion_choice,
@@ -281,6 +287,8 @@ def top_dep_settings():
         first_day = first_day,
         last_day = last_day,
         label = label,
+        department = department,
+        region = region,
         
         mapchoice = mapchoice,
         criterion_choice = criterion_choice,
@@ -364,6 +372,8 @@ def global_monitoring_settings():
         first_day = first_day,
         last_day = last_day,
         label = label,
+        department = department,
+        region = region,
         
         mapchoice = mapchoice,
         criterion_choice = criterion_choice,
@@ -447,6 +457,8 @@ def hosp_monitoring_settings():
         first_day = first_day,
         last_day = last_day,
         label = label,
+        department = department,
+        region = region,
         
         mapchoice = mapchoice,
         criterion_choice = criterion_choice,
@@ -480,7 +492,7 @@ def view_department(department):
     charts_and_parameters = covfr.charts(data=None, department=department, region=None, top_number=top_dep)
     charts_and_parameters_positive_data = covfr.charts_positive_data(data=None, department=department, region=None, top_number=top_dep)
     label = covfr.request_label(department=department, region=None)
-    
+
     return render_template(
         "graphs.html", 
         graphJSON = charts_and_parameters,  
@@ -521,6 +533,8 @@ def view_department(department):
         first_day = first_day,
         last_day = last_day,
         label = label,
+        department = department,
+        region = region,
         
         mapchoice = mapchoice,
         criterion_choice = criterion_choice,
@@ -595,6 +609,8 @@ def view_region(region):
         first_day = first_day,
         last_day = last_day,
         label = label,
+        department = department,
+        region = region,
         
         mapchoice = mapchoice,
         criterion_choice = criterion_choice,
