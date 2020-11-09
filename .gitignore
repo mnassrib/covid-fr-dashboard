@@ -3,3 +3,4 @@
 __pycache__/*
 cutils/__pycache__/*
 *.ipynb
+*.pptx

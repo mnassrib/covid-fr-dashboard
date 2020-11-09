@@ -69,18 +69,38 @@
                         </div>
                         <div class="col-md-6">
                             <div class="card mb-4 box-shadow">
-                                <div class="card-body">
-                                    <p align="center">
-                                        Les états de santé et les possibles transitions inter-états pour un patient atteint du virus COVID-19
-                                    </p>  
+
+                                <div class="row">
+                                    <div class="col-md-3"></div>
+                                    <div class="col-md-6">
+                                        <button onclick="window.location.href='#cas_positifs';" class="button positive">
+                                            <font size="2">au {{ positive_counters['positive_last_day_fr'] }}</font> <br />
+                                            <span class="key-value">{{ positive_counters['current_positive'] }}</span>
+                                            {% if (positive_counters['diff_positive'] < 0): %}
+                                                <br /> <font size="2">({{ positive_counters['diff_positive'] }})</font>
+                                            {% else: %}
+                                                <br /> <font size="2">(+{{ positive_counters['diff_positive'] }})</font>
+                                            {% endif %}
+                                            {% if (positive_counters['current_positive']>1): %}
+                                                <br /> cas positifs
+                                            {% else: %}
+                                                <br /> cas positif
+                                            {% endif %}
+                                        </button>
+                                    </div>
+                                    <div class="col-md-3"></div>
+                                </div>
+        
+                                <div class="card-body">  
                                     <div class=conteneur>
-                                        <img usemap="#etats" src="{{ url_for('static', filename='images/little_transition.png') }}" alt="">
+                                        <img usemap="#etats" src="{{ url_for('static', filename='images/transition.png') }}" alt="">
                                     </div>                              
                                     <map name="etats">
-                                        <area href="#patients_décédés_quotidiennement" shape="rect" coords="27,0 114,38">
-                                        <area href="#patients_en_réanimation" shape="rect" coords="27,106 114,144">
-                                        <area href="#patients_guéris_quotidiennement" shape="rect" coords="169,0 256,38">
-                                        <area href="#patients_en_hospitalisation" shape="rect" coords="169,106 256,144">
+                                        <area href="#patients_en_réanimation" shape="rect" coords="28,30 121,69">
+                                        <area href="#patients_en_hospitalisation" shape="rect" coords="165,30 259,69">
+                                        <area href="#cas_positifs" shape="rect" coords="96,87 190,124">
+                                        <area href="#patients_décédés_quotidiennement" shape="rect" coords="28,142 121,180">
+                                        <area href="#patients_guéris_quotidiennement" shape="rect" coords="165,142 259,180">
                                     </map>
                                 </div>
                                 <div class="row">
@@ -167,7 +187,7 @@
                     {% endif %}
                     <div class="row">
                         <div class="col-md-12">
-                            <div class="card mb-4 box-shadow back">
+                            <div class="card mb-4 box-shadow imagebackground">
                                 <div class="row">
                                     <div class="col-md-3">
                                         <button onclick="window.location.href='#map_view';" class="button death">
@@ -231,7 +251,7 @@
                                     </div>
                                 </div>
                                 <div class="row">
-                                    <div class="col-md-4">
+                                    <div class="col-md-2">
                                     </div>
                                     <div class="col-md-4">
                                         <button onclick="window.location.href='#map_view';" class="button">
@@ -244,8 +264,21 @@
                                                 <br /> décès/guérisons
                                         </button>
                                     </div>
+
                                     <div class="col-md-4">
+                                        <button onclick="window.location.href='#map_view';" class="button positive">
+                                            <span class="key-value">{{ positive_counters['rates']['positive'] }}</span>
+                                            {% if (positive_counters['rates']['d_positive'] < 0): %}
+                                                <br /> <font size="2">({{ positive_counters['rates']['d_positive'] }})</font>
+                                            {% else: %}
+                                                <br /> <font size="2">(+{{ positive_counters['rates']['d_positive'] }})</font>
+                                            {% endif %}
+                                                <br /> cas positifs
+                                        </button>
                                     </div>
+                                    <div class="col-md-2">
+                                    </div>
+
                                 </div>
                             </div>
                         </div>
@@ -580,6 +613,66 @@
                         </div>
                     </div>
 
+                    {% elif (map_select == "Nombre de cas positifs le " + positive_counters["positive_last_day_fr"]): %}
+
+                    <div class="col-md-6" id="positive_map_reg">
+                        <div class="card mb-4 box-shadow">
+                            <div class="card-body">
+                                <div class="pictos">
+                                    <a class="picto-item" aria-label="Cliquez sur un département pour afficher le détail">
+                                        <h3>Nombre de cas positifs par région le {{ positive_counters["positive_last_day_fr"] }} *
+                                    </a>
+                                </div>
+                                <div class="row">
+                                    <div class="col-md-12">
+                                        <div class="map"></div>
+                                    </div>
+                                    <div class="col-md-12">
+                                        <div class="card mb-4 box-shadow">
+                                            <div class="card-body">
+                                                <a class="picto-item" aria-label="Sélectionnez les couleurs que vous souhaitez afficher sur la carte">
+                                                    <p>Légende</p>
+                                                </a>
+                                                <div class="areaLegend"></div>
+                                                <p style="color:red">&#x26A0; Niveau national : {{ positive_counters["nat_refs"]['nat_positive'] }} cas positifs *</p>
+                                                <p style="color:black"><small>(* : pour 100 000 habitants)</small></p>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="col-md-6" id="postive_map_dep">
+                        <div class="card mb-4 box-shadow">
+                            <div class="card-body">
+                                <div class="pictos">
+                                    <a class="picto-item" aria-label="Cliquez sur un département pour afficher le détail">
+                                        <h3>Nombre de cas positifs par département le {{ positive_counters["positive_last_day_fr"] }} *
+                                    </a>
+                                </div>
+                                <div class="row">
+                                    <div class="col-md-12">
+                                        <div class="map"></div>
+                                    </div>
+                                    <div class="col-md-12">
+                                        <div class="card mb-4 box-shadow">
+                                            <div class="card-body">
+                                                <a class="picto-item" aria-label="Sélectionnez les couleurs que vous souhaitez afficher sur la carte">
+                                                    <p>Légende</p>
+                                                </a>
+                                                <div class="areaLegend"></div>
+                                                <p style="color:red">&#x26A0; Niveau national : {{ positive_counters["nat_refs"]['nat_positive'] }} cas positifs *</p>
+                                                <p style="color:black"><small>(* : pour 100 000 habitants)</small></p>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
                     {% endif %}
 
                 </div>
@@ -589,8 +682,8 @@
         <div class="col-md-12">
             <div class="card mb-4 box-shadow">
                 <div class="card-body">
-                    <h3 id="patients_quotidiennement">Nombre de patients sur 100 000 habitants par département au {{ counters['last_day_fr'] }}</h3>
-                    <div id="Nombre de patients pour 100 000 habitants par département"></div>
+                    <h3 id="patients_quotidiennement">Nombre de cas sur 100 000 habitants par département au {{ counters['last_day_fr'] }} (au  {{ positive_counters['positive_last_day_fr'] }} pour les cas positifs)</h3>
+                    <div id="Dernier nombre de patients pour 100 000 habitants par département"></div>
                 </div>
             </div>
         </div>
@@ -603,8 +696,8 @@
                         <form method="POST" action="{{ url_for('top_dep_settings') }}">
                             <div class="form-row align-items-center">
                                 <div class="col-auto my-1">
-                                    <label class="mr-sm-2" for="inlineFormCustomSelect">Sélection du nombre de dépt. à visualiser</label>
-                                    <select name="top_dep" class="custom-select mr-sm-2">
+                                    <label class="mr-sm-2" for="inlineFormCustomSelect">Nombre de dépt. à afficher</label>
+                                    <select name="top_dep_settings" class="custom-select mr-sm-2">
                                         {% for t in number_all_dep %}
                                             {% if (t == top_dep): %}
                                                 <option selected="selected">{{ top_dep }}</option> 
@@ -615,34 +708,80 @@
                                     </select>
                                 </div>
 
+                                <div class="col-auto my-1">
+                                    <label class="mr-sm-2" for="inlineFormCustomSelect">Critère à afficher</label>
+                                    <select name="top_dep_settings" class="custom-select mr-sm-2">
+                                        {% for c in criterion_choice %}
+                                            {% if (c == criterion): %}
+                                                <option selected="selected">{{ criterion }}</option> 
+                                            {% else %}
+                                                <option value="{{ c }}">{{ c }}</option>
+                                            {% endif %}
+                                        {% endfor %}
+                                    </select>
+                                </div>
+
                                 <div class="col-auto my-1 align-self-end">
-                                    <button type="submit" formaction="{{ url_for('top_dep_settings') }}#top_dep_results" class="btn btn-primary">Valider</button>
+                                  <button type="submit" formaction="{{ url_for('top_dep_settings') }}#top_dep_results" class="btn btn-primary">Valider</button>
                                 </div>
                             </div>
                         </form> 
                     </div>
                 </div>
 
+                {% if (criterion == "Cas positifs au "+positive_counters['positive_last_day_fr']): %}
+
+                <div class="col-md-12" id="">
+                    <div class="card mb-4 box-shadow">
+                        <div class="card-body">
+                            <h3 id="patients_quotidiennement">Top {{ top_dep }} des départements selon le nombre de cas positifs pour 100 000 habitants au {{ positive_counters['positive_last_day_fr'] }}</h3>
+                            <div id="Top des départements selon le nombre de cas positifs pour 100 000 habitants"></div>
+                        </div>
+                    </div>
+                </div>
+
+                {% elif (criterion == "Hospitalisations au "+counters['last_day_fr']): %}
+
                 <div class="col-md-12" id="">
                     <div class="card mb-4 box-shadow">
                         <div class="card-body">
                             <h3 id="patients_quotidiennement">Top {{ top_dep }} des départements selon le nombre d'hospitalisations pour 100 000 habitants au {{ counters['last_day_fr'] }}</h3>
-                            <div id="Nombre d'hospitalisations pour 100 000 habitants"></div>
+                            <div id="Top des départements selon le nombre d'hospitalisations pour 100 000 habitants"></div>
                         </div>
                     </div>
                 </div>
+
+                {% elif (criterion == "Réanimations au "+counters['last_day_fr']): %}
 
                 <div class="col-md-12" id="">
                     <div class="card mb-4 box-shadow">
                         <div class="card-body">
                             <h3 id="patients_quotidiennement">Top {{ top_dep }} des départements selon le nombre de réanimations pour 100 000 habitants au {{ counters['last_day_fr'] }}</h3>
-                            <div id="Nombre de réanimations pour 100 000 habitants"></div>
+                            <div id="Top des départements selon le nombre de réanimations pour 100 000 habitants"></div>
                         </div>
                     </div>
                 </div>
 
+                {% endif %}
             </div>
         </div> 
+
+        <div class="col-md-12">
+            <div class="card mb-4 box-shadow">
+                <div class="card-body">
+                    {% if (label != 'France'): %}
+                        {% if (label['type'] == 'department'): %}
+                            <h3 id="cas_positifs">Nombre quotidien de personnes détectées positives au {{ label['prefix'] }} {{ label['name'] }} (FR-{{ department }})</h3>
+                        {% else : %}
+                            <h3 id="cas_positifs">Nombre quotidien de personnes détectées positives à la {{ label['prefix'] }} {{ label['name'] }} (FR-{{ region }})</h3>
+                        {% endif %}
+                    {% else : %}
+                        <h3 id="cas_positifs">Nombre quotidien de personnes détectées positives en {{ label }}</h3> 
+                    {% endif %}
+                    <div id="Nombre de personnes actuellement positives"></div>
+                </div>
+            </div>
+        </div>
 
         <div class="col-md-6">
             <div class="card mb-4 box-shadow">
@@ -683,7 +822,7 @@
                         {% if (label['type'] == 'department'): %}
                             <h3 id="total_patients_décédés">Nombre cumulé de patients décédés à l'hôpital au {{ label['prefix'] }} {{ label['name'] }} (FR-{{ department }})</h3>
                         {% else : %}
-                            <h3 id="total_patients_décédés">Nombre cumulé de patients décédés à l'hôpital à la {{ label['prefix'] }} {{ label['name'] }} (FR-{{ région }})</h3>
+                            <h3 id="total_patients_décédés">Nombre cumulé de patients décédés à l'hôpital à la {{ label['prefix'] }} {{ label['name'] }} (FR-{{ region }})</h3>
                         {% endif %}
                     {% else : %}
                         <h3 id="total_patients_décédés">Nombre cumulé de patients décédés à l'hôpital en {{ label }}</h3>
@@ -720,7 +859,7 @@
                     {% else : %}
                         <h3 id="patients_décédés_quotidiennement">Nombre quotidien de patients décédés à l'hôpital en {{ label }}</h3> 
                     {% endif %}
-                    <div id="Nombre de personnes décédées par jour à l'hôpital"></div>
+                    <div id="Nombre quotidien de personnes décédées à l'hôpital"></div>
                 </div>
             </div>
         </div>
@@ -736,7 +875,7 @@
                     {% else : %}
                         <h3 id="patients_guéris_quotidiennement">Nombre quotidien de patients retournés à domicile en {{ label }}</h3> 
                     {% endif %}
-                    <div id="Nombre de personnes retournées par jour à domicile"></div>
+                    <div id="Nombre quotidien de personnes retournées à domicile"></div>
                 </div>
             </div>
         </div>
@@ -942,6 +1081,158 @@
                             monthNames: ['Janv', 'Févr', 'Mars', 'Avr', 'Mai', 'Juin',
                                 'Juill', 'Août', 'Sept', 'Oct', 'Nov', 'Déc'],
                             firstDay: 1},
+            });
+        });
+    </script>
+
+    <!-- positive map regions-->
+    <script type="text/javascript">
+        $(function() {
+            // Init map
+            var regions = {{ overall_regions_data_P|safe }};
+            var quantiles = {{ overall_regions_quantiles_P|safe }};
+            quantiles = Object.values(quantiles);
+            var slices = [
+                    {"max": quantiles[0], "label": "Moins de " + quantiles[0] + " cas positifs *", attrs: {fill: "#D6F77F"}}
+                ];
+            colors = ["#f2f53a", '#df891a', '#e61919', '#680000', '#1d0303']
+            for (var i = 0; i < quantiles.length; i++) {
+                var slice = {
+                        attrs: {
+                            fill: colors[i]
+                        }
+                    };
+                slice.min = quantiles[i];
+                if (i < quantiles.length -1) {
+                    slice.max = quantiles[i + 1];
+                    slice.label = "Entre " + slice.min + " et " + slice.max + " cas positifs *";
+                } else {
+                    slice.label = "Plus de " + slice.min + " cas positifs *";
+                }
+                slices.push(slice);
+            }
+            for (var id in regions) {
+                regions[id]['value'] = regions[id]['P_par_habitants'];
+                regions[id]['tooltip'] = {
+                    "content": regions[id]['label'] + " : <b>" + regions[id]['P'] + "</b> cas positifs (<b>" + regions[id]['P_par_habitants'] + "</b> pour 100 000 habitants)"
+                };
+                regions[id]['href'] = "/region/" + regions[id]['insee'] + "#";
+                if (regions[id]['insee'] === '{{ region }}') {
+                    regions[id]['href'] = "/";
+                    delete regions[id]['value'];
+                    regions[id]['attrs'] = {
+                        "fill": "#004a9b",
+                    };
+                }
+            }
+            $("#positive_map_reg").mapael({
+                "map": {
+                    "name": "france_regions_2016_domtom",
+                    zoom: {
+                        enabled: true,
+                        maxLevel: 10
+                    },
+                    "defaultArea": {
+                        "attrs": {
+                            "fill": "#f4f4e8",
+                            "stroke": "#ced8d0",
+                        },
+                        "attrsHover": {
+                            "fill": "#004a9b",
+                        },
+                        "text": {
+                            "attrs": {
+                                "fill": "#505444"
+                            },
+                            "attrsHover": {
+                                "fill": "#000",
+                            }
+                        }
+                    }
+                },
+                "legend": {
+                    "area": {
+                        "marginBottom": 20,
+                        "slices": slices,
+                    }
+                },
+                "areas": regions
+            });
+        });
+    </script>
+
+    <!-- positive map departments-->
+    <script type="text/javascript">
+        $(function() {
+            // Init map
+            var departments = {{ overall_departments_data_P|safe }};
+            var quantiles = {{ overall_departments_quantiles_P|safe }};
+            quantiles = Object.values(quantiles);
+            var slices = [
+                    {"max": quantiles[0], "label": "Moins de " + quantiles[0] + " cas positives *", attrs: {fill: "#D6F77F"}}
+                ];
+            colors = ["#f2f53a", '#df891a', '#e61919', '#680000', '#1d0303']
+            for (var i = 0; i < quantiles.length; i++) {
+                var slice = {
+                        attrs: {
+                            fill: colors[i]
+                        }
+                    };
+                slice.min = quantiles[i];
+                if (i < quantiles.length -1) {
+                    slice.max = quantiles[i + 1];
+                    slice.label = "Entre " + slice.min + " et " + slice.max + " cas positives *";
+                } else {
+                    slice.label = "Plus de " + slice.min + " cas positives *";
+                }
+                slices.push(slice);
+            }
+            for (var id in departments) {
+                departments[id]['value'] = departments[id]['P_par_habitants'];
+                departments[id]['tooltip'] = {
+                    "content": departments[id]['label'] + " : <b>" + departments[id]['P'] + "</b> cas positives (<b>" + departments[id]['P_par_habitants'] + "</b> pour 100 000 habitants)"
+                };
+                departments[id]['href'] = "/departement/" + departments[id]['insee'] + "#";
+                if (departments[id]['insee'] === '{{ department }}') {
+                    departments[id]['href'] = "/";
+                    delete departments[id]['value'];
+                    departments[id]['attrs'] = {
+                        "fill": "#004a9b",
+                    };
+                }
+            }
+            $("#postive_map_dep").mapael({
+                "map": {
+                    "name": "france_departments_domtom",
+                    zoom: {
+                        enabled: true,
+                        maxLevel: 10
+                    },
+                    "defaultArea": {
+                        "attrs": {
+                            "fill": "#f4f4e8",
+                            "stroke": "#ced8d0",
+                        },
+                        "attrsHover": {
+                            "fill": "#004a9b",
+                        },
+                        "text": {
+                            "attrs": {
+                                "fill": "#505444"
+                            },
+                            "attrsHover": {
+                                "fill": "#000",
+                            }
+                        }
+                    }
+                },
+                "legend": {
+                    "area": {
+                        "marginBottom": 20,
+                        "slices": slices
+                    }
+                },
+                "areas": departments
             });
         });
     </script>
@@ -1726,7 +2017,152 @@
                 "showTips": false,
             };
 
-        var graphs = {{ graphJSON | safe }};
+        var graphs = {{ graphJSON["graphJSON0"] | safe }};
+
+        for(var i in graphs) {
+            Plotly.plot(
+                graphs[i].id, // the ID of the div, created above
+                graphs[i].data,
+                graphs[i].layout || {}, 
+                plotlyConfig);
+        }
+    </script>
+
+    <!-- charts-->
+    <script type="text/javascript">
+        var graphs = {{ graphJSON["graphJSON1"] | safe }};
+
+        for(var i in graphs) {
+            Plotly.plot(
+                graphs[i].id, // the ID of the div, created above
+                graphs[i].data,
+                graphs[i].layout || {}, 
+                plotlyConfig);
+        }
+    </script>
+
+    <!-- charts-->
+    <script type="text/javascript">
+        var graphs = {{ graphJSON["graphJSON2"] | safe }};
+
+        for(var i in graphs) {
+            Plotly.plot(
+                graphs[i].id, // the ID of the div, created above
+                graphs[i].data,
+                graphs[i].layout || {}, 
+                plotlyConfig);
+        }
+    </script>
+
+    <!-- charts-->
+    <script type="text/javascript">
+        var graphs = {{ graphJSON["graphJSON3"] | safe }};
+
+        for(var i in graphs) {
+            Plotly.plot(
+                graphs[i].id, // the ID of the div, created above
+                graphs[i].data,
+                graphs[i].layout || {}, 
+                plotlyConfig);
+        }
+    </script>
+
+    <!-- charts-->
+    <script type="text/javascript">
+        var graphs = {{ graphJSON["graphJSON4"] | safe }};
+
+        for(var i in graphs) {
+            Plotly.plot(
+                graphs[i].id, // the ID of the div, created above
+                graphs[i].data,
+                graphs[i].layout || {}, 
+                plotlyConfig);
+        }
+    </script>
+
+    <!-- charts-->
+    <script type="text/javascript">
+        var graphs = {{ graphJSON["graphJSON5"] | safe }};
+
+        for(var i in graphs) {
+            Plotly.plot(
+                graphs[i].id, // the ID of the div, created above
+                graphs[i].data,
+                graphs[i].layout || {}, 
+                plotlyConfig);
+        }
+    </script>
+
+    <!-- charts-->
+    <script type="text/javascript">
+        var graphs = {{ graphJSON["graphJSON6"] | safe }};
+
+        for(var i in graphs) {
+            Plotly.plot(
+                graphs[i].id, // the ID of the div, created above
+                graphs[i].data,
+                graphs[i].layout || {}, 
+                plotlyConfig);
+        }
+    </script>
+
+    <!-- charts-->
+    <script type="text/javascript">
+        var graphs = {{ graphJSON["graphJSON7"] | safe }};
+
+        for(var i in graphs) {
+            Plotly.plot(
+                graphs[i].id, // the ID of the div, created above
+                graphs[i].data,
+                graphs[i].layout || {}, 
+                plotlyConfig);
+        }
+    </script>
+
+    <!-- charts-->
+    <script type="text/javascript">
+        var graphs = {{ graphJSON["graphJSON8"] | safe }};
+
+        for(var i in graphs) {
+            Plotly.plot(
+                graphs[i].id, // the ID of the div, created above
+                graphs[i].data,
+                graphs[i].layout || {}, 
+                plotlyConfig);
+        }
+    </script>
+
+
+    <!-- positive data charts-->
+    <script type="text/javascript">
+        var graphs = {{ positive_graphJSON["graphJSON0"] | safe }};
+
+        for(var i in graphs) {
+            Plotly.plot(
+                graphs[i].id, // the ID of the div, created above
+                graphs[i].data,
+                graphs[i].layout || {}, 
+                plotlyConfig);
+        }
+    </script>
+
+    <!-- positive data charts-->
+    <script type="text/javascript">
+        var graphs = {{ positive_graphJSON["graphJSON1"] | safe }};
+
+        for(var i in graphs) {
+            Plotly.plot(
+                graphs[i].id, // the ID of the div, created above
+                graphs[i].data,
+                graphs[i].layout || {}, 
+                plotlyConfig);
+        }
+    </script>
+
+
+    <!-- charts pca-->
+    <script type="text/javascript">
+        var graphs = {{ graphJSONquadratics | safe }};
 
         for(var i in graphs) {
             Plotly.plot(
@@ -1739,20 +2175,7 @@
 
     <!-- charts pca-->
     <script type="text/javascript">
-        var graphs = {{ graphJSONquadratics["graphJSON"] | safe }};
-
-        for(var i in graphs) {
-            Plotly.plot(
-                graphs[i].id, // the ID of the div, created above
-                graphs[i].data,
-                graphs[i].layout || {}, 
-                plotlyConfig);
-        }
-    </script>
-
-    <!-- charts pca-->
-    <script type="text/javascript">
-        var graphs = {{ graphJSONquadratics_reg["graphJSON"] | safe }};
+        var graphs = {{ graphJSONquadratics_reg | safe }};
 
         for(var i in graphs) {
             Plotly.plot(
@@ -1762,5 +2185,5 @@
                 plotlyConfig);
         }
     </script>
-    
+   
 {% endblock %}

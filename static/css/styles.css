@@ -53,9 +53,9 @@ h3 {
     font-weight: bold;
 }
 
-.back::before {    
+.imagebackground::before {    
       content: "";
-      background-image: url("/static/images/little_app.png");
+      background-image: url("/static/images/app.png");
       background-size: cover cover;
       position: absolute;
       top: 0px;
@@ -265,6 +265,21 @@ button.button:hover {
 }
 .button.healed:hover { background-color: /*hsl(39, 100%, 65%)*/ hsl(109, 65%, 70%); }
 
+.button.positive {
+	color: 				/*hsl(39, 100%, 30%)*/ hsl(327, 39%, 38%) !important;
+	background-color: 	/*hsl(39, 100%, 50%);*/ hsl(330, 84%, 75%);
+
+	-webkit-box-shadow: inset rgba(255,254,255,0.6) 0 0.3em .3em, inset rgba(0,0,0,0.15) 0 -0.1em .3em, /* inner shadow */ 
+							/*hsl(39, 100%, 40%)*/  hsl(303, 78%, 50%) 0 .1em 3px, /*hsl(39, 100%, 30%)*/  hsl(303, 78%, 30%) 0 .3em 1px, /* color border */
+							rgba(0,0,0,0.2) 0 .5em 5px; /* drop shadow */
+	-moz-box-shadow: 	inset rgba(255,254,255,0.6) 0 0.3em .3em, inset rgba(0,0,0,0.15) 0 -0.1em .3em, /* inner shadow */ 
+							/*hsl(39, 100%, 40%)*/   hsl(303, 78%, 50%) 0 .1em 3px, /*hsl(39, 100%, 30%)*/   hsl(303, 78%, 30%) 0 .3em 1px, /* color border */
+							rgba(0,0,0,0.2) 0 .5em 5px; /* drop shadow */
+	box-shadow:		 	inset rgba(255,254,255,0.6) 0 0.3em .3em, inset rgba(0,0,0,0.15) 0 -0.1em .3em, /* inner shadow */ 
+							/*hsl(39, 100%, 40%)*/   hsl(303, 78%, 50%) 0 .1em 3px, /*hsl(39, 100%, 30%)*/   hsl(303, 78%, 30%) 0 .3em 1px, /* color border */
+							rgba(0,0,0,0.2) 0 .5em 5px; /* drop shadow */
+}
+.button.positive:hover { background-color: /*hsl(39, 100%, 65%)*/  hsl(303, 79%, 69%); }
 
 /* -------------- States -------------- */
 

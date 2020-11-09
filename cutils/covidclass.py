@@ -19,15 +19,23 @@ class CovidFr():
     ### URL source for loading covid data
     synthesis_covid_url = 'https://www.data.gouv.fr/fr/datasets/r/63352e38-d353-4b54-bfd1-f1b3ee1cabd7'
 
+    synthesis_dprate_url = 'https://www.data.gouv.fr/fr/datasets/r/19a91d64-3cd3-42fc-9943-d635491a4d76'
+
+    synthesis_rprate_url = 'https://www.data.gouv.fr/fr/datasets/r/ad09241e-52fa-4be8-8298-e5760b43cae2'
+
+    synthesis_nprate_url = 'https://www.data.gouv.fr/fr/datasets/r/57d44bd6-c9fd-424f-9a72-7834454f9e3c'
+
     def __init__(self):
         # Init basic departments data
         data_dir = os.path.realpath(os.path.dirname(__file__) + "/../data/")
 
-        self.department_base_data = pd.read_csv(data_dir + "/departments.csv")
+        #self.department_base_data = pd.read_csv(data_dir + "/departments.csv")
+        self.department_base_data = pd.read_csv(data_dir + "/departments_rectif_pop.csv")
         self.department_base_data.index = self.department_base_data['insee']
         self.department_base_data = self.department_base_data.sort_index()
 
-        self.region_base_data = pd.read_csv(data_dir + "/regions.csv", converters={'insee': '{:0>2}'.format})
+        #self.region_base_data = pd.read_csv(data_dir + "/regions.csv", converters={'insee': '{:0>2}'.format})
+        self.region_base_data = pd.read_csv(data_dir + "/regions_rectif_pop.csv", converters={'insee': '{:0>2}'.format})
         self.region_base_data.index = self.region_base_data['insee']
         self.region_base_data = self.region_base_data.sort_index()
 
@@ -49,9 +57,41 @@ class CovidFr():
 
         self.dep_data_norm = {department: ((self.covid[(self.covid.dep == department) & (self.covid.sexe == 0)].groupby(['jour']).sum() / self.department_base_data.at[department, 'population']) * 100000).round(2) for department in self.department_base_data.insee}
         
-        self.dep_data_norm_col = CovidFr.normrate(ddn=self.dep_data_norm, cdu=list(self.covid.dep.unique()))
+        self.dep_data_norm_col = CovidFr.normrate(ddn=self.dep_data_norm, cdu=list(self.covid.dep.unique()), featurelist = ['hosp', 'rea', 'rad', 'dc'])
 
         return self.covid 
+        
+    def load_positive_df(self):
+        """
+        Loading dataframes
+        """
+        #national df
+        self.nprate = pd.read_csv(CovidFr.synthesis_nprate_url, sep=';', low_memory=False).dropna()
+        self.nprate['jour'] = pd.to_datetime(self.nprate['jour'])
+        self.nprate = self.nprate.drop_duplicates()
+
+        #regional df
+        self.rprate = pd.read_csv(CovidFr.synthesis_rprate_url, sep=';', low_memory=False, converters={'reg': '{:0>2}'.format}).dropna()
+        self.rprate['jour'] = pd.to_datetime(self.rprate['jour'])
+        self.rprate = self.rprate.drop_duplicates()
+        self.rprate['reg'] = self.rprate['reg'].apply(str)
+        self.rprate = self.rprate.loc[self.rprate['reg'].isin(list(self.region_base_data.index))]
+
+        #departmental df
+        self.dprate = pd.read_csv(CovidFr.synthesis_dprate_url, sep=';', low_memory=False).dropna()
+        self.dprate['jour'] = pd.to_datetime(self.dprate['jour'])
+        self.dprate = self.dprate.drop_duplicates()
+        self.dprate['dep'] = self.dprate['dep'].apply(str)
+        self.dprate = self.dprate.loc[self.dprate['dep'].isin(list(self.department_base_data.index))]
+
+        #other parameters
+        self.positive_last_day = self.dprate.jour.max().strftime("%Y-%m-%d")
+
+        self.dep_positive_norm = {department: ((self.dprate[(self.dprate.dep == department) & (self.dprate.cl_age90 == 0)].groupby(['jour']).sum() / self.department_base_data.at[department, 'population']) * 100000).round(2) for department in self.department_base_data.insee}
+        
+        self.dep_positive_norm_col = CovidFr.normrate(ddn=self.dep_positive_norm, cdu=list(self.dprate.dep.unique()), featurelist = ['P'])
+
+        return self.nprate, self.rprate, self.dprate
 
     def need_update(self):
         """Check the last update of the dataset on data.gouv.fr and tells wether we need to refresh the data or not
@@ -66,113 +106,6 @@ class CovidFr():
                         self.last_update = dataset['modified']
                         return True
         return False
-
-    def overall_departments_data_as_json(self, data=None):
-        """
-        Get data from departments as a JSON string along with quantiles
-        Returns:
-            JSON string of departments overall data
-        """
-        if data is None:
-            dep_data = self.covid[(self.covid['sexe'] == 0)]
-        else:
-            dep_data = data[(data['sexe'] == 0)]
-
-        nat_data = dep_data.copy()
-        nat_data = nat_data.groupby("jour").sum()
-
-        dep_data = dep_data \
-            .drop(['reg', 'jour', 'sexe'], axis=1) \
-            .groupby('dep') \
-            .max()
-
-        dep_data = pd.concat([dep_data, self.department_base_data], axis=1)
-
-        overall_dep_data_as_json_dict = {}
-
-        for feature in self.features:         
-            if feature == "dc" or feature == "rad":
-                ### For death and or rad case maps
-                dep_data[feature+'_par_habitants'] = (dep_data[feature] / dep_data['population']) * 100000
-
-                data_feature = dep_data.copy()
-                
-                data_feature = data_feature.set_index("department-" + data_feature.index)
-                
-                data_feature = data_feature.loc[:, ['label', feature, feature+'_par_habitants', 'insee']]
-
-                q_feature = np.mean(data_feature[feature+'_par_habitants'].to_numpy() \
-                    <= ((nat_data.at[self.last_day, feature] / self.department_base_data["population"].sum()) * 100000))
-
-                q_feature_list = [0.1, 0.1+(q_feature-0.1)/2, q_feature, q_feature+(.949-q_feature)/2, .949]
-             
-                quantiles_feature = data_feature[feature+'_par_habitants'] \
-                    .quantile(q_feature_list) \
-                    .round(2)
-
-                data_feature[feature+'_par_habitants'] = data_feature[feature+'_par_habitants'].round(2)
-
-                setattr(self, 'overall_departments_{}'.format(feature)+"_as_json", {"data_"+feature: data_feature.to_json(orient='index'), "quantiles_"+feature: quantiles_feature.to_json(orient='index')})
-
-                overall_dep_data_as_json_dict.update({'overall_departments_{}'.format(feature)+"_as_json": {"data_"+feature: data_feature.to_json(orient='index'), "quantiles_"+feature: quantiles_feature.to_json(orient='index')}})
-         
-            elif feature == "r_dc_rad":
-                ### For rate death case map
-                dep_data[feature] = (dep_data['dc'] / (dep_data['dc'] + dep_data['rad']))
-               
-                data_feature = dep_data.copy()
-
-                data_feature = data_feature.set_index("department-" + data_feature.index)
-
-                data_feature = data_feature.loc[:, ['label', 'dc', 'rad', feature, 'insee']]
-
-                q_feature = np.mean(dep_data[feature].to_numpy() <= (data_feature['dc'].sum() / (data_feature['dc'].sum() + data_feature['rad'].sum())))
-
-                q_feature_list = [0.1, 0.1+(q_feature-0.1)/2, q_feature, q_feature+2*(.979-q_feature)/3, .979]
-
-                quantiles_feature = data_feature[feature] \
-                    .quantile(q_feature_list) \
-                    .round(2)
-
-                data_feature[feature] = data_feature[feature].round(2)
-
-                setattr(self, 'overall_departments_{}'.format(feature)+"_as_json", {"data_"+feature: data_feature.to_json(orient='index'), "quantiles_"+feature: quantiles_feature.to_json(orient='index')})
-
-                overall_dep_data_as_json_dict.update({'overall_departments_{}'.format(feature)+"_as_json": {"data_"+feature: data_feature.to_json(orient='index'), "quantiles_"+feature: quantiles_feature.to_json(orient='index')}})
-
-            elif feature == "hosp" or feature == "rea":
-                ### For hosp and or rea case map
-                dep_data_j = self.covid[(self.covid['sexe'] == 0) & (self.covid['jour'] == self.last_day)]
-                dep_data_j = dep_data_j \
-                    .drop(['reg', 'jour', 'sexe'], axis=1) \
-                    .groupby('dep') \
-                    .max()
-                dep_data_j = pd.concat([dep_data_j, self.department_base_data], axis=1)
-
-                dep_data_j[feature+'_par_habitants'] = (dep_data_j[feature] / dep_data_j['population']) * 100000
-                
-                data_feature = dep_data_j.copy()
-                
-                data_feature = data_feature.set_index("department-" + data_feature.index)
-                
-                data_feature = data_feature.loc[:, ['label', feature, feature+'_par_habitants', 'insee']]
-
-                q_feature = np.mean(data_feature[feature+'_par_habitants'].to_numpy() \
-                    <= ((nat_data.at[self.last_day, feature] / self.department_base_data["population"].sum()) * 100000))
-
-                q_feature_list = [0.1, 0.1+(q_feature-0.1)/2, q_feature, q_feature+(.949-q_feature)/2, .949]
-
-                quantiles_feature = data_feature[feature+'_par_habitants'] \
-                    .quantile(q_feature_list) \
-                    .round(2)
-
-                data_feature[feature+'_par_habitants'] = data_feature[feature+'_par_habitants'].round(2)
-
-                setattr(self, 'overall_departments_{}'.format(feature)+"_as_json", {"data_"+feature: data_feature.to_json(orient='index'), "quantiles_"+feature: quantiles_feature.to_json(orient='index')})
-
-                overall_dep_data_as_json_dict.update({'overall_departments_{}'.format(feature)+"_as_json": {"data_"+feature: data_feature.to_json(orient='index'), "quantiles_"+feature: quantiles_feature.to_json(orient='index')}})
-
-        return overall_dep_data_as_json_dict
 
     def overall_regions_data_as_json(self, data=None):
         """
@@ -288,6 +221,113 @@ class CovidFr():
 
         return overall_reg_data_as_json_dict
 
+    def overall_departments_data_as_json(self, data=None):
+        """
+        Get data from departments as a JSON string along with quantiles
+        Returns:
+            JSON string of departments overall data
+        """
+        if data is None:
+            dep_data = self.covid[(self.covid['sexe'] == 0)]
+        else:
+            dep_data = data[(data['sexe'] == 0)]
+
+        nat_data = dep_data.copy()
+        nat_data = nat_data.groupby("jour").sum()
+
+        dep_data = dep_data \
+            .drop(['reg', 'jour', 'sexe'], axis=1) \
+            .groupby('dep') \
+            .max()
+
+        dep_data = pd.concat([dep_data, self.department_base_data], axis=1)
+
+        overall_dep_data_as_json_dict = {}
+
+        for feature in self.features:         
+            if feature == "dc" or feature == "rad":
+                ### For death and or rad case maps
+                dep_data[feature+'_par_habitants'] = (dep_data[feature] / dep_data['population']) * 100000
+
+                data_feature = dep_data.copy()
+                
+                data_feature = data_feature.set_index("department-" + data_feature.index)
+                
+                data_feature = data_feature.loc[:, ['label', feature, feature+'_par_habitants', 'insee']]
+
+                q_feature = np.mean(data_feature[feature+'_par_habitants'].to_numpy() \
+                    <= ((nat_data.at[self.last_day, feature] / self.department_base_data["population"].sum()) * 100000))
+
+                q_feature_list = [0.1, 0.1+(q_feature-0.1)/2, q_feature, q_feature+(.949-q_feature)/2, .949]
+             
+                quantiles_feature = data_feature[feature+'_par_habitants'] \
+                    .quantile(q_feature_list) \
+                    .round(2)
+
+                data_feature[feature+'_par_habitants'] = data_feature[feature+'_par_habitants'].round(2)
+
+                setattr(self, 'overall_departments_{}'.format(feature)+"_as_json", {"data_"+feature: data_feature.to_json(orient='index'), "quantiles_"+feature: quantiles_feature.to_json(orient='index')})
+
+                overall_dep_data_as_json_dict.update({'overall_departments_{}'.format(feature)+"_as_json": {"data_"+feature: data_feature.to_json(orient='index'), "quantiles_"+feature: quantiles_feature.to_json(orient='index')}})
+         
+            elif feature == "r_dc_rad":
+                ### For rate death case map
+                dep_data[feature] = (dep_data['dc'] / (dep_data['dc'] + dep_data['rad']))
+               
+                data_feature = dep_data.copy()
+
+                data_feature = data_feature.set_index("department-" + data_feature.index)
+
+                data_feature = data_feature.loc[:, ['label', 'dc', 'rad', feature, 'insee']]
+
+                q_feature = np.mean(dep_data[feature].to_numpy() <= (data_feature['dc'].sum() / (data_feature['dc'].sum() + data_feature['rad'].sum())))
+
+                q_feature_list = [0.1, 0.1+(q_feature-0.1)/2, q_feature, q_feature+2*(.979-q_feature)/3, .979]
+
+                quantiles_feature = data_feature[feature] \
+                    .quantile(q_feature_list) \
+                    .round(2)
+
+                data_feature[feature] = data_feature[feature].round(2)
+
+                setattr(self, 'overall_departments_{}'.format(feature)+"_as_json", {"data_"+feature: data_feature.to_json(orient='index'), "quantiles_"+feature: quantiles_feature.to_json(orient='index')})
+
+                overall_dep_data_as_json_dict.update({'overall_departments_{}'.format(feature)+"_as_json": {"data_"+feature: data_feature.to_json(orient='index'), "quantiles_"+feature: quantiles_feature.to_json(orient='index')}})
+
+            elif feature == "hosp" or feature == "rea":
+                ### For hosp and or rea case map
+                dep_data_j = self.covid[(self.covid['sexe'] == 0) & (self.covid['jour'] == self.last_day)]
+                dep_data_j = dep_data_j \
+                    .drop(['reg', 'jour', 'sexe'], axis=1) \
+                    .groupby('dep') \
+                    .max()
+                dep_data_j = pd.concat([dep_data_j, self.department_base_data], axis=1)
+
+                dep_data_j[feature+'_par_habitants'] = (dep_data_j[feature] / dep_data_j['population']) * 100000
+                
+                data_feature = dep_data_j.copy()
+                
+                data_feature = data_feature.set_index("department-" + data_feature.index)
+                
+                data_feature = data_feature.loc[:, ['label', feature, feature+'_par_habitants', 'insee']]
+
+                q_feature = np.mean(data_feature[feature+'_par_habitants'].to_numpy() \
+                    <= ((nat_data.at[self.last_day, feature] / self.department_base_data["population"].sum()) * 100000))
+
+                q_feature_list = [0.1, 0.1+(q_feature-0.1)/2, q_feature, q_feature+(.949-q_feature)/2, .949]
+
+                quantiles_feature = data_feature[feature+'_par_habitants'] \
+                    .quantile(q_feature_list) \
+                    .round(2)
+
+                data_feature[feature+'_par_habitants'] = data_feature[feature+'_par_habitants'].round(2)
+
+                setattr(self, 'overall_departments_{}'.format(feature)+"_as_json", {"data_"+feature: data_feature.to_json(orient='index'), "quantiles_"+feature: quantiles_feature.to_json(orient='index')})
+
+                overall_dep_data_as_json_dict.update({'overall_departments_{}'.format(feature)+"_as_json": {"data_"+feature: data_feature.to_json(orient='index'), "quantiles_"+feature: quantiles_feature.to_json(orient='index')}})
+
+        return overall_dep_data_as_json_dict
+
     def charts(self, data=None, department=None, region=None, top_number=None): 
         if region is None and department is None:
             if data is None:
@@ -330,28 +370,39 @@ class CovidFr():
         tddv_hosp = CovidFr.topdepdataviz(data=self.dep_data_norm_col["hosp"], top=True, top_number=top_number, threshold=65)
         tddv_rea = CovidFr.topdepdataviz(data=self.dep_data_norm_col["rea"], top=True, top_number=top_number, threshold=65)
 
+        # start of integration of the positive cases
+        pratedf = self.dprate[(self.dprate.cl_age90 == 0) & (self.dprate.jour == self.positive_last_day)].groupby(['dep']).sum().copy()
+        pratedf = pratedf.drop(['cl_age90', 'pop'], axis=1)
+        pratedf = (pratedf[['P']].div(self.department_base_data['population'], axis=0) * 100000).round(2)
+        pratedf = pd.concat([pratedf, self.department_base_data], axis=1)
+        
+        dep_positive_cases = CovidFr.dataviz(x=pratedf.label, y=pratedf['P'], curve_type='bar', color='#f84ed3', width=1.5, name="Nbre de cas positifs", opacity=0.9, text = [i for i in pratedf.index], hovertemplate = '<b>%{y:.2f}</b> cas positifs<br>dépt. <b>%{x} (FR-%{text})</b><extra></extra>')
+        # end integratation of the positive cases
+
         graphs = [
             dict(
-                id = "Nombre de patients pour 100 000 habitants par département",
+                id = "Dernier nombre de patients pour 100 000 habitants par département",
                 data = [
-                    CovidFr.dataviz(x=ratedf.label, y=ratedf['hosp'], curve_type='bar', color='#ff7f00', width=1, name="Nbre d'hospitalisations", opacity=0.9, text = [i for i in ratedf.index], hovertemplate = '<b>%{y:.2f}</b> hospitalisations<br>dépt. <b>%{x} (FR-%{text})</b><extra></extra>'), 
+                    CovidFr.dataviz(x=ratedf.label, y=ratedf['hosp'], curve_type='bar', color='#ff7f00', width=1.5, name="Nbre d'hospitalisations", opacity=0.9, text = [i for i in ratedf.index], hovertemplate = '<b>%{y:.2f}</b> hospitalisations<br>dépt. <b>%{x} (FR-%{text})</b><extra></extra>'), 
 
-                    CovidFr.dataviz(x=ratedf.label, y=ratedf['dc'], curve_type='bar', color='#730800', width=1, name="Nbre de décès", opacity=0.9, text = [i for i in ratedf.index], hovertemplate = '<b>%{y:.2f}</b> décès<br>dépt. <b>%{x} (FR-%{text})</b><extra></extra>'), 
+                    CovidFr.dataviz(x=ratedf.label, y=ratedf['dc'], curve_type='bar', color='#730800', width=1.5, name="Nbre de décès", opacity=0.9, text = [i for i in ratedf.index], hovertemplate = '<b>%{y:.2f}</b> décès<br>dépt. <b>%{x} (FR-%{text})</b><extra></extra>'), 
 
-                    CovidFr.dataviz(x=ratedf.label, y=ratedf['rea'], curve_type='bar', color='#ff0000', width=1, name="Nbre de réanimations", opacity=0.9, text = [i for i in ratedf.index], hovertemplate = '<b>%{y:.2f}</b> réanimations<br>dépt. <b>%{x} (FR-%{text})</b><extra></extra>'),
+                    CovidFr.dataviz(x=ratedf.label, y=ratedf['rea'], curve_type='bar', color='#ff0000', width=1.5, name="Nbre de réanimations", opacity=0.9, text = [i for i in ratedf.index], hovertemplate = '<b>%{y:.2f}</b> réanimations<br>dépt. <b>%{x} (FR-%{text})</b><extra></extra>'),
+
+                    dep_positive_cases
                 ],
                 layout = CovidFr.layoutoption(margin=dict(l=30, r=10, b=30, t=30), barmode='group', linemode='overlay', legend_orientation="h"),
             ),
 
             dict(
-                id = "Nombre d'hospitalisations pour 100 000 habitants",
-                data = [CovidFr.dataviz(x=tddv_hosp.index, y=tddv_hosp[dep], curve_type='Scatter', name=self.department_base_data.at[dep, "label"], text=[self.department_base_data.at[dep, "label"]+" (FR-"+dep+")"]*len(tddv_hosp.index), hovertemplate='<b>%{y:.2f}</b> '+'réanimations'+'<br>'+'dépt. %{text}<extra></extra>') for dep in list(tddv_hosp.columns.unique())],
+                id = "Top des départements selon le nombre d'hospitalisations pour 100 000 habitants",
+                data = [CovidFr.dataviz(x=tddv_hosp.index, y=tddv_hosp[dep], curve_type='Scatter', name=self.department_base_data.at[dep, "label"], text=[self.department_base_data.at[dep, "label"]+" (FR-"+dep+")"]*len(tddv_hosp.index), hovertemplate='<b>%{y:.2f}</b> '+'hospitalisations'+'<br>'+'dépt. %{text}<extra></extra>') for dep in list(tddv_hosp.columns.unique())],
                 layout = CovidFr.layoutoption(margin=dict(l=30, r=10, b=30, t=30), linemode='overlay', legend_orientation="h"),
             ),
 
             dict(
-                id = "Nombre de réanimations pour 100 000 habitants",
-                data = [CovidFr.dataviz(x=tddv_rea.index, y=tddv_rea[dep], curve_type='Scatter', name=self.department_base_data.at[dep, "label"], text=[self.department_base_data.at[dep, "label"]+" (FR-"+dep+")"]*len(tddv_rea.index), hovertemplate='<b>%{y:.2f}</b> '+'hospitalisations'+'<br>'+'dépt. %{text}<extra></extra>') for dep in list(tddv_rea.columns.unique())],
+                id = "Top des départements selon le nombre de réanimations pour 100 000 habitants",
+                data = [CovidFr.dataviz(x=tddv_rea.index, y=tddv_rea[dep], curve_type='Scatter', name=self.department_base_data.at[dep, "label"], text=[self.department_base_data.at[dep, "label"]+" (FR-"+dep+")"]*len(tddv_rea.index), hovertemplate='<b>%{y:.2f}</b> '+'réanimations'+'<br>'+'dépt. %{text}<extra></extra>') for dep in list(tddv_rea.columns.unique())],
                 layout = CovidFr.layoutoption(margin=dict(l=30, r=10, b=30, t=30), linemode='overlay', legend_orientation="h"),
             ),
 
@@ -380,64 +431,245 @@ class CovidFr():
             ),
 
             dict(
-                id = "Nombre de personnes décédées par jour à l'hôpital",
+                id = "Nombre quotidien de personnes décédées à l'hôpital",
                 data = [CovidFr.dataviz(x=cdata.index, y=cdata['dc_j'], curve_type='bar', color='#730800', width=1)],
                 layout = CovidFr.layoutoption(margin=dict(l=30, r=15, b=30, t=30), barmode='overlay',linemode='overlay', legend_orientation="h"),
             ),
 
             dict(
-                id = "Nombre de personnes retournées par jour à domicile",
+                id = "Nombre quotidien de personnes retournées à domicile",
                 data = [CovidFr.dataviz(x=cdata.index, y=cdata['rad_j'], curve_type='bar', color='#57d53b', width=1, opacity=0.8)],
                 layout = CovidFr.layoutoption(margin=dict(l=30, r=15, b=30, t=30), barmode='overlay',linemode='overlay', legend_orientation="h"),
             ),
         ]
-
-        self.graphJSON = json.dumps(graphs, cls=plotly.utils.PlotlyJSONEncoder)
+        #############################################################
+        gJ = {}
+        for g in range(len(graphs)):
+            gJ.update({'graphJSON{}'.format(g): json.dumps([graphs[g]], cls=plotly.utils.PlotlyJSONEncoder)})
+        #############################################################
 
         fdata = self.covid[self.covid.sexe == 0].groupby(['jour']).sum().copy()
         popfr = self.department_base_data["population"].sum()
 
         before_last_day = cdata.index[-2].strftime("%Y-%m-%d")
 
-        self.counters = {
-                        "last_day_fr": datetime.strptime(self.last_day, "%Y-%m-%d").strftime("%d/%m/%Y"),
-                        "last_update_fr": datetime.strptime(self.last_update, "%Y-%m-%dT%H:%M:%S.%f").strftime("%d/%m/%Y à %Hh%M"),
-                                    
-                        "last_dc": cdata.at[self.last_day, 'dc_j'],
-                        "diff_dc": cdata.at[self.last_day, 'dc_j'] - cdata.at[before_last_day, 'dc_j'],
-                        "all_dc": cdata.at[self.last_day, 'dc_rectif'],
-                        "last_rad": cdata.at[self.last_day, 'rad_j'],
-                        "diff_rad": cdata.at[self.last_day, 'rad_j'] - cdata.at[before_last_day, 'rad_j'],
-                        "all_rad": cdata.at[self.last_day, 'rad_rectif'],          
-                        "current_hosp": cdata.at[self.last_day, 'hosp'],
-                        "diff_hosp": cdata.at[self.last_day, 'hosp'] - cdata.at[before_last_day, 'hosp'],
-                        "current_rea": cdata.at[self.last_day, 'rea'], 
-                        "diff_rea": cdata.at[self.last_day, 'rea'] - cdata.at[before_last_day, 'rea'],
+        counters = {
+                    "last_day_fr": datetime.strptime(self.last_day, "%Y-%m-%d").strftime("%d/%m/%Y"),
+                    "last_update_fr": datetime.strptime(self.last_update, "%Y-%m-%dT%H:%M:%S.%f").strftime("%d/%m/%Y à %Hh%M"),
+                                
+                    "last_dc": cdata.at[self.last_day, 'dc_j'],
+                    "diff_dc": cdata.at[self.last_day, 'dc_j'] - cdata.at[before_last_day, 'dc_j'],
+                    "all_dc": cdata.at[self.last_day, 'dc_rectif'],
+                    "last_rad": cdata.at[self.last_day, 'rad_j'],
+                    "diff_rad": cdata.at[self.last_day, 'rad_j'] - cdata.at[before_last_day, 'rad_j'],
+                    "all_rad": cdata.at[self.last_day, 'rad_rectif'],          
+                    "current_hosp": cdata.at[self.last_day, 'hosp'],
+                    "diff_hosp": cdata.at[self.last_day, 'hosp'] - cdata.at[before_last_day, 'hosp'],
+                    "current_rea": cdata.at[self.last_day, 'rea'], 
+                    "diff_rea": cdata.at[self.last_day, 'rea'] - cdata.at[before_last_day, 'rea'],
 
-                        "rates": {
-                                    "dc": ((cdata.at[self.last_day, 'dc_rectif'] / cpop) * 100000).round(2),
-                                    "d_dc": (((cdata.at[self.last_day, 'dc_rectif'] - cdata.at[before_last_day, 'dc_rectif']) / cpop) * 100000).round(2),
-                                    "rea": ((cdata.at[self.last_day, 'rea'] / cpop) * 100000).round(2),
-                                    "d_rea": (((cdata.at[self.last_day, 'rea'] - cdata.at[before_last_day, 'rea']) / cpop) * 100000).round(2),
-                                    "hosp": ((cdata.at[self.last_day, 'hosp'] / cpop) * 100000).round(2),
-                                    "d_hosp": (((cdata.at[self.last_day, 'hosp'] - cdata.at[before_last_day, 'hosp']) / cpop) * 100000).round(2),
-                                    "rad": ((cdata.at[self.last_day, 'rad_rectif'] / cpop) * 100000).round(2),
-                                    "d_rad": (((cdata.at[self.last_day, 'rad_rectif'] - cdata.at[before_last_day, 'rad_rectif']) / cpop) * 100000).round(2),
-                                    "r_dc_rad": ((cdata.at[self.last_day, 'dc_rectif'] / (cdata.at[self.last_day, 'dc_rectif'] + cdata.at[self.last_day, 'rad_rectif']))*100).round(2),
-                                    "d_r_dc_rad": ((cdata.at[self.last_day, 'dc_rectif'] / (cdata.at[self.last_day, 'dc_rectif'] + cdata.at[self.last_day, 'rad_rectif']))*100 - (cdata.at[before_last_day, 'dc_rectif'] / (cdata.at[before_last_day, 'dc_rectif'] + cdata.at[before_last_day, 'rad_rectif']))*100).round(2),
+                    "rates": {
+                                "dc": ((cdata.at[self.last_day, 'dc_rectif'] / cpop) * 100000).round(2),
+                                "d_dc": (((cdata.at[self.last_day, 'dc_rectif'] - cdata.at[before_last_day, 'dc_rectif']) / cpop) * 100000).round(2),
+                                "rea": ((cdata.at[self.last_day, 'rea'] / cpop) * 100000).round(2),
+                                "d_rea": (((cdata.at[self.last_day, 'rea'] - cdata.at[before_last_day, 'rea']) / cpop) * 100000).round(2),
+                                "hosp": ((cdata.at[self.last_day, 'hosp'] / cpop) * 100000).round(2),
+                                "d_hosp": (((cdata.at[self.last_day, 'hosp'] - cdata.at[before_last_day, 'hosp']) / cpop) * 100000).round(2),
+                                "rad": ((cdata.at[self.last_day, 'rad_rectif'] / cpop) * 100000).round(2),
+                                "d_rad": (((cdata.at[self.last_day, 'rad_rectif'] - cdata.at[before_last_day, 'rad_rectif']) / cpop) * 100000).round(2),
+                                "r_dc_rad": ((cdata.at[self.last_day, 'dc_rectif'] / (cdata.at[self.last_day, 'dc_rectif'] + cdata.at[self.last_day, 'rad_rectif']))*100).round(2),
+                                "d_r_dc_rad": ((cdata.at[self.last_day, 'dc_rectif'] / (cdata.at[self.last_day, 'dc_rectif'] + cdata.at[self.last_day, 'rad_rectif']))*100 - (cdata.at[before_last_day, 'dc_rectif'] / (cdata.at[before_last_day, 'dc_rectif'] + cdata.at[before_last_day, 'rad_rectif']))*100).round(2),
+                            },
+                
+                    "nat_refs": {
+                                "nat_dc": ((fdata.at[self.last_day, 'dc'] / popfr) * 100000).round(2),
+                                "nat_r_dc_rad": (fdata.at[self.last_day, 'dc'] / (fdata.at[self.last_day, 'dc'] + fdata.at[self.last_day, 'rad'])).round(2),
+                                "nat_rad": ((fdata.at[self.last_day, 'rad'] / popfr) * 100000).round(2),
+                                "nat_hosp": ((fdata.at[self.last_day, 'hosp'] / popfr) * 100000).round(2),
+                                "nat_rea": ((fdata.at[self.last_day, 'rea'] / popfr) * 100000).round(2),
                                 },
-                    
-                        "nat_refs": {
-                                    "nat_dc": ((fdata.at[self.last_day, 'dc'] / popfr) * 100000).round(2),
-                                    "nat_r_dc_rad": (fdata.at[self.last_day, 'dc'] / (fdata.at[self.last_day, 'dc'] + fdata.at[self.last_day, 'rad'])).round(2),
-                                    "nat_rad": ((fdata.at[self.last_day, 'rad'] / popfr) * 100000).round(2),
-                                    "nat_hosp": ((fdata.at[self.last_day, 'hosp'] / popfr) * 100000).round(2),
-                                    "nat_rea": ((fdata.at[self.last_day, 'rea'] / popfr) * 100000).round(2),
-                                    },
-                        }
-        return {"graphJSON": self.graphJSON, 
-                "counters": self.counters,
+                    }
+        gJ.update({'counters': counters})
+
+        return gJ
+
+    ##############################
+    # positive case study starting
+    ##############################
+    def overall_regions_positive_data_as_json(self, data=None):
+        """
+        Get data from regions as a JSON string along with quantiles
+        Returns:
+            JSON string of regions overall data
+        """     
+        if data is None:
+            reg_data = self.rprate[(self.rprate['cl_age90'] == 0)].copy()
+        else:
+            reg_data = data[(data['cl_age90'] == 0)]
+
+        nat_data = reg_data.copy()
+        nat_data = nat_data.groupby("jour").sum()
+
+        overall_reg_data_as_json_dict = {}
+
+        for feature in ["P"]:         
+            ### For positive case map
+            reg_data_j = self.rprate[(self.rprate['cl_age90'] == 0) & (self.rprate['jour'] == self.positive_last_day)]
+            reg_data_j = reg_data_j \
+                .drop(["jour",	"pop", "P_f", "P_h", "pop_f", "pop_h", "cl_age90"], axis=1) \
+                .groupby('reg') \
+                .max()
+            reg_data_j = pd.concat([reg_data_j, self.region_base_data], axis=1)
+
+            reg_data_j[feature+'_par_habitants'] = (reg_data_j[feature] / reg_data_j['population']) * 100000
+            
+            data_feature = reg_data_j.copy()
+            
+            data_feature = data_feature.set_index("region-" + data_feature.index)
+            
+            data_feature = data_feature.loc[:, ['label', feature, feature+'_par_habitants', 'insee']]
+
+            nat = (nat_data.at[self.positive_last_day, feature] / self.region_base_data["population"].sum()) * 100000
+
+            q_feature = np.mean(data_feature[feature+'_par_habitants'].to_numpy() <= nat)
+
+            q_feature_list = [0.1, 0.1+(q_feature-0.1)/2, q_feature, q_feature+(.949-q_feature)/2, .949]
+
+            quantiles_feature = data_feature[feature+'_par_habitants'] \
+                .quantile(q_feature_list) \
+                .round(2)
+
+            data_feature[feature+'_par_habitants'] = data_feature[feature+'_par_habitants'].round(2)
+
+            setattr(self, 'overall_regions_{}'.format(feature)+"_as_json", {"data_"+feature: data_feature.to_json(orient='index'), "quantiles_"+feature: quantiles_feature.to_json(orient='index')})
+
+            overall_reg_data_as_json_dict.update({'overall_regions_{}'.format(feature)+"_as_json": {"data_"+feature: data_feature.to_json(orient='index'), "quantiles_"+feature: quantiles_feature.to_json(orient='index')}})
+
+        return {"orpdaj": overall_reg_data_as_json_dict, "national_level_p_reg": nat.round(2)}
+
+    def overall_departments_positive_data_as_json(self, data=None):
+        """
+        Get data from regions as a JSON string along with quantiles
+        Returns:
+            JSON string of departments overall data
+        """     
+        if data is None:
+            dep_data = self.dprate[(self.dprate['cl_age90'] == 0)].copy()
+        else:
+            dep_data = data[(data['cl_age90'] == 0)]
+
+        nat_data = dep_data.copy()
+        nat_data = nat_data.groupby("jour").sum()
+
+        overall_dep_data_as_json_dict = {}
+
+        for feature in ["P"]:         
+            ### For positive case map
+            dep_data_j = self.dprate[(self.dprate['cl_age90'] == 0) & (self.dprate['jour'] == self.positive_last_day)]
+            dep_data_j = dep_data_j \
+                .drop(["jour",	"pop", "cl_age90"], axis=1) \
+                .groupby('dep') \
+                .max()
+            dep_data_j = pd.concat([dep_data_j, self.department_base_data], axis=1)
+
+            dep_data_j[feature+'_par_habitants'] = (dep_data_j[feature] / dep_data_j['population']) * 100000
+            
+            data_feature = dep_data_j.copy()
+            
+            data_feature = data_feature.set_index("department-" + data_feature.index)
+            
+            data_feature = data_feature.loc[:, ['label', feature, feature+'_par_habitants', 'insee']]
+
+            nat = (nat_data.at[self.positive_last_day, feature] / self.department_base_data["population"].sum()) * 100000
+
+            q_feature = np.mean(data_feature[feature+'_par_habitants'].to_numpy() <= nat)
+
+            q_feature_list = [0.1, 0.1+(q_feature-0.1)/2, q_feature, q_feature+(.949-q_feature)/2, .949]
+
+            quantiles_feature = data_feature[feature+'_par_habitants'] \
+                .quantile(q_feature_list) \
+                .round(2)
+
+            data_feature[feature+'_par_habitants'] = data_feature[feature+'_par_habitants'].round(2)
+
+            setattr(self, 'overall_departments_{}'.format(feature)+"_as_json", {"data_"+feature: data_feature.to_json(orient='index'), "quantiles_"+feature: quantiles_feature.to_json(orient='index')})
+
+            overall_dep_data_as_json_dict.update({'overall_departments_{}'.format(feature)+"_as_json": {"data_"+feature: data_feature.to_json(orient='index'), "quantiles_"+feature: quantiles_feature.to_json(orient='index')}})
+
+        return {"odpdaj": overall_dep_data_as_json_dict, "national_level_p_dep": nat.round(2)}
+
+    def charts_positive_data(self, data=None, department=None, region=None, top_number=None): 
+        if region is None and department is None:
+            if data is None:
+                cdata = self.nprate[self.nprate.cl_age90 == 0].groupby(['jour']).sum().copy()
+                cpop = self.department_base_data["population"].sum()
+            else: 
+                cdata = data[data.cl_age90 == 0].groupby(['jour']).sum().copy()
+                cpop = self.department_base_data["population"].sum()
+        elif region is None and not department is None:
+            if data is None:
+                cdata = self.dprate[(self.dprate.dep == department) & (self.dprate.cl_age90 == 0)].groupby(['jour']).sum().copy()
+                cpop = self.department_base_data.at[department, 'population']
+            else: 
+                cdata = data[(data.dep == department) & (data.cl_age90 == 0)].groupby(['jour']).sum().copy()
+                cpop = self.department_base_data.at[department, 'population']
+        elif not region is None and department is None:
+            if data is None:
+                cdata = self.rprate[(self.rprate.reg == region) & (self.rprate.cl_age90 == 0)].groupby(['jour']).sum().copy()
+                cpop = self.region_base_data.at[region, 'population']
+            else: 
+                cdata = data[(data.reg == region) & (data.cl_age90 == 0)].groupby(['jour']).sum().copy()
+                cpop = self.region_base_data.at[region, 'population']
+
+        tddv_positive = CovidFr.topdepdataviz(data=self.dep_positive_norm_col["P"], top=True, top_number=top_number, threshold=65)
+
+        graphs = [
+            dict(
+                id = "Top des départements selon le nombre de cas positifs pour 100 000 habitants",
+                data = [CovidFr.dataviz(x=tddv_positive.index, y=tddv_positive[dep], curve_type='Scatter', name=self.department_base_data.at[dep, "label"], text=[self.department_base_data.at[dep, "label"]+" (FR-"+dep+")"]*len(tddv_positive.index), hovertemplate='<b>%{y:.2f}</b> '+'cas positifs'+'<br>'+'dépt. %{text}<extra></extra>') for dep in list(tddv_positive.columns.unique())],
+                layout = CovidFr.layoutoption(margin=dict(l=30, r=10, b=30, t=30), linemode='overlay', legend_orientation="h"),
+            ),
+
+            dict(
+                id = "Nombre de personnes actuellement positives",
+                data = [CovidFr.dataviz(x=cdata.index, y=cdata['P'], curve_type='bar', color='#f84ed3', width=1, opacity=0.8)],
+                layout = CovidFr.layoutoption(margin=dict(l=30, r=15, b=30, t=30), barmode='overlay',linemode='overlay', legend_orientation="h"),
+            ),   
+        ]
+        #############################################################
+        gJ = {}
+        for g in range(len(graphs)):
+            gJ.update({'graphJSON{}'.format(g): json.dumps([graphs[g]], cls=plotly.utils.PlotlyJSONEncoder)})
+        #############################################################
+
+        fdata = self.nprate[self.nprate.cl_age90 == 0].groupby(['jour']).sum().copy()
+        popfr = self.department_base_data["population"].sum()
+
+        before_last_day = cdata.index[-2].strftime("%Y-%m-%d")
+
+        counters = {
+                "positive_last_day_fr": datetime.strptime(self.positive_last_day, "%Y-%m-%d").strftime("%d/%m/%Y"),
+                "positive_last_update_fr": datetime.strptime(self.last_update, "%Y-%m-%dT%H:%M:%S.%f").strftime("%d/%m/%Y à %Hh%M"),
+                            
+                "current_positive": cdata.at[self.positive_last_day, 'P'],
+                "diff_positive": cdata.at[self.positive_last_day, 'P'] - cdata.at[before_last_day, 'P'],
+
+                "rates": {
+                        "positive": ((cdata.at[self.positive_last_day, 'P'] / cpop) * 100000).round(2),
+                        "d_positive": (((cdata.at[self.positive_last_day, 'P'] - cdata.at[before_last_day, 'P']) / cpop) * 100000).round(2),
+                        },
+            
+                "nat_refs": {
+                            "nat_positive": ((fdata.at[self.positive_last_day, 'P'] / popfr) * 100000).round(2),
+                            },
                 }
+
+        gJ.update({'counters': counters})
+
+        return gJ
+    ##############################
+    # positive case study ending
+    ##############################
 
     def request_label(self, department=None, region=None):
         """Get a department or a region label from its insee code
@@ -530,9 +762,9 @@ class CovidFr():
                }
 
     @staticmethod
-    def normrate(ddn, cdu):
+    def normrate(ddn, cdu, featurelist):
         dep_data_norm_col = {}
-        for col in ['hosp', 'rea', 'rad', 'dc']:
+        for col in featurelist:
             data = []
             for dep in cdu:
                 data.append(ddn[dep][col])
