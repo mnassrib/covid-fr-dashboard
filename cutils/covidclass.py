@@ -30,14 +30,15 @@ class CovidFr():
         data_dir = os.path.realpath(os.path.dirname(__file__) + "/../data/")
 
         #self.department_base_data = pd.read_csv(data_dir + "/departments.csv")
-        self.department_base_data = pd.read_csv(data_dir + "/departments_rectif_pop.csv")
-        self.department_base_data.index = self.department_base_data['insee']
-        self.department_base_data = self.department_base_data.sort_index()
+        department_base_data = pd.read_csv(data_dir + "/departments_rectif_pop.csv")
+        department_base_data.index = department_base_data['insee']
+        self.department_base_data = department_base_data.sort_index()
 
         #self.region_base_data = pd.read_csv(data_dir + "/regions.csv", converters={'insee': '{:0>2}'.format})
-        self.region_base_data = pd.read_csv(data_dir + "/regions_rectif_pop.csv", converters={'insee': '{:0>2}'.format})
-        self.region_base_data.index = self.region_base_data['insee']
-        self.region_base_data = self.region_base_data.sort_index()
+        #self.region_base_data = pd.read_csv(data_dir + "/regions.csv", dtype={'insee': "string"})
+        region_base_data = pd.read_csv(data_dir + "/regions_rectif_pop.csv", dtype={'insee': "string"})
+        region_base_data.index = region_base_data['insee']
+        self.region_base_data = region_base_data.sort_index()
 
         self.last_update = ""
 
@@ -47,11 +48,11 @@ class CovidFr():
         """
         Loading dataframes
         """
-        self.covid = pd.read_csv(CovidFr.synthesis_covid_url, sep=';').dropna()
-        self.covid['jour'] = pd.to_datetime(self.covid['jour'])
-        self.covid = self.covid.drop_duplicates()
+        covid = pd.read_csv(CovidFr.synthesis_covid_url, sep=';').dropna()
+        covid['jour'] = pd.to_datetime(covid['jour'])
+        covid = covid.drop_duplicates()
 
-        self.covid = CovidFr.regionadd(data=self.covid)
+        self.covid = CovidFr.regionadd(data=covid)
 
         self.last_day = self.covid.jour.max().strftime("%Y-%m-%d")
 
@@ -66,23 +67,21 @@ class CovidFr():
         Loading dataframes
         """
         #national df
-        self.nprate = pd.read_csv(CovidFr.synthesis_nprate_url, sep=';', low_memory=False).dropna()
-        self.nprate['jour'] = pd.to_datetime(self.nprate['jour'])
-        self.nprate = self.nprate.drop_duplicates()
+        nprate = pd.read_csv(CovidFr.synthesis_nprate_url, sep=';', usecols=['jour', 'P', 'cl_age90']).dropna()
+        nprate['jour'] = pd.to_datetime(nprate['jour'])
+        self.nprate = nprate.drop_duplicates()
 
         #regional df
-        self.rprate = pd.read_csv(CovidFr.synthesis_rprate_url, sep=';', low_memory=False, converters={'reg': '{:0>2}'.format}).dropna()
-        self.rprate['jour'] = pd.to_datetime(self.rprate['jour'])
-        self.rprate = self.rprate.drop_duplicates()
-        self.rprate['reg'] = self.rprate['reg'].apply(str)
-        self.rprate = self.rprate.loc[self.rprate['reg'].isin(list(self.region_base_data.index))]
+        rprate = pd.read_csv(CovidFr.synthesis_rprate_url, sep=';', dtype={'reg': "string"}, usecols=['reg', 'jour', 'P', 'cl_age90']).dropna()
+        rprate['jour'] = pd.to_datetime(rprate['jour'])
+        rprate = rprate.drop_duplicates()
+        self.rprate = rprate.loc[rprate['reg'].isin(list(self.region_base_data.index))]
 
         #departmental df
-        self.dprate = pd.read_csv(CovidFr.synthesis_dprate_url, sep=';', low_memory=False).dropna()
-        self.dprate['jour'] = pd.to_datetime(self.dprate['jour'])
-        self.dprate = self.dprate.drop_duplicates()
-        self.dprate['dep'] = self.dprate['dep'].apply(str)
-        self.dprate = self.dprate.loc[self.dprate['dep'].isin(list(self.department_base_data.index))]
+        dprate = pd.read_csv(CovidFr.synthesis_dprate_url, sep=';', dtype={'dep': "string"}, usecols=['dep', 'jour', 'P', 'cl_age90']).dropna()
+        dprate['jour'] = pd.to_datetime(dprate['jour'])
+        dprate = dprate.drop_duplicates()
+        self.dprate = dprate.loc[dprate['dep'].isin(list(self.department_base_data.index))]
 
         #other parameters
         self.positive_last_day = self.dprate.jour.max().strftime("%Y-%m-%d")
@@ -372,7 +371,7 @@ class CovidFr():
 
         # start of integration of the positive cases
         pratedf = self.dprate[(self.dprate.cl_age90 == 0) & (self.dprate.jour == self.positive_last_day)].groupby(['dep']).sum().copy()
-        pratedf = pratedf.drop(['cl_age90', 'pop'], axis=1)
+        pratedf = pratedf.drop(['cl_age90'], axis=1)
         pratedf = (pratedf[['P']].div(self.department_base_data['population'], axis=0) * 100000).round(2)
         pratedf = pd.concat([pratedf, self.department_base_data], axis=1)
         
@@ -512,10 +511,7 @@ class CovidFr():
         for feature in ["P"]:         
             ### For positive case map
             reg_data_j = self.rprate[(self.rprate['cl_age90'] == 0) & (self.rprate['jour'] == self.positive_last_day)]
-            reg_data_j = reg_data_j \
-                .drop(["jour",	"pop", "P_f", "P_h", "pop_f", "pop_h", "cl_age90"], axis=1) \
-                .groupby('reg') \
-                .max()
+            reg_data_j = reg_data_j.drop(["jour", "cl_age90"], axis=1).groupby('reg').max()
             reg_data_j = pd.concat([reg_data_j, self.region_base_data], axis=1)
 
             reg_data_j[feature+'_par_habitants'] = (reg_data_j[feature] / reg_data_j['population']) * 100000
@@ -560,10 +556,7 @@ class CovidFr():
         for feature in ["P"]:         
             ### For positive case map
             dep_data_j = self.dprate[(self.dprate['cl_age90'] == 0) & (self.dprate['jour'] == self.positive_last_day)]
-            dep_data_j = dep_data_j \
-                .drop(["jour",	"pop", "cl_age90"], axis=1) \
-                .groupby('dep') \
-                .max()
+            dep_data_j = dep_data_j.drop(["jour", "cl_age90"], axis=1).groupby('dep').max()
             dep_data_j = pd.concat([dep_data_j, self.department_base_data], axis=1)
 
             dep_data_j[feature+'_par_habitants'] = (dep_data_j[feature] / dep_data_j['population']) * 100000
