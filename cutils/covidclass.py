@@ -507,9 +507,6 @@ class CovidFr():
         else:
             reg_data = data[(data['cl_age90'] == 0)]
 
-        nat_data = reg_data.copy()
-        nat_data = nat_data.groupby("jour").sum()
-
         overall_reg_data_as_json_dict = {}
 
         for feature in ["P"]:         
@@ -529,7 +526,7 @@ class CovidFr():
             
             data_feature = data_feature.loc[:, ['label', feature, feature+'_par_habitants', 'insee']]
 
-            nat = (nat_data.at[self.positive_last_day, feature] / self.region_base_data["population"].sum()) * 100000
+            nat = (reg_data.groupby("jour").sum().at[self.positive_last_day, feature] / self.region_base_data["population"].sum()) * 100000
 
             q_feature = np.mean(data_feature[feature+'_par_habitants'].to_numpy() <= nat)
 
@@ -545,7 +542,7 @@ class CovidFr():
 
             overall_reg_data_as_json_dict.update({'overall_regions_{}'.format(feature)+"_as_json": {"data_"+feature: data_feature.to_json(orient='index'), "quantiles_"+feature: quantiles_feature.to_json(orient='index')}})
 
-        return {"orpdaj": overall_reg_data_as_json_dict, "national_level_p_reg": nat.round(2)}
+        return overall_reg_data_as_json_dict
 
     def overall_departments_positive_data_as_json(self, data=None):
         """
@@ -557,9 +554,6 @@ class CovidFr():
             dep_data = self.dprate[(self.dprate['cl_age90'] == 0)].copy()
         else:
             dep_data = data[(data['cl_age90'] == 0)]
-
-        nat_data = dep_data.copy()
-        nat_data = nat_data.groupby("jour").sum()
 
         overall_dep_data_as_json_dict = {}
 
@@ -580,7 +574,7 @@ class CovidFr():
             
             data_feature = data_feature.loc[:, ['label', feature, feature+'_par_habitants', 'insee']]
 
-            nat = (nat_data.at[self.positive_last_day, feature] / self.department_base_data["population"].sum()) * 100000
+            nat = (dep_data.groupby("jour").sum().at[self.positive_last_day, feature] / self.department_base_data["population"].sum()) * 100000
 
             q_feature = np.mean(data_feature[feature+'_par_habitants'].to_numpy() <= nat)
 
@@ -596,7 +590,7 @@ class CovidFr():
 
             overall_dep_data_as_json_dict.update({'overall_departments_{}'.format(feature)+"_as_json": {"data_"+feature: data_feature.to_json(orient='index'), "quantiles_"+feature: quantiles_feature.to_json(orient='index')}})
 
-        return {"odpdaj": overall_dep_data_as_json_dict, "national_level_p_dep": nat.round(2)}
+        return overall_dep_data_as_json_dict
 
     def charts_positive_data(self, data=None, department=None, region=None, top_number=None): 
         if region is None and department is None:

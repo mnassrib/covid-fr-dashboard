@@ -128,10 +128,10 @@ def graphs():
         overall_departments_data_rea = oddaj_dep["overall_departments_rea_as_json"]['data_rea'],
         overall_departments_quantiles_rea = oddaj_dep["overall_departments_rea_as_json"]['quantiles_rea'],
 
-        overall_regions_data_P = orpdaj_reg["orpdaj"]["overall_regions_P_as_json"]['data_P'],
-        overall_regions_quantiles_P = orpdaj_reg["orpdaj"]["overall_regions_P_as_json"]['quantiles_P'], 
-        overall_departments_data_P = odpdaj_dep["odpdaj"]["overall_departments_P_as_json"]['data_P'],
-        overall_departments_quantiles_P = odpdaj_dep["odpdaj"]["overall_departments_P_as_json"]['quantiles_P'],  
+        overall_regions_data_P = orpdaj_reg["overall_regions_P_as_json"]['data_P'],
+        overall_regions_quantiles_P = orpdaj_reg["overall_regions_P_as_json"]['quantiles_P'], 
+        overall_departments_data_P = odpdaj_dep["overall_departments_P_as_json"]['data_P'],
+        overall_departments_quantiles_P = odpdaj_dep["overall_departments_P_as_json"]['quantiles_P'],  
 
         first_day = first_day,
         last_day = last_day,
@@ -202,10 +202,10 @@ def maps():
         overall_departments_data_rea = oddaj_dep["overall_departments_rea_as_json"]['data_rea'],
         overall_departments_quantiles_rea = oddaj_dep["overall_departments_rea_as_json"]['quantiles_rea'],
 
-        overall_regions_data_P = orpdaj_reg["orpdaj"]["overall_regions_P_as_json"]['data_P'],
-        overall_regions_quantiles_P = orpdaj_reg["orpdaj"]["overall_regions_P_as_json"]['quantiles_P'], 
-        overall_departments_data_P = odpdaj_dep["odpdaj"]["overall_departments_P_as_json"]['data_P'],
-        overall_departments_quantiles_P = odpdaj_dep["odpdaj"]["overall_departments_P_as_json"]['quantiles_P'],  
+        overall_regions_data_P = orpdaj_reg["overall_regions_P_as_json"]['data_P'],
+        overall_regions_quantiles_P = orpdaj_reg["overall_regions_P_as_json"]['quantiles_P'], 
+        overall_departments_data_P = odpdaj_dep["overall_departments_P_as_json"]['data_P'],
+        overall_departments_quantiles_P = odpdaj_dep["overall_departments_P_as_json"]['quantiles_P'],  
 
         first_day = first_day,
         last_day = last_day,
@@ -279,10 +279,10 @@ def top_dep_settings():
         overall_departments_data_rea = oddaj_dep["overall_departments_rea_as_json"]['data_rea'],
         overall_departments_quantiles_rea = oddaj_dep["overall_departments_rea_as_json"]['quantiles_rea'],
 
-        overall_regions_data_P = orpdaj_reg["orpdaj"]["overall_regions_P_as_json"]['data_P'],
-        overall_regions_quantiles_P = orpdaj_reg["orpdaj"]["overall_regions_P_as_json"]['quantiles_P'], 
-        overall_departments_data_P = odpdaj_dep["odpdaj"]["overall_departments_P_as_json"]['data_P'],
-        overall_departments_quantiles_P = odpdaj_dep["odpdaj"]["overall_departments_P_as_json"]['quantiles_P'],  
+        overall_regions_data_P = orpdaj_reg["overall_regions_P_as_json"]['data_P'],
+        overall_regions_quantiles_P = orpdaj_reg["overall_regions_P_as_json"]['quantiles_P'], 
+        overall_departments_data_P = odpdaj_dep["overall_departments_P_as_json"]['data_P'],
+        overall_departments_quantiles_P = odpdaj_dep["overall_departments_P_as_json"]['quantiles_P'],  
 
         first_day = first_day,
         last_day = last_day,
@@ -364,10 +364,10 @@ def global_monitoring_settings():
         overall_departments_data_rea = oddaj_dep["overall_departments_rea_as_json"]['data_rea'],
         overall_departments_quantiles_rea = oddaj_dep["overall_departments_rea_as_json"]['quantiles_rea'],
 
-        overall_regions_data_P = orpdaj_reg["orpdaj"]["overall_regions_P_as_json"]['data_P'],
-        overall_regions_quantiles_P = orpdaj_reg["orpdaj"]["overall_regions_P_as_json"]['quantiles_P'], 
-        overall_departments_data_P = odpdaj_dep["odpdaj"]["overall_departments_P_as_json"]['data_P'],
-        overall_departments_quantiles_P = odpdaj_dep["odpdaj"]["overall_departments_P_as_json"]['quantiles_P'],  
+        overall_regions_data_P = orpdaj_reg["overall_regions_P_as_json"]['data_P'],
+        overall_regions_quantiles_P = orpdaj_reg["overall_regions_P_as_json"]['quantiles_P'], 
+        overall_departments_data_P = odpdaj_dep["overall_departments_P_as_json"]['data_P'],
+        overall_departments_quantiles_P = odpdaj_dep["overall_departments_P_as_json"]['quantiles_P'],  
 
         first_day = first_day,
         last_day = last_day,
@@ -449,10 +449,10 @@ def hosp_monitoring_settings():
         overall_departments_data_rea = oddaj_dep["overall_departments_rea_as_json"]['data_rea'],
         overall_departments_quantiles_rea = oddaj_dep["overall_departments_rea_as_json"]['quantiles_rea'],
 
-        overall_regions_data_P = orpdaj_reg["orpdaj"]["overall_regions_P_as_json"]['data_P'],
-        overall_regions_quantiles_P = orpdaj_reg["orpdaj"]["overall_regions_P_as_json"]['quantiles_P'], 
-        overall_departments_data_P = odpdaj_dep["odpdaj"]["overall_departments_P_as_json"]['data_P'],
-        overall_departments_quantiles_P = odpdaj_dep["odpdaj"]["overall_departments_P_as_json"]['quantiles_P'],  
+        overall_regions_data_P = orpdaj_reg["overall_regions_P_as_json"]['data_P'],
+        overall_regions_quantiles_P = orpdaj_reg["overall_regions_P_as_json"]['quantiles_P'], 
+        overall_departments_data_P = odpdaj_dep["overall_departments_P_as_json"]['data_P'],
+        overall_departments_quantiles_P = odpdaj_dep["overall_departments_P_as_json"]['quantiles_P'],  
 
         first_day = first_day,
         last_day = last_day,
@@ -525,10 +525,10 @@ def view_department(department):
         overall_departments_data_rea = oddaj_dep["overall_departments_rea_as_json"]['data_rea'],
         overall_departments_quantiles_rea = oddaj_dep["overall_departments_rea_as_json"]['quantiles_rea'],
 
-        overall_regions_data_P = orpdaj_reg["orpdaj"]["overall_regions_P_as_json"]['data_P'],
-        overall_regions_quantiles_P = orpdaj_reg["orpdaj"]["overall_regions_P_as_json"]['quantiles_P'], 
-        overall_departments_data_P = odpdaj_dep["odpdaj"]["overall_departments_P_as_json"]['data_P'],
-        overall_departments_quantiles_P = odpdaj_dep["odpdaj"]["overall_departments_P_as_json"]['quantiles_P'],  
+        overall_regions_data_P = orpdaj_reg["overall_regions_P_as_json"]['data_P'],
+        overall_regions_quantiles_P = orpdaj_reg["overall_regions_P_as_json"]['quantiles_P'], 
+        overall_departments_data_P = odpdaj_dep["overall_departments_P_as_json"]['data_P'],
+        overall_departments_quantiles_P = odpdaj_dep["overall_departments_P_as_json"]['quantiles_P'],  
 
         first_day = first_day,
         last_day = last_day,
@@ -601,10 +601,10 @@ def view_region(region):
         overall_departments_data_rea = oddaj_dep["overall_departments_rea_as_json"]['data_rea'],
         overall_departments_quantiles_rea = oddaj_dep["overall_departments_rea_as_json"]['quantiles_rea'],
 
-        overall_regions_data_P = orpdaj_reg["orpdaj"]["overall_regions_P_as_json"]['data_P'],
-        overall_regions_quantiles_P = orpdaj_reg["orpdaj"]["overall_regions_P_as_json"]['quantiles_P'], 
-        overall_departments_data_P = odpdaj_dep["odpdaj"]["overall_departments_P_as_json"]['data_P'],
-        overall_departments_quantiles_P = odpdaj_dep["odpdaj"]["overall_departments_P_as_json"]['quantiles_P'],  
+        overall_regions_data_P = orpdaj_reg["overall_regions_P_as_json"]['data_P'],
+        overall_regions_quantiles_P = orpdaj_reg["overall_regions_P_as_json"]['quantiles_P'], 
+        overall_departments_data_P = odpdaj_dep["overall_departments_P_as_json"]['data_P'],
+        overall_departments_quantiles_P = odpdaj_dep["overall_departments_P_as_json"]['quantiles_P'],  
 
         first_day = first_day,
         last_day = last_day,
