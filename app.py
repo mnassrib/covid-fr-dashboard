@@ -8,7 +8,7 @@ from cutils.covidclass import CovidFr
 app = Flask(__name__)
 
 covfr = CovidFr()
-if covfr.need_update():
+if covfr.need_covid_data_update() or covfr.need_positive_data_update():
     covid = covfr.load_df()
     oddaj_dep = covfr.overall_departments_data_as_json()
     ordaj_reg = covfr.overall_regions_data_as_json()

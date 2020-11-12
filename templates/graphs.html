@@ -74,7 +74,6 @@
                                     <div class="col-md-3"></div>
                                     <div class="col-md-6">
                                         <button onclick="window.location.href='#cas_positifs';" class="button positive">
-                                            <font size="2">au {{ positive_counters['positive_last_day_fr'] }}</font> <br />
                                             <span class="key-value">{{ positive_counters['current_positive'] }}</span>
                                             {% if (positive_counters['diff_positive'] < 0): %}
                                                 <br /> <font size="2">({{ positive_counters['diff_positive'] }})</font>
@@ -82,7 +81,7 @@
                                                 <br /> <font size="2">(+{{ positive_counters['diff_positive'] }})</font>
                                             {% endif %}
                                             {% if (positive_counters['current_positive']>1): %}
-                                                <br /> cas positifs
+                                                <br /> cas positifs <font size="2">au {{ positive_counters['positive_last_day_fr'] }}</font>
                                             {% else: %}
                                                 <br /> cas positif
                                             {% endif %}
@@ -178,12 +177,12 @@
                 <div class="card-body">
                     {% if (label != 'France'): %}
                         {% if (label['type'] == 'department'): %}
-                            <h3>Taux clés pour 100 000 habitants au {{ label['prefix'] }} {{ label['name'] }} (FR-{{ department }})</h3>
+                            <h3>Taux clés pour 100 000 habitants du {{ counters['last_day_fr'] }} au {{ label['prefix'] }} {{ label['name'] }} (FR-{{ department }})</h3>
                         {% else : %}
-                            <h3>Taux clés pour 100 000 habitants à la {{ label['prefix'] }} {{ label['name'] }} (FR-{{ region }})</h3>
+                            <h3>Taux clés pour 100 000 habitants du {{ counters['last_day_fr'] }} à la {{ label['prefix'] }} {{ label['name'] }} (FR-{{ region }})</h3>
                         {% endif %}
                     {% else : %}
-                        <h3>Taux clés pour 100 000 habitants en {{ label }}</h3> 
+                        <h3>Taux clés pour 100 000 habitants du {{ counters['last_day_fr'] }} en {{ label }}</h3> 
                     {% endif %}
                     <div class="row">
                         <div class="col-md-12">
@@ -273,7 +272,7 @@
                                             {% else: %}
                                                 <br /> <font size="2">(+{{ positive_counters['rates']['d_positive'] }})</font>
                                             {% endif %}
-                                                <br /> cas positifs
+                                                <br /> cas positifs <font size="2">au {{ positive_counters['positive_last_day_fr'] }}</font>
                                         </button>
                                     </div>
                                     <div class="col-md-2">

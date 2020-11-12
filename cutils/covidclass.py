@@ -43,6 +43,8 @@ class CovidFr():
         self.last_update = ""
 
         self.features = ["dc", "r_dc_rad", "rad", "hosp", "rea"]
+
+        self.positive_last_update = ""
    
     def load_df(self):
         """
@@ -92,8 +94,8 @@ class CovidFr():
 
         return self.nprate, self.rprate, self.dprate
 
-    def need_update(self):
-        """Check the last update of the dataset on data.gouv.fr and tells wether we need to refresh the data or not
+    def need_covid_data_update(self):
+        """Check the last update of the datasets on data.gouv.fr and tells whether we need to refresh the data or not
         Returns:
             True if the data need to be updated, False instead
         """
@@ -103,6 +105,20 @@ class CovidFr():
                 if 'accessURL' in dataset.keys() and dataset['accessURL'] == CovidFr.synthesis_covid_url:
                     if self.last_update == "" or self.last_update < dataset['modified']:
                         self.last_update = dataset['modified']
+                        return True
+        return False
+    
+    def need_positive_data_update(self):
+        """Check the last update of the datasets on data.gouv.fr and tells whether we need to refresh the data or not
+        Returns:
+            True if the data need to be updated, False instead
+        """
+        with urllib.request.urlopen("https://www.data.gouv.fr/datasets/5ed1175ca00bbe1e4941a46a/rdf.json") as url:
+            data = json.loads(url.read().decode())
+            for dataset in data['@graph']:
+                if 'accessURL' in dataset.keys() and dataset['accessURL'] == CovidFr.synthesis_dprate_url:
+                    if self.positive_last_update == "" or self.positive_last_update < dataset['modified']:
+                        self.positive_last_update = dataset['modified']
                         return True
         return False
 
