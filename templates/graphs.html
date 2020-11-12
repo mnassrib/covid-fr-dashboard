@@ -177,12 +177,12 @@
                 <div class="card-body">
                     {% if (label != 'France'): %}
                         {% if (label['type'] == 'department'): %}
-                            <h3>Taux clés pour 100 000 habitants du {{ counters['last_day_fr'] }} au {{ label['prefix'] }} {{ label['name'] }} (FR-{{ department }})</h3>
+                            <h3>Taux clés du {{ counters['last_day_fr'] }} pour 100 000 habitants au {{ label['prefix'] }} {{ label['name'] }} (FR-{{ department }})</h3>
                         {% else : %}
-                            <h3>Taux clés pour 100 000 habitants du {{ counters['last_day_fr'] }} à la {{ label['prefix'] }} {{ label['name'] }} (FR-{{ region }})</h3>
+                            <h3>Taux clés du {{ counters['last_day_fr'] }} pour 100 000 habitants à la {{ label['prefix'] }} {{ label['name'] }} (FR-{{ region }})</h3>
                         {% endif %}
                     {% else : %}
-                        <h3>Taux clés pour 100 000 habitants du {{ counters['last_day_fr'] }} en {{ label }}</h3> 
+                        <h3>Taux clés du {{ counters['last_day_fr'] }} pour 100 000 habitants en {{ label }}</h3> 
                     {% endif %}
                     <div class="row">
                         <div class="col-md-12">
