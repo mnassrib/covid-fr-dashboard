@@ -643,7 +643,7 @@
                         </div>
                     </div>
 
-                    <div class="col-md-6" id="postive_map_dep">
+                    <div class="col-md-6" id="positive_map_dep">
                         <div class="card mb-4 box-shadow">
                             <div class="card-body">
                                 <div class="pictos">
@@ -1039,10 +1039,37 @@
     </div>
 </div>
 
+<!-- <p id="paragraphe">Un peu de texte</p>
+<button onclick="changeCouleur('blue');">blue</button>
+<button onclick="changeCouleur('red');">red</button>
+
+<h3>div1 (drawLines() function)</h3> 
+<div id="myDiv2"> </div>
+
+<h3>div2 (drawplots() function)</h3>
+<div id="testplot"></div> -->
 {% endblock %}
 
 
 {% block js %}
+    <!-- <script type="text/javascript">
+        var trace1 = {
+            x: [1, 2, 3, 4],
+            y: [10, 15, 13, 17],
+            type: 'scatter'
+        };
+        var trace2 = {
+            x: [1, 2, 3, 4],
+            y: [16, 5, 11, 9],
+            type: 'scatter'
+        };
+        
+        drawplots([trace1, trace2]);
+    </script>
+
+    <script>
+        drawLines('myDiv2');
+    </script> -->
 
     <script type="text/javascript">
         $(function() {
@@ -1086,233 +1113,75 @@
 
     <!-- positive map regions-->
     <script type="text/javascript">
-        $(function() {
-            // Init map
-            var regions = {{ overall_regions_data_P|safe }};
-            var quantiles = {{ overall_regions_quantiles_P|safe }};
-            quantiles = Object.values(quantiles);
-            var slices = [
-                    {"max": quantiles[0], "label": "Moins de " + quantiles[0] + " cas positifs *", attrs: {fill: "#D6F77F"}}
-                ];
-            colors = ["#f2f53a", '#df891a', '#e61919', '#680000', '#1d0303']
-            for (var i = 0; i < quantiles.length; i++) {
-                var slice = {
-                        attrs: {
-                            fill: colors[i]
-                        }
-                    };
-                slice.min = quantiles[i];
-                if (i < quantiles.length -1) {
-                    slice.max = quantiles[i + 1];
-                    slice.label = "Entre " + slice.min + " et " + slice.max + " cas positifs *";
-                } else {
-                    slice.label = "Plus de " + slice.min + " cas positifs *";
-                }
-                slices.push(slice);
-            }
-            for (var id in regions) {
-                regions[id]['value'] = regions[id]['P_par_habitants'];
-                regions[id]['tooltip'] = {
-                    "content": regions[id]['label'] + " : <b>" + regions[id]['P'] + "</b> cas positifs (<b>" + regions[id]['P_par_habitants'] + "</b> pour 100 000 habitants)"
-                };
-                regions[id]['href'] = "/region/" + regions[id]['insee'] + "#";
-                if (regions[id]['insee'] === '{{ region }}') {
-                    regions[id]['href'] = "/";
-                    delete regions[id]['value'];
-                    regions[id]['attrs'] = {
-                        "fill": "#004a9b",
-                    };
-                }
-            }
-            $("#positive_map_reg").mapael({
-                "map": {
-                    "name": "france_regions_2016_domtom",
-                    zoom: {
-                        enabled: true,
-                        maxLevel: 10
-                    },
-                    "defaultArea": {
-                        "attrs": {
-                            "fill": "#f4f4e8",
-                            "stroke": "#ced8d0",
-                        },
-                        "attrsHover": {
-                            "fill": "#004a9b",
-                        },
-                        "text": {
-                            "attrs": {
-                                "fill": "#505444"
-                            },
-                            "attrsHover": {
-                                "fill": "#000",
-                            }
-                        }
-                    }
-                },
-                "legend": {
-                    "area": {
-                        "marginBottom": 20,
-                        "slices": slices,
-                    }
-                },
-                "areas": regions
-            });
-        });
+        mapDiv = "#positive_map_reg";
+        regions = {{ overall_regions_data_P | safe }};
+        quantiles = {{ overall_regions_quantiles_P | safe }};
+        current_label = "{{ region }}";
+        text = " cas positifs *";
+        textopt = "cas positifs";
+        feature_par_habitants = "P_par_habitants";
+        feature_name = "P";
+        colors = ["#f2f53a", '#df891a', '#e61919', '#680000', '#1d0303'];
+        fill_slices = "#D6F77F";
+        plotRegMap(mapDiv, regions, quantiles, current_label, text, textopt, feature_name, feature_par_habitants, colors, fill_slices);
     </script>
-
-    <!-- positive map departments-->
-    <script type="text/javascript">
-        $(function() {
-            // Init map
-            var departments = {{ overall_departments_data_P|safe }};
-            var quantiles = {{ overall_departments_quantiles_P|safe }};
-            quantiles = Object.values(quantiles);
-            var slices = [
-                    {"max": quantiles[0], "label": "Moins de " + quantiles[0] + " cas positives *", attrs: {fill: "#D6F77F"}}
-                ];
-            colors = ["#f2f53a", '#df891a', '#e61919', '#680000', '#1d0303']
-            for (var i = 0; i < quantiles.length; i++) {
-                var slice = {
-                        attrs: {
-                            fill: colors[i]
-                        }
-                    };
-                slice.min = quantiles[i];
-                if (i < quantiles.length -1) {
-                    slice.max = quantiles[i + 1];
-                    slice.label = "Entre " + slice.min + " et " + slice.max + " cas positives *";
-                } else {
-                    slice.label = "Plus de " + slice.min + " cas positives *";
-                }
-                slices.push(slice);
-            }
-            for (var id in departments) {
-                departments[id]['value'] = departments[id]['P_par_habitants'];
-                departments[id]['tooltip'] = {
-                    "content": departments[id]['label'] + " : <b>" + departments[id]['P'] + "</b> cas positives (<b>" + departments[id]['P_par_habitants'] + "</b> pour 100 000 habitants)"
-                };
-                departments[id]['href'] = "/departement/" + departments[id]['insee'] + "#";
-                if (departments[id]['insee'] === '{{ department }}') {
-                    departments[id]['href'] = "/";
-                    delete departments[id]['value'];
-                    departments[id]['attrs'] = {
-                        "fill": "#004a9b",
-                    };
-                }
-            }
-            $("#postive_map_dep").mapael({
-                "map": {
-                    "name": "france_departments_domtom",
-                    zoom: {
-                        enabled: true,
-                        maxLevel: 10
-                    },
-                    "defaultArea": {
-                        "attrs": {
-                            "fill": "#f4f4e8",
-                            "stroke": "#ced8d0",
-                        },
-                        "attrsHover": {
-                            "fill": "#004a9b",
-                        },
-                        "text": {
-                            "attrs": {
-                                "fill": "#505444"
-                            },
-                            "attrsHover": {
-                                "fill": "#000",
-                            }
-                        }
-                    }
-                },
-                "legend": {
-                    "area": {
-                        "marginBottom": 20,
-                        "slices": slices
-                    }
-                },
-                "areas": departments
-            });
-        });
-    </script>
-
     <!-- death map regions-->
     <script type="text/javascript">
-        $(function() {
-            // Init map
-            var regions = {{ overall_regions_data_dc|safe }};
-            var quantiles = {{ overall_regions_quantiles_dc|safe }};
-            quantiles = Object.values(quantiles);
-            var slices = [
-                    {"max": quantiles[0], "label": "Moins de " + quantiles[0] + " décès *", attrs: {fill: "#D6F77F"}}
-                ];
-            colors = ["#f2f53a", '#df891a', '#e61919', '#680000', '#1d0303']
-            for (var i = 0; i < quantiles.length; i++) {
-                var slice = {
-                        attrs: {
-                            fill: colors[i]
-                        }
-                    };
-                slice.min = quantiles[i];
-                if (i < quantiles.length -1) {
-                    slice.max = quantiles[i + 1];
-                    slice.label = "Entre " + slice.min + " et " + slice.max + " décès *";
-                } else {
-                    slice.label = "Plus de " + slice.min + " décès *";
-                }
-                slices.push(slice);
-            }
-            for (var id in regions) {
-                regions[id]['value'] = regions[id]['dc_par_habitants'];
-                regions[id]['tooltip'] = {
-                    "content": regions[id]['label'] + " : <b>" + regions[id]['dc'] + "</b> décès (<b>" + regions[id]['dc_par_habitants'] + "</b> pour 100 000 habitants)"
-                };
-                regions[id]['href'] = "/region/" + regions[id]['insee'] + "#";
-                if (regions[id]['insee'] === '{{ region }}') {
-                    regions[id]['href'] = "/";
-                    delete regions[id]['value'];
-                    regions[id]['attrs'] = {
-                        "fill": "#004a9b",
-                    };
-                }
-            }
-            $("#death_map_reg").mapael({
-                "map": {
-                    "name": "france_regions_2016_domtom",
-                    zoom: {
-                        enabled: true,
-                        maxLevel: 10
-                    },
-                    "defaultArea": {
-                        "attrs": {
-                            "fill": "#f4f4e8",
-                            "stroke": "#ced8d0",
-                        },
-                        "attrsHover": {
-                            "fill": "#004a9b",
-                        },
-                        "text": {
-                            "attrs": {
-                                "fill": "#505444"
-                            },
-                            "attrsHover": {
-                                "fill": "#000",
-                            }
-                        }
-                    }
-                },
-                "legend": {
-                    "area": {
-                        "marginBottom": 20,
-                        "slices": slices,
-                    }
-                },
-                "areas": regions
-            });
-        });
+        mapDiv = "#death_map_reg";
+        regions = {{ overall_regions_data_dc | safe }};
+        quantiles = {{ overall_regions_quantiles_dc | safe }};
+        current_label = "{{ region }}";
+        text = " décès *";
+        textopt = "décès";
+        feature_par_habitants = "dc_par_habitants";
+        feature_name = "dc";
+        colors = ["#f2f53a", '#df891a', '#e61919', '#680000', '#1d0303'];
+        fill_slices = "#D6F77F";
+        plotRegMap(mapDiv, regions, quantiles, current_label, text, textopt, feature_name, feature_par_habitants, colors, fill_slices);
     </script>
-
-    <!-- rate dc map regions -->
+    <!-- rad map regions-->
+    <script type="text/javascript">
+        mapDiv = "#rad_map_reg";
+        regions = {{ overall_regions_data_rad | safe }};
+        quantiles = {{ overall_regions_quantiles_rad | safe }};
+        current_label = "{{ region }}";
+        text = " guérisons *";
+        textopt = "guérisons";
+        feature_par_habitants = "rad_par_habitants";
+        feature_name = "rad";
+        colors = ["#FED674", '#F5F50A', '#A4F905', '#06BF06', '#146806'];
+        fill_slices = "#FEB653";
+        plotRegMap(mapDiv, regions, quantiles, current_label, text, textopt, feature_name, feature_par_habitants, colors, fill_slices);
+    </script>
+    <!-- hosp map regions-->
+    <script type="text/javascript">
+        mapDiv = "#hosp_map_reg";
+        regions = {{ overall_regions_data_hosp | safe }};
+        quantiles = {{ overall_regions_quantiles_hosp | safe }};
+        current_label = "{{ region }}";
+        text = " hospitalisations *";
+        textopt = "hospitalisations";
+        feature_par_habitants = "hosp_par_habitants";
+        feature_name = "hosp";
+        colors = ["#f2f53a", '#df891a', '#e61919', '#680000', '#1d0303'];
+        fill_slices = "#D6F77F";
+        plotRegMap(mapDiv, regions, quantiles, current_label, text, textopt, feature_name, feature_par_habitants, colors, fill_slices);
+    </script>
+    <!-- rea map regions-->
+    <script type="text/javascript">
+        mapDiv = "#rea_map_reg";
+        regions = {{ overall_regions_data_rea | safe }};
+        quantiles = {{ overall_regions_quantiles_rea | safe }};
+        current_label = "{{ region }}";
+        text = " réanimations *";
+        textopt = "réanimations";
+        feature_par_habitants = "rea_par_habitants";
+        feature_name = "rea";
+        colors = ["#f2f53a", '#df891a', '#e61919', '#680000', '#1d0303'];
+        fill_slices = "#D6F77F";
+        plotRegMap(mapDiv, regions, quantiles, current_label, text, textopt, feature_name, feature_par_habitants, colors, fill_slices);
+    </script>
+    <!-- rate dc/rad map regions -->
     <script type="text/javascript">
         $(function() {
             // Init map
@@ -1320,7 +1189,7 @@
             var quantiles = {{ overall_regions_quantiles_r_dc_rad|safe }};
             quantiles = Object.values(quantiles);
             var slices = [
-                    {"max": quantiles[0], "label": "Taux inférieur à " + quantiles[0], attrs: {fill: '#D6F77F'}}
+                    {"max": quantiles[0], "label": "Taux inférieur à " + quantiles[0], attrs: {fill: "#D6F77F"}}
                 ];
             colors = ["#f2f53a", '#df891a', '#e61919', '#680000', '#1d0303'] 
             for (var i = 0; i < quantiles.length; i++) {
@@ -1388,316 +1257,78 @@
         });
     </script>
 
-    <!-- rad map regions-->
-    <script type="text/javascript">
-        $(function() {
-            // Init map
-            var regions = {{ overall_regions_data_rad|safe }};
-            var quantiles = {{ overall_regions_quantiles_rad|safe }};
-            quantiles = Object.values(quantiles);
-            var slices = [
-                {"max": quantiles[0], "label": "Moins de " + quantiles[0] + " guérisons *", attrs: {fill: "#FEB653"}}
-                ];
-            colors = ["#FED674", '#F5F50A', '#A4F905', '#06BF06', '#146806']  
-            for (var i = 0; i < quantiles.length; i++) {
-                var slice = {
-                        attrs: {
-                            fill: colors[i]
-                        }
-                    };
-                slice.min = quantiles[i];
-                if (i < quantiles.length -1) {
-                    slice.max = quantiles[i + 1];
-                    slice.label = "Entre " + slice.min + " et " + slice.max + " guérisons *";
-                } else {
-                    slice.label = "Plus de " + slice.min + " guérisons *";
-                }
-                slices.push(slice);
-            }
-            for (var id in regions) {
-                regions[id]['value'] = regions[id]['rad_par_habitants'];
-                regions[id]['tooltip'] = {
-                    "content": regions[id]['label'] + " : <b>" + regions[id]['rad'] + "</b> guérisons (<b>" + regions[id]['rad_par_habitants'] + "</b> pour 100 000 habitants)"
-                };
-                regions[id]['href'] = "/region/" + regions[id]['insee'] + "#"; 
-                if (regions[id]['insee'] === '{{ region }}') {
-                    regions[id]['href'] = "/";
-                    delete regions[id]['value'];
-                    regions[id]['attrs'] = {
-                        "fill": "#004a9b", 
-                    };
-                }
-            }   
-            $("#rad_map_reg").mapael({
-                "map": {
-                    "name": "france_regions_2016_domtom",
-                    zoom: {
-                        enabled: true,
-                        maxLevel: 10
-                    },
-                
-                    "defaultArea": {
-                        "attrs": {
-                            "fill": "#f4f4e8",
-                            "stroke": "#ced8d0",
-                        },
-                        "attrsHover": {
-                            "fill": "#004a9b",
-                        },
-                        "text": {
-                            "attrs": {
-                                "fill": "#505444"
-                            },
-                            "attrsHover": {
-                                "fill": "#000",
-                            }
-                        }
-                    }   
-                },
-                "legend": {
-                    "area": {
-                        "marginBottom": 20,
-                        "slices": slices
-                    }
-                },
-                "areas": regions
-            });
-        });
-    </script>
 
-    <!-- hosp map regions-->
+    <!-- positive map departments-->
     <script type="text/javascript">
-        $(function() {
-            // Init map
-            var regions = {{ overall_regions_data_hosp|safe }};
-            var quantiles = {{ overall_regions_quantiles_hosp|safe }};
-            quantiles = Object.values(quantiles);
-            var slices = [
-                    {"max": quantiles[0], "label": "Moins de " + quantiles[0] + " hospitalisations *", attrs: {fill: "#D6F77F"}}
-                ];
-            colors = ["#f2f53a", '#df891a', '#e61919', '#680000', '#1d0303']
-            for (var i = 0; i < quantiles.length; i++) {
-                var slice = {
-                        attrs: {
-                            fill: colors[i]
-                        }
-                    };
-                slice.min = quantiles[i];
-                if (i < quantiles.length -1) {
-                    slice.max = quantiles[i + 1];
-                    slice.label = "Entre " + slice.min + " et " + slice.max + " hospitalisations *";
-                } else {
-                    slice.label = "Plus de " + slice.min + " hospitalisations *";
-                }
-                slices.push(slice);
-            }
-            for (var id in regions) {
-                regions[id]['value'] = regions[id]['hosp_par_habitants'];
-                regions[id]['tooltip'] = {
-                    "content": regions[id]['label'] + " : <b>" + regions[id]['hosp'] + "</b> hospitalisations (<b>" + regions[id]['hosp_par_habitants'] + "</b> pour 100 000 habitants)"
-                };
-                regions[id]['href'] = "/region/" + regions[id]['insee'] + "#"; 
-                if (regions[id]['insee'] === '{{ region }}') {
-                    regions[id]['href'] = "/";
-                    delete regions[id]['value'];
-                    regions[id]['attrs'] = {
-                        "fill": "#004a9b", 
-                    };
-                }
-            }        
-            $("#hosp_map_reg").mapael({
-                "map": {
-                    "name": "france_regions_2016_domtom",
-                    zoom: {
-                        enabled: true,
-                        maxLevel: 10
-                    },      
-                    "defaultArea": {
-                        "attrs": {
-                            "fill": "#f4f4e8",
-                            "stroke": "#ced8d0",
-                        },
-                        "attrsHover": {
-                            "fill": "#004a9b",
-                        },
-                        "text": {
-                            "attrs": {
-                                "fill": "#505444"
-                            },
-                            "attrsHover": {
-                                "fill": "#000",
-                            }
-                        }
-                    }   
-                },          
-                "legend": {
-                    "area": {
-                        "marginBottom": 20,
-                        "slices": slices
-                    }
-                },
-                "areas": regions
-            });
-        });
+        mapDiv = "#positive_map_dep";
+        departments = {{ overall_departments_data_P | safe }};
+        quantiles = {{ overall_departments_quantiles_P | safe }};
+        current_label = "{{ department }}";
+        text = " cas positifs *";
+        textopt = "cas positifs";
+        feature_par_habitants = "P_par_habitants";
+        feature_name = "P";
+        colors = ["#f2f53a", '#df891a', '#e61919', '#680000', '#1d0303'];
+        fill_slices = "#D6F77F";
+        plotDepMap(mapDiv, departments, quantiles, current_label, text, textopt, feature_name, feature_par_habitants, colors, fill_slices);
     </script>
-
-    <!-- rea map regions-->
-    <script type="text/javascript">
-        $(function() {
-            // Init map
-            var regions = {{ overall_regions_data_rea|safe }};
-            var quantiles = {{ overall_regions_quantiles_rea|safe }};
-            quantiles = Object.values(quantiles);
-            var slices = [
-                    {"max": quantiles[0], "label": quantiles[0] + " réanimations *", attrs: {fill: "#D6F77F"}}
-                ];
-            colors = ["#f2f53a", '#df891a', '#e61919', '#680000', '#1d0303']
-            for (var i = 0; i < quantiles.length; i++) {
-                var slice = {
-                        attrs: {
-                            fill: colors[i]
-                        }
-                    };
-                slice.min = quantiles[i];
-                if (i < quantiles.length -1) {
-                    slice.max = quantiles[i + 1];
-                    slice.label = "Entre " + slice.min + " et " + slice.max + " réanimations *";
-                } else {
-                    slice.label = "Plus de " + slice.min + " réanimations *";
-                }
-                if (i == 0) {
-                    slice.max = quantiles[i + 1];
-                    slice.label = "Moins de " + slice.max + " réanimations *";
-                }           
-                slices.push(slice);
-            }
-            for (var id in regions) {
-                regions[id]['value'] = regions[id]['rea_par_habitants'];
-                regions[id]['tooltip'] = {
-                    "content": regions[id]['label'] + " : <b>" + regions[id]['rea'] + "</b> réanimations (<b>" + regions[id]['rea_par_habitants'] + "</b> pour 100 000 habitants)"
-                };
-                regions[id]['href'] = "/region/" + regions[id]['insee'] + "#"; 
-                if (regions[id]['insee'] === '{{ region }}') {
-                    regions[id]['href'] = "/";
-                    delete regions[id]['value'];
-                    regions[id]['attrs'] = {
-                        "fill": "#004a9b", 
-                    };
-                }
-            }       
-            $("#rea_map_reg").mapael({
-                "map": {
-                    "name": "france_regions_2016_domtom",
-                    zoom: {
-                        enabled: true,
-                        maxLevel: 10
-                    },                  
-                    "defaultArea": {
-                        "attrs": {
-                            "fill": "#f4f4e8",
-                            "stroke": "#ced8d0",
-                        },
-                        "attrsHover": {
-                            "fill": "#004a9b",
-                        },
-                        "text": {
-                            "attrs": {
-                                "fill": "#505444"
-                            },
-                            "attrsHover": {
-                                "fill": "#000",
-                            }
-                        }
-                    }   
-                },  
-                "legend": {
-                    "area": {
-                        "marginBottom": 20,
-                        "slices": slices
-                    }
-                },
-                "areas": regions
-            });
-        });
-    </script>
-
     <!-- death map departments-->
     <script type="text/javascript">
-        $(function() {
-            // Init map
-            var departments = {{ overall_departments_data_dc|safe }};
-            var quantiles = {{ overall_departments_quantiles_dc|safe }};
-            quantiles = Object.values(quantiles);
-            var slices = [
-                    {"max": quantiles[0], "label": "Moins de " + quantiles[0] + " décès *", attrs: {fill: "#D6F77F"}}
-                ];
-            colors = ["#f2f53a", '#df891a', '#e61919', '#680000', '#1d0303']
-            for (var i = 0; i < quantiles.length; i++) {
-                var slice = {
-                        attrs: {
-                            fill: colors[i]
-                        }
-                    };
-                slice.min = quantiles[i];
-                if (i < quantiles.length -1) {
-                    slice.max = quantiles[i + 1];
-                    slice.label = "Entre " + slice.min + " et " + slice.max + " décès *";
-                } else {
-                    slice.label = "Plus de " + slice.min + " décès *";
-                }
-                slices.push(slice);
-            }
-            for (var id in departments) {
-                departments[id]['value'] = departments[id]['dc_par_habitants'];
-                departments[id]['tooltip'] = {
-                    "content": departments[id]['label'] + " : <b>" + departments[id]['dc'] + "</b> décès (<b>" + departments[id]['dc_par_habitants'] + "</b> pour 100 000 habitants)"
-                };
-                departments[id]['href'] = "/departement/" + departments[id]['insee'] + "#";
-                if (departments[id]['insee'] === '{{ department }}') {
-                    departments[id]['href'] = "/";
-                    delete departments[id]['value'];
-                    departments[id]['attrs'] = {
-                        "fill": "#004a9b",
-                    };
-                }
-            }
-            $("#death_map_dep").mapael({
-                "map": {
-                    "name": "france_departments_domtom",
-                    zoom: {
-                        enabled: true,
-                        maxLevel: 10
-                    },
-                    "defaultArea": {
-                        "attrs": {
-                            "fill": "#f4f4e8",
-                            "stroke": "#ced8d0",
-                        },
-                        "attrsHover": {
-                            "fill": "#004a9b",
-                        },
-                        "text": {
-                            "attrs": {
-                                "fill": "#505444"
-                            },
-                            "attrsHover": {
-                                "fill": "#000",
-                            }
-                        }
-                    }
-                },
-                "legend": {
-                    "area": {
-                        "marginBottom": 20,
-                        "slices": slices
-                    }
-                },
-                "areas": departments
-            });
-        });
+        mapDiv = "#death_map_dep";
+        departments = {{ overall_departments_data_dc | safe }};
+        quantiles = {{ overall_departments_quantiles_dc | safe }};
+        current_label = "{{ department }}";
+        text = " décès *";
+        textopt = "décès";
+        feature_par_habitants = "dc_par_habitants";
+        feature_name = "dc";
+        colors = ["#f2f53a", '#df891a', '#e61919', '#680000', '#1d0303'];
+        fill_slices = "#D6F77F";
+        plotDepMap(mapDiv, departments, quantiles, current_label, text, textopt, feature_name, feature_par_habitants, colors, fill_slices);
     </script>
-    
-    <!-- rate dc map departments-->
+    <!-- rad map departments-->
+    <script type="text/javascript">
+        mapDiv = "#rad_map_dep";
+        departments = {{ overall_departments_data_rad | safe }};
+        quantiles = {{ overall_departments_quantiles_rad | safe }};
+        current_label = "{{ department }}";
+        text = " guérisons *";
+        textopt = "guérisons";
+        feature_par_habitants = "rad_par_habitants";
+        feature_name = "rad";
+        colors = ["#FED674", '#F5F50A', '#A4F905', '#06BF06', '#146806'];
+        fill_slices = "#FEB653";
+        plotDepMap(mapDiv, departments, quantiles, current_label, text, textopt, feature_name, feature_par_habitants, colors, fill_slices);
+    </script>
+    <!-- hosp map departments-->
+    <script type="text/javascript">
+        mapDiv = "#hosp_map_dep";
+        departments = {{ overall_departments_data_hosp | safe }};
+        quantiles = {{ overall_departments_quantiles_hosp | safe }};
+        current_label = "{{ department }}";
+        text = " hospitalisations *";
+        textopt = "hospitalisations";
+        feature_par_habitants = "hosp_par_habitants";
+        feature_name = "hosp";
+        colors = ["#f2f53a", '#df891a', '#e61919', '#680000', '#1d0303'];
+        fill_slices = "#D6F77F";
+        plotDepMap(mapDiv, departments, quantiles, current_label, text, textopt, feature_name, feature_par_habitants, colors, fill_slices);
+    </script>
+    <!-- rea map departments-->
+    <script type="text/javascript">
+        mapDiv = "#rea_map_dep";
+        departments = {{ overall_departments_data_rea | safe }};
+        quantiles = {{ overall_departments_quantiles_rea | safe }};
+        current_label = "{{ department }}";
+        text = " réanimations *";
+        textopt = "réanimations";
+        feature_par_habitants = "rea_par_habitants";
+        feature_name = "rea";
+        colors = ["#f2f53a", '#df891a', '#e61919', '#680000', '#1d0303'];
+        fill_slices = "#D6F77F";
+        plotDepMap(mapDiv, departments, quantiles, current_label, text, textopt, feature_name, feature_par_habitants, colors, fill_slices);
+    </script>
+    <!-- rate dc/rad map departments-->
     <script type="text/javascript">
         $(function() {
             // Init map
@@ -1705,7 +1336,7 @@
             var quantiles = {{ overall_departments_quantiles_r_dc_rad|safe }};
             quantiles = Object.values(quantiles);
             var slices = [
-                    {"max": quantiles[0], "label": "Taux inférieur à " + quantiles[0], attrs: {fill: '#D6F77F'}}
+                    {"max": quantiles[0], "label": "Taux inférieur à " + quantiles[0], attrs: {fill: "#D6F77F"}}
                 ];
             colors = ["#f2f53a", '#df891a', '#e61919', '#680000', '#1d0303'] 
             for (var i = 0; i < quantiles.length; i++) {
@@ -1773,416 +1404,77 @@
         });
     </script>
 
-    <!-- rad map departments -->
-    <script type="text/javascript">
-        $(function() {
-            // Init map
-            var departments = {{ overall_departments_data_rad|safe }};
-            var quantiles = {{ overall_departments_quantiles_rad|safe }};
-            quantiles = Object.values(quantiles);
-            var slices = [
-                {"max": quantiles[0], "label": "Moins de " + quantiles[0] + " guérisons *", attrs: {fill: "#FEB653"}}
-                ];
-            colors = ["#FED674", '#F5F50A', '#A4F905', '#06BF06', '#146806']  
-            for (var i = 0; i < quantiles.length; i++) {
-                var slice = {
-                        attrs: {
-                            fill: colors[i]
-                        }
-                    };
-                slice.min = quantiles[i];
-                if (i < quantiles.length -1) {
-                    slice.max = quantiles[i + 1];
-                    slice.label = "Entre " + slice.min + " et " + slice.max + " guérisons *";
-                } else {
-                    slice.label = "Plus de " + slice.min + " guérisons *";
-                }
-                slices.push(slice);
-            }
-            for (var id in departments) {
-                departments[id]['value'] = departments[id]['rad_par_habitants'];
-                departments[id]['tooltip'] = {
-                    "content": departments[id]['label'] + " : <b>" + departments[id]['rad'] + "</b> guérisons (<b>" + departments[id]['rad_par_habitants'] + "</b> pour 100 000 habitants)"
-                };
-                departments[id]['href'] = "/departement/" + departments[id]['insee'] + "#"; 
-                if (departments[id]['insee'] === '{{ department }}') {
-                    departments[id]['href'] = "/";
-                    delete departments[id]['value'];
-                    departments[id]['attrs'] = {
-                        "fill": "#004a9b", 
-                    };
-                }
-            }   
-            $("#rad_map_dep").mapael({
-                "map": {
-                    "name": "france_departments_domtom",
-                    zoom: {
-                        enabled: true,
-                        maxLevel: 10
-                    },
-                
-                    "defaultArea": {
-                        "attrs": {
-                            "fill": "#f4f4e8",
-                            "stroke": "#ced8d0",
-                        },
-                        "attrsHover": {
-                            "fill": "#004a9b",
-                        },
-                        "text": {
-                            "attrs": {
-                                "fill": "#505444"
-                            },
-                            "attrsHover": {
-                                "fill": "#000",
-                            }
-                        }
-                    }   
-                },
-                "legend": {
-                    "area": {
-                        "marginBottom": 20,
-                        "slices": slices
-                    }
-                },
-                "areas": departments
-            });
-        });
-    </script>
-        
-    <!-- hosp map departments-->
-    <script type="text/javascript">
-        $(function() {
-            // Init map
-            var departments = {{ overall_departments_data_hosp|safe }};
-            var quantiles = {{ overall_departments_quantiles_hosp|safe }};
-            quantiles = Object.values(quantiles);
-            var slices = [
-                    {"max": quantiles[0], "label": "Moins de " + quantiles[0] + " hospitalisations *", attrs: {fill: "#D6F77F"}}
-                ];
-            colors = ["#f2f53a", '#df891a', '#e61919', '#680000', '#1d0303']
-            for (var i = 0; i < quantiles.length; i++) {
-                var slice = {
-                        attrs: {
-                            fill: colors[i]
-                        }
-                    };
-                slice.min = quantiles[i];
-                if (i < quantiles.length -1) {
-                    slice.max = quantiles[i + 1];
-                    slice.label = "Entre " + slice.min + " et " + slice.max + " hospitalisations *";
-                } else {
-                    slice.label = "Plus de " + slice.min + " hospitalisations *";
-                }
-                slices.push(slice);
-            }
-            for (var id in departments) {
-                departments[id]['value'] = departments[id]['hosp_par_habitants'];
-                departments[id]['tooltip'] = {
-                    "content": departments[id]['label'] + " : <b>" + departments[id]['hosp'] + "</b> hospitalisations (<b>" + departments[id]['hosp_par_habitants'] + "</b> pour 100 000 habitants)"
-                };
-                departments[id]['href'] = "/departement/" + departments[id]['insee'] + "#"; 
-                if (departments[id]['insee'] === '{{ department }}') {
-                    departments[id]['href'] = "/";
-                    delete departments[id]['value'];
-                    departments[id]['attrs'] = {
-                        "fill": "#004a9b", 
-                    };
-                }
-            }        
-            $("#hosp_map_dep").mapael({
-                "map": {
-                    "name": "france_departments_domtom",
-                    zoom: {
-                        enabled: true,
-                        maxLevel: 10
-                    },      
-                    "defaultArea": {
-                        "attrs": {
-                            "fill": "#f4f4e8",
-                            "stroke": "#ced8d0",
-                        },
-                        "attrsHover": {
-                            "fill": "#004a9b",
-                        },
-                        "text": {
-                            "attrs": {
-                                "fill": "#505444"
-                            },
-                            "attrsHover": {
-                                "fill": "#000",
-                            }
-                        }
-                    }   
-                },          
-                "legend": {
-                    "area": {
-                        "marginBottom": 20,
-                        "slices": slices
-                    }
-                },
-                "areas": departments
-            });
-        });
-    </script>
-    
-    <!-- rea map departments-->
-    <script type="text/javascript">
-        $(function() {
-            // Init map
-            var departments = {{ overall_departments_data_rea|safe }};
-            var quantiles = {{ overall_departments_quantiles_rea|safe }};
-            quantiles = Object.values(quantiles);
-            var slices = [
-                    {"max": quantiles[0], "label": quantiles[0] + " réanimations *", attrs: {fill: "#D6F77F"}}
-                ];
-            colors = ["#f2f53a", '#df891a', '#e61919', '#680000', '#1d0303']
-            for (var i = 0; i < quantiles.length; i++) {
-                var slice = {
-                        attrs: {
-                            fill: colors[i]
-                        }
-                    };
-                slice.min = quantiles[i];
-                if (i < quantiles.length -1) {
-                    slice.max = quantiles[i + 1];
-                    slice.label = "Entre " + slice.min + " et " + slice.max + " réanimations *";
-                } else {
-                    slice.label = "Plus de " + slice.min + " réanimations *";
-                }
-                if (i == 0) {
-                    slice.max = quantiles[i + 1];
-                    slice.label = "Moins de " + slice.max + " réanimations *";
-                }           
-                slices.push(slice);
-            }
-            for (var id in departments) {
-                departments[id]['value'] = departments[id]['rea_par_habitants'];
-                departments[id]['tooltip'] = {
-                    "content": departments[id]['label'] + " : <b>" + departments[id]['rea'] + "</b> réanimations (<b>" + departments[id]['rea_par_habitants'] + "</b> pour 100 000 habitants)"
-                };
-                departments[id]['href'] = "/departement/" + departments[id]['insee'] + "#"; 
-                if (departments[id]['insee'] === '{{ department }}') {
-                    departments[id]['href'] = "/";
-                    delete departments[id]['value'];
-                    departments[id]['attrs'] = {
-                        "fill": "#004a9b", 
-                    };
-                }
-            }       
-            $("#rea_map_dep").mapael({
-                "map": {
-                    "name": "france_departments_domtom",
-                    zoom: {
-                        enabled: true,
-                        maxLevel: 10
-                    },                  
-                    "defaultArea": {
-                        "attrs": {
-                            "fill": "#f4f4e8",
-                            "stroke": "#ced8d0",
-                        },
-                        "attrsHover": {
-                            "fill": "#004a9b",
-                        },
-                        "text": {
-                            "attrs": {
-                                "fill": "#505444"
-                            },
-                            "attrsHover": {
-                                "fill": "#000",
-                            }
-                        }
-                    }   
-                },  
-                "legend": {
-                    "area": {
-                        "marginBottom": 20,
-                        "slices": slices
-                    }
-                },
-                "areas": departments
-            });
-        });
-    </script>
+
 
     <!-- charts -->
     <script type="text/javascript">
-        // Init charts
-        var plotlyConfig = {
-                "locale": "fr",
-                "modeBarButtonsToRemove": ["sendDataToCloud", "autoScale2d", "hoverClosestCartesian", "hoverCompareCartesian", "lasso2d", "select2d"],
-                "displaylogo": false,
-                "showTips": false,
-            };
-
         var graphs = {{ graphJSON["graphJSON0"] | safe }};
-
-        for(var i in graphs) {
-            Plotly.plot(
-                graphs[i].id, // the ID of the div, created above
-                graphs[i].data,
-                graphs[i].layout || {}, 
-                plotlyConfig);
-        }
+        var text = "";
+        plotGraphs(graphs, text);
     </script>
-
-    <!-- charts-->
     <script type="text/javascript">
         var graphs = {{ graphJSON["graphJSON1"] | safe }};
-
-        for(var i in graphs) {
-            Plotly.plot(
-                graphs[i].id, // the ID of the div, created above
-                graphs[i].data,
-                graphs[i].layout || {}, 
-                plotlyConfig);
-        }
+        var text = "";
+        plotGraphs(graphs, text);
     </script>
-
-    <!-- charts-->
     <script type="text/javascript">
         var graphs = {{ graphJSON["graphJSON2"] | safe }};
-
-        for(var i in graphs) {
-            Plotly.plot(
-                graphs[i].id, // the ID of the div, created above
-                graphs[i].data,
-                graphs[i].layout || {}, 
-                plotlyConfig);
-        }
+        var text = "";
+        plotGraphs(graphs, text);
     </script>
-
-    <!-- charts-->
     <script type="text/javascript">
         var graphs = {{ graphJSON["graphJSON3"] | safe }};
-
-        for(var i in graphs) {
-            Plotly.plot(
-                graphs[i].id, // the ID of the div, created above
-                graphs[i].data,
-                graphs[i].layout || {}, 
-                plotlyConfig);
-        }
+        var text = "";
+        plotGraphs(graphs, text);
     </script>
-
-    <!-- charts-->
     <script type="text/javascript">
         var graphs = {{ graphJSON["graphJSON4"] | safe }};
-
-        for(var i in graphs) {
-            Plotly.plot(
-                graphs[i].id, // the ID of the div, created above
-                graphs[i].data,
-                graphs[i].layout || {}, 
-                plotlyConfig);
-        }
+        var text = "";
+        plotGraphs(graphs, text);
     </script>
-
-    <!-- charts-->
     <script type="text/javascript">
         var graphs = {{ graphJSON["graphJSON5"] | safe }};
-
-        for(var i in graphs) {
-            Plotly.plot(
-                graphs[i].id, // the ID of the div, created above
-                graphs[i].data,
-                graphs[i].layout || {}, 
-                plotlyConfig);
-        }
+        var text = "";
+        plotGraphs(graphs, text);
     </script>
-
-    <!-- charts-->
     <script type="text/javascript">
         var graphs = {{ graphJSON["graphJSON6"] | safe }};
-
-        for(var i in graphs) {
-            Plotly.plot(
-                graphs[i].id, // the ID of the div, created above
-                graphs[i].data,
-                graphs[i].layout || {}, 
-                plotlyConfig);
-        }
+        var text = "";
+        plotGraphs(graphs, text);
     </script>
-
-    <!-- charts-->
     <script type="text/javascript">
         var graphs = {{ graphJSON["graphJSON7"] | safe }};
-
-        for(var i in graphs) {
-            Plotly.plot(
-                graphs[i].id, // the ID of the div, created above
-                graphs[i].data,
-                graphs[i].layout || {}, 
-                plotlyConfig);
-        }
+        var text = "";
+        plotGraphs(graphs, text);
     </script>
-
-    <!-- charts-->
     <script type="text/javascript">
         var graphs = {{ graphJSON["graphJSON8"] | safe }};
-
-        for(var i in graphs) {
-            Plotly.plot(
-                graphs[i].id, // the ID of the div, created above
-                graphs[i].data,
-                graphs[i].layout || {}, 
-                plotlyConfig);
-        }
+        var text = "";
+        plotGraphs(graphs, text);
     </script>
-
 
     <!-- positive data charts-->
     <script type="text/javascript">
         var graphs = {{ positive_graphJSON["graphJSON0"] | safe }};
-
-        for(var i in graphs) {
-            Plotly.plot(
-                graphs[i].id, // the ID of the div, created above
-                graphs[i].data,
-                graphs[i].layout || {}, 
-                plotlyConfig);
-        }
+        var text = "";
+        plotGraphs(graphs, text);
     </script>
-
-    <!-- positive data charts-->
     <script type="text/javascript">
         var graphs = {{ positive_graphJSON["graphJSON1"] | safe }};
-
-        for(var i in graphs) {
-            Plotly.plot(
-                graphs[i].id, // the ID of the div, created above
-                graphs[i].data,
-                graphs[i].layout || {}, 
-                plotlyConfig);
-        }
+        var text = "";
+        plotGraphs(graphs, text);
     </script>
-
 
     <!-- charts pca-->
     <script type="text/javascript">
         var graphs = {{ graphJSONquadratics | safe }};
-
-        for(var i in graphs) {
-            Plotly.plot(
-                graphs[i].id, // the ID of the div, created above
-                graphs[i].data,
-                graphs[i].layout || {}, 
-                plotlyConfig);
-        }
+        var text = "";
+        plotGraphs(graphs, text);
     </script>
-
-    <!-- charts pca-->
     <script type="text/javascript">
         var graphs = {{ graphJSONquadratics_reg | safe }};
-
-        for(var i in graphs) {
-            Plotly.plot(
-                graphs[i].id + '_reg', // the ID of the div, created above
-                graphs[i].data,
-                graphs[i].layout || {}, 
-                plotlyConfig);
-        }
+        var text = "_reg";
+        plotGraphs(graphs, text);
     </script>
    
 {% endblock %}
