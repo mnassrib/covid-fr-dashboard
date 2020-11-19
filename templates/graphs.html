@@ -5,13 +5,11 @@
 {% endblock %}
 
 {% block content %} 
-
 <div id="data">
     <h2>
         {% if (label != 'France'): %}
             <a href="/#">France</a> &gt; 
         {% endif %} 
-        
         {% if (label != 'France'): %}
             {% if (label['type'] == 'department'): %}
                 {{ label['prefix'] }} : {{ label['name'] }} (FR-{{ department }})
@@ -69,7 +67,6 @@
                         </div>
                         <div class="col-md-6">
                             <div class="card mb-4 box-shadow">
-
                                 <div class="row">
                                     <div class="col-md-3"></div>
                                     <div class="col-md-6">
@@ -88,8 +85,7 @@
                                         </button>
                                     </div>
                                     <div class="col-md-3"></div>
-                                </div>
-        
+                                </div>       
                                 <div class="card-body">  
                                     <div class=conteneur>
                                         <img usemap="#etats" src="{{ url_for('static', filename='images/transition.png') }}" alt="">
@@ -171,7 +167,6 @@
                 </div>
             </div>
         </div>
-
         <div class="col-md-12">     
             <div class="card mb-4 box-shadow">
                 <div class="card-body">
@@ -263,7 +258,6 @@
                                                 <br /> décès/guérisons
                                         </button>
                                     </div>
-
                                     <div class="col-md-4">
                                         <button onclick="window.location.href='#map_view';" class="button positive">
                                             <span class="key-value">{{ positive_counters['rates']['positive'] }}</span>
@@ -277,7 +271,6 @@
                                     </div>
                                     <div class="col-md-2">
                                     </div>
-
                                 </div>
                             </div>
                         </div>
@@ -285,7 +278,6 @@
                 </div>
             </div>
         </div>
-
         <div class="col-md-12" id="map_view">
             <div class="card mb-4 box-shadow">
                 <div class="card-body">
@@ -311,11 +303,8 @@
                         </form> 
                     </div>
                 </div>
-
                 <div class="row">
-
                     {% if (map_select == "Nombre de décès"): %}
-
                     <div class="col-md-6" id="death_map_reg">
                         <div class="card mb-4 box-shadow">
                             <div class="card-body">
@@ -344,7 +333,6 @@
                             </div>
                         </div>
                     </div>
-
                     <div class="col-md-6" id="death_map_dep">
                         <div class="card mb-4 box-shadow">
                             <div class="card-body">
@@ -373,9 +361,7 @@
                             </div>
                         </div>
                     </div>
-
                     {% elif (map_select == "Taux décès / (décès + guérisons)"): %}
-
                     <div class="col-md-6" id="rate_death_map_reg">
                         <div class="card mb-4 box-shadow">
                             <div class="card-body">
@@ -403,7 +389,6 @@
                             </div>
                         </div>
                     </div>
-
                     <div class="col-md-6" id="rate_death_map_dep">
                         <div class="card mb-4 box-shadow">
                             <div class="card-body">
@@ -431,9 +416,7 @@
                             </div>
                         </div>
                     </div>
-
                     {% elif (map_select == "Nombre de guérisons"): %}
-
                     <div class="col-md-6" id="rad_map_reg">
                         <div class="card mb-4 box-shadow">
                             <div class="card-body">
@@ -462,7 +445,6 @@
                             </div>
                         </div>
                     </div>
-
                     <div class="col-md-6" id="rad_map_dep">
                         <div class="card mb-4 box-shadow">
                             <div class="card-body">
@@ -491,9 +473,7 @@
                             </div>
                         </div>
                     </div>
-
                     {% elif (map_select == "Nombre d'hospitalisations le " + counters['last_day_fr']): %}
-
                     <div class="col-md-6" id="hosp_map_reg">
                         <div class="card mb-4 box-shadow">
                             <div class="card-body">
@@ -522,7 +502,6 @@
                             </div>
                         </div>
                     </div>
-
                     <div class="col-md-6" id="hosp_map_dep">
                         <div class="card mb-4 box-shadow">
                             <div class="card-body">
@@ -551,9 +530,7 @@
                             </div>
                         </div>
                     </div>
-
                     {% elif (map_select == "Nombre de réanimations le " + counters['last_day_fr']): %}
-
                     <div class="col-md-6" id="rea_map_reg">
                         <div class="card mb-4 box-shadow">
                             <div class="card-body">
@@ -582,7 +559,6 @@
                             </div>
                         </div>
                     </div>
-
                     <div class="col-md-6" id="rea_map_dep">
                         <div class="card mb-4 box-shadow">
                             <div class="card-body">
@@ -611,9 +587,7 @@
                             </div>
                         </div>
                     </div>
-
                     {% elif (map_select == "Nombre de cas positifs le " + positive_counters["positive_last_day_fr"]): %}
-
                     <div class="col-md-6" id="positive_map_reg">
                         <div class="card mb-4 box-shadow">
                             <div class="card-body">
@@ -642,7 +616,6 @@
                             </div>
                         </div>
                     </div>
-
                     <div class="col-md-6" id="positive_map_dep">
                         <div class="card mb-4 box-shadow">
                             <div class="card-body">
@@ -671,13 +644,10 @@
                             </div>
                         </div>
                     </div>
-
                     {% endif %}
-
                 </div>
             </div>
         </div>
-
         <div class="col-md-12">
             <div class="card mb-4 box-shadow">
                 <div class="card-body">
@@ -686,7 +656,6 @@
                 </div>
             </div>
         </div>
-
         <div class="col-md-12" id="top_dep_results">
             <div class="card mb-4 box-shadow">
                 <div class="card-body">
@@ -706,7 +675,6 @@
                                         {% endfor %}
                                     </select>
                                 </div>
-
                                 <div class="col-auto my-1">
                                     <label class="mr-sm-2" for="inlineFormCustomSelect">Critère à afficher</label>
                                     <select name="top_dep_settings" class="custom-select mr-sm-2">
@@ -719,7 +687,6 @@
                                         {% endfor %}
                                     </select>
                                 </div>
-
                                 <div class="col-auto my-1 align-self-end">
                                   <button type="submit" formaction="{{ url_for('top_dep_settings') }}#top_dep_results" class="btn btn-primary">Valider</button>
                                 </div>
@@ -727,9 +694,7 @@
                         </form> 
                     </div>
                 </div>
-
                 {% if (criterion == "Cas positifs au "+positive_counters['positive_last_day_fr']): %}
-
                 <div class="col-md-12" id="">
                     <div class="card mb-4 box-shadow">
                         <div class="card-body">
@@ -738,9 +703,7 @@
                         </div>
                     </div>
                 </div>
-
                 {% elif (criterion == "Hospitalisations au "+counters['last_day_fr']): %}
-
                 <div class="col-md-12" id="">
                     <div class="card mb-4 box-shadow">
                         <div class="card-body">
@@ -749,9 +712,7 @@
                         </div>
                     </div>
                 </div>
-
                 {% elif (criterion == "Réanimations au "+counters['last_day_fr']): %}
-
                 <div class="col-md-12" id="">
                     <div class="card mb-4 box-shadow">
                         <div class="card-body">
@@ -760,11 +721,9 @@
                         </div>
                     </div>
                 </div>
-
                 {% endif %}
             </div>
         </div> 
-
         <div class="col-md-12">
             <div class="card mb-4 box-shadow">
                 <div class="card-body">
@@ -781,7 +740,6 @@
                 </div>
             </div>
         </div>
-
         <div class="col-md-6">
             <div class="card mb-4 box-shadow">
                 <div class="card-body">
@@ -878,7 +836,6 @@
                 </div>
             </div>
         </div>
-
         <div class="col-md-12" id="global_monitoring_results">
             <div class="card mb-4 box-shadow">
                 <div class="card-body">
@@ -898,7 +855,6 @@
                                         {% endfor %}
                                     </select>
                                 </div>
-
                                 <div class="col-auto my-1">
                                     <label class="mr-sm-2" for="inlineFormCustomSelect">data normalization</label>
                                     <select name="global_parameters" class="custom-select mr-sm-2">
@@ -911,12 +867,10 @@
                                         {% endfor %}
                                     </select>
                                 </div>
-
                                 <div class="col-auto my-1">
                                     <label class="control-label" for="date">date range (model learning)</label>
                                     <input type="text" class="form-control" data-filter-type="date-range" data-toggle="daterangepicker" name="global_parameters">
                                 </div>
-
                                 <div class="col-auto my-1">
                                     <label class="mr-sm-2" for="inlineFormCustomSelect">smoothing filter</label>
                                     <select name="global_parameters" class="custom-select mr-sm-2">
@@ -929,7 +883,6 @@
                                         {% endfor %}
                                     </select>
                                 </div>
-
                                 <div class="col-auto my-1 align-self-end">
                                   <button type="submit" formaction="{{ url_for('global_monitoring_settings') }}#global_monitoring_results" class="btn btn-primary">Valider</button>
                                 </div>
@@ -937,7 +890,6 @@
                         </form> 
                     </div>
                 </div>
-
                 <div class="col-md-12" id="">
                     <div class="card mb-4 box-shadow">
                         <div class="card-body">
@@ -946,7 +898,6 @@
                         </div>
                     </div>
                 </div>
-
                 <div class="col-md-12" id="">
                     <div class="card mb-4 box-shadow">
                         <div class="card-body">
@@ -957,7 +908,6 @@
                 </div>
             </div>
         </div>
-
         <div class="col-md-12" id="hosp_monitoring_results">
             <div class="card mb-4 box-shadow">
                 <div class="card-body">
@@ -977,7 +927,6 @@
                                         {% endfor %}
                                     </select>
                                 </div>
-
                                 <div class="col-auto my-1">
                                     <label class="mr-sm-2" for="inlineFormCustomSelect">data normalization</label>
                                     <select name="hosp_parameters" class="custom-select mr-sm-2">
@@ -990,12 +939,10 @@
                                         {% endfor %}
                                     </select>
                                 </div>
-
                                 <div class="col-auto my-1">
                                     <label class="control-label" for="date">date range (model learning)</label>
                                     <input type="text" class="form-control" data-filter-type="date-range" data-toggle="daterangepicker" name="hosp_parameters">
                                 </div>
-
                                 <div class="col-auto my-1">
                                     <label class="mr-sm-2" for="inlineFormCustomSelect">smoothing filter</label>
                                     <select name="hosp_parameters" class="custom-select mr-sm-2">
@@ -1008,7 +955,6 @@
                                         {% endfor %}
                                     </select>
                                 </div>
-
                                 <div class="col-auto my-1 align-self-end">
                                     <button type="submit" formaction="{{ url_for('hosp_monitoring_settings') }}#hosp_monitoring_results" class="btn btn-primary">Valider</button>
                                 </div>
@@ -1016,7 +962,6 @@
                         </form> 
                     </div>
                 </div>
-
                 <div class="col-md-12" id="">
                     <div class="card mb-4 box-shadow">
                         <div class="card-body">
@@ -1025,7 +970,6 @@
                         </div>
                     </div>
                 </div>
-
                 <div class="col-md-12" id="">
                     <div class="card mb-4 box-shadow">
                         <div class="card-body">
@@ -1038,39 +982,10 @@
         </div> 
     </div>
 </div>
-
-<!-- <p id="paragraphe">Un peu de texte</p>
-<button onclick="changeCouleur('blue');">blue</button>
-<button onclick="changeCouleur('red');">red</button>
-
-<h3>div1 (drawLines() function)</h3> 
-<div id="myDiv2"> </div>
-
-<h3>div2 (drawplots() function)</h3>
-<div id="testplot"></div> -->
 {% endblock %}
 
-
 {% block js %}
-    <!-- <script type="text/javascript">
-        var trace1 = {
-            x: [1, 2, 3, 4],
-            y: [10, 15, 13, 17],
-            type: 'scatter'
-        };
-        var trace2 = {
-            x: [1, 2, 3, 4],
-            y: [16, 5, 11, 9],
-            type: 'scatter'
-        };
-        
-        drawplots([trace1, trace2]);
-    </script>
-
-    <script>
-        drawLines('myDiv2');
-    </script> -->
-
+    <!-- global_parameters calendar-->
     <script type="text/javascript">
         $(function() {
             $('input[name="global_parameters"]').daterangepicker({
@@ -1090,7 +1005,7 @@
             });
         });
     </script>
-
+    <!-- hosp_parameters calendar-->
     <script type="text/javascript">
         $(function() {
             $('input[name="hosp_parameters"]').daterangepicker({
@@ -1117,13 +1032,12 @@
         regions = {{ overall_regions_data_P | safe }};
         quantiles = {{ overall_regions_quantiles_P | safe }};
         current_label = "{{ region }}";
-        text = " cas positifs *";
-        textopt = "cas positifs";
+        text = "cas positifs";
         feature_par_habitants = "P_par_habitants";
         feature_name = "P";
         colors = ["#f2f53a", '#df891a', '#e61919', '#680000', '#1d0303'];
         fill_slices = "#D6F77F";
-        plotRegMap(mapDiv, regions, quantiles, current_label, text, textopt, feature_name, feature_par_habitants, colors, fill_slices);
+        plotRegMap(mapDiv, regions, quantiles, current_label, text, feature_name, feature_par_habitants, colors, fill_slices);
     </script>
     <!-- death map regions-->
     <script type="text/javascript">
@@ -1131,13 +1045,12 @@
         regions = {{ overall_regions_data_dc | safe }};
         quantiles = {{ overall_regions_quantiles_dc | safe }};
         current_label = "{{ region }}";
-        text = " décès *";
-        textopt = "décès";
+        text = "décès";
         feature_par_habitants = "dc_par_habitants";
         feature_name = "dc";
         colors = ["#f2f53a", '#df891a', '#e61919', '#680000', '#1d0303'];
         fill_slices = "#D6F77F";
-        plotRegMap(mapDiv, regions, quantiles, current_label, text, textopt, feature_name, feature_par_habitants, colors, fill_slices);
+        plotRegMap(mapDiv, regions, quantiles, current_label, text, feature_name, feature_par_habitants, colors, fill_slices);
     </script>
     <!-- rad map regions-->
     <script type="text/javascript">
@@ -1145,13 +1058,12 @@
         regions = {{ overall_regions_data_rad | safe }};
         quantiles = {{ overall_regions_quantiles_rad | safe }};
         current_label = "{{ region }}";
-        text = " guérisons *";
-        textopt = "guérisons";
+        text = "guérisons";
         feature_par_habitants = "rad_par_habitants";
         feature_name = "rad";
         colors = ["#FED674", '#F5F50A', '#A4F905', '#06BF06', '#146806'];
         fill_slices = "#FEB653";
-        plotRegMap(mapDiv, regions, quantiles, current_label, text, textopt, feature_name, feature_par_habitants, colors, fill_slices);
+        plotRegMap(mapDiv, regions, quantiles, current_label, text, feature_name, feature_par_habitants, colors, fill_slices);
     </script>
     <!-- hosp map regions-->
     <script type="text/javascript">
@@ -1159,13 +1071,12 @@
         regions = {{ overall_regions_data_hosp | safe }};
         quantiles = {{ overall_regions_quantiles_hosp | safe }};
         current_label = "{{ region }}";
-        text = " hospitalisations *";
-        textopt = "hospitalisations";
+        text = "hospitalisations";
         feature_par_habitants = "hosp_par_habitants";
         feature_name = "hosp";
         colors = ["#f2f53a", '#df891a', '#e61919', '#680000', '#1d0303'];
         fill_slices = "#D6F77F";
-        plotRegMap(mapDiv, regions, quantiles, current_label, text, textopt, feature_name, feature_par_habitants, colors, fill_slices);
+        plotRegMap(mapDiv, regions, quantiles, current_label, text, feature_name, feature_par_habitants, colors, fill_slices);
     </script>
     <!-- rea map regions-->
     <script type="text/javascript">
@@ -1173,13 +1084,12 @@
         regions = {{ overall_regions_data_rea | safe }};
         quantiles = {{ overall_regions_quantiles_rea | safe }};
         current_label = "{{ region }}";
-        text = " réanimations *";
-        textopt = "réanimations";
+        text = "réanimations";
         feature_par_habitants = "rea_par_habitants";
         feature_name = "rea";
         colors = ["#f2f53a", '#df891a', '#e61919', '#680000', '#1d0303'];
         fill_slices = "#D6F77F";
-        plotRegMap(mapDiv, regions, quantiles, current_label, text, textopt, feature_name, feature_par_habitants, colors, fill_slices);
+        plotRegMap(mapDiv, regions, quantiles, current_label, text, feature_name, feature_par_habitants, colors, fill_slices);
     </script>
     <!-- rate dc/rad map regions -->
     <script type="text/javascript">
@@ -1257,20 +1167,18 @@
         });
     </script>
 
-
     <!-- positive map departments-->
     <script type="text/javascript">
         mapDiv = "#positive_map_dep";
         departments = {{ overall_departments_data_P | safe }};
         quantiles = {{ overall_departments_quantiles_P | safe }};
         current_label = "{{ department }}";
-        text = " cas positifs *";
-        textopt = "cas positifs";
+        text = "cas positifs";
         feature_par_habitants = "P_par_habitants";
         feature_name = "P";
         colors = ["#f2f53a", '#df891a', '#e61919', '#680000', '#1d0303'];
         fill_slices = "#D6F77F";
-        plotDepMap(mapDiv, departments, quantiles, current_label, text, textopt, feature_name, feature_par_habitants, colors, fill_slices);
+        plotDepMap(mapDiv, departments, quantiles, current_label, text, feature_name, feature_par_habitants, colors, fill_slices);
     </script>
     <!-- death map departments-->
     <script type="text/javascript">
@@ -1278,13 +1186,12 @@
         departments = {{ overall_departments_data_dc | safe }};
         quantiles = {{ overall_departments_quantiles_dc | safe }};
         current_label = "{{ department }}";
-        text = " décès *";
-        textopt = "décès";
+        text = "décès";
         feature_par_habitants = "dc_par_habitants";
         feature_name = "dc";
         colors = ["#f2f53a", '#df891a', '#e61919', '#680000', '#1d0303'];
         fill_slices = "#D6F77F";
-        plotDepMap(mapDiv, departments, quantiles, current_label, text, textopt, feature_name, feature_par_habitants, colors, fill_slices);
+        plotDepMap(mapDiv, departments, quantiles, current_label, text, feature_name, feature_par_habitants, colors, fill_slices);
     </script>
     <!-- rad map departments-->
     <script type="text/javascript">
@@ -1292,13 +1199,12 @@
         departments = {{ overall_departments_data_rad | safe }};
         quantiles = {{ overall_departments_quantiles_rad | safe }};
         current_label = "{{ department }}";
-        text = " guérisons *";
-        textopt = "guérisons";
+        text = "guérisons";
         feature_par_habitants = "rad_par_habitants";
         feature_name = "rad";
         colors = ["#FED674", '#F5F50A', '#A4F905', '#06BF06', '#146806'];
         fill_slices = "#FEB653";
-        plotDepMap(mapDiv, departments, quantiles, current_label, text, textopt, feature_name, feature_par_habitants, colors, fill_slices);
+        plotDepMap(mapDiv, departments, quantiles, current_label, text, feature_name, feature_par_habitants, colors, fill_slices);
     </script>
     <!-- hosp map departments-->
     <script type="text/javascript">
@@ -1306,13 +1212,12 @@
         departments = {{ overall_departments_data_hosp | safe }};
         quantiles = {{ overall_departments_quantiles_hosp | safe }};
         current_label = "{{ department }}";
-        text = " hospitalisations *";
-        textopt = "hospitalisations";
+        text = "hospitalisations";
         feature_par_habitants = "hosp_par_habitants";
         feature_name = "hosp";
         colors = ["#f2f53a", '#df891a', '#e61919', '#680000', '#1d0303'];
         fill_slices = "#D6F77F";
-        plotDepMap(mapDiv, departments, quantiles, current_label, text, textopt, feature_name, feature_par_habitants, colors, fill_slices);
+        plotDepMap(mapDiv, departments, quantiles, current_label, text, feature_name, feature_par_habitants, colors, fill_slices);
     </script>
     <!-- rea map departments-->
     <script type="text/javascript">
@@ -1320,13 +1225,12 @@
         departments = {{ overall_departments_data_rea | safe }};
         quantiles = {{ overall_departments_quantiles_rea | safe }};
         current_label = "{{ department }}";
-        text = " réanimations *";
-        textopt = "réanimations";
+        text = "réanimations";
         feature_par_habitants = "rea_par_habitants";
         feature_name = "rea";
         colors = ["#f2f53a", '#df891a', '#e61919', '#680000', '#1d0303'];
         fill_slices = "#D6F77F";
-        plotDepMap(mapDiv, departments, quantiles, current_label, text, textopt, feature_name, feature_par_habitants, colors, fill_slices);
+        plotDepMap(mapDiv, departments, quantiles, current_label, text, feature_name, feature_par_habitants, colors, fill_slices);
     </script>
     <!-- rate dc/rad map departments-->
     <script type="text/javascript">
@@ -1404,8 +1308,6 @@
         });
     </script>
 
-
-
     <!-- charts -->
     <script type="text/javascript">
         var graphs = {{ graphJSON["graphJSON0"] | safe }};
@@ -1476,5 +1378,4 @@
         var text = "_reg";
         plotGraphs(graphs, text);
     </script>
-   
 {% endblock %}

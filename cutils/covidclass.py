@@ -172,7 +172,7 @@ class CovidFr():
 
                 data_feature[feature+'_par_habitants'] = data_feature[feature+'_par_habitants'].round(2)
 
-                setattr(self, 'overall_regions_{}'.format(feature)+"_as_json", {"data_"+feature: data_feature.to_json(orient='index'), "quantiles_"+feature: quantiles_feature.to_json(orient='index')})
+                #setattr(self, 'overall_regions_{}'.format(feature)+"_as_json", {"data_"+feature: data_feature.to_json(orient='index'), "quantiles_"+feature: quantiles_feature.to_json(orient='index')})
 
                 overall_reg_data_as_json_dict.update({'overall_regions_{}'.format(feature)+"_as_json": {"data_"+feature: data_feature.to_json(orient='index'), "quantiles_"+feature: quantiles_feature.to_json(orient='index')}})
          
@@ -196,7 +196,7 @@ class CovidFr():
 
                 data_feature[feature] = data_feature[feature].round(2)
 
-                setattr(self, 'overall_regions_{}'.format(feature)+"_as_json", {"data_"+feature: data_feature.to_json(orient='index'), "quantiles_"+feature: quantiles_feature.to_json(orient='index')})
+                #setattr(self, 'overall_regions_{}'.format(feature)+"_as_json", {"data_"+feature: data_feature.to_json(orient='index'), "quantiles_"+feature: quantiles_feature.to_json(orient='index')})
 
                 overall_reg_data_as_json_dict.update({'overall_regions_{}'.format(feature)+"_as_json": {"data_"+feature: data_feature.to_json(orient='index'), "quantiles_"+feature: quantiles_feature.to_json(orient='index')}})
 
@@ -230,7 +230,7 @@ class CovidFr():
 
                 data_feature[feature+'_par_habitants'] = data_feature[feature+'_par_habitants'].round(2)
 
-                setattr(self, 'overall_regions_{}'.format(feature)+"_as_json", {"data_"+feature: data_feature.to_json(orient='index'), "quantiles_"+feature: quantiles_feature.to_json(orient='index')})
+                #setattr(self, 'overall_regions_{}'.format(feature)+"_as_json", {"data_"+feature: data_feature.to_json(orient='index'), "quantiles_"+feature: quantiles_feature.to_json(orient='index')})
 
                 overall_reg_data_as_json_dict.update({'overall_regions_{}'.format(feature)+"_as_json": {"data_"+feature: data_feature.to_json(orient='index'), "quantiles_"+feature: quantiles_feature.to_json(orient='index')}})
 
@@ -281,7 +281,7 @@ class CovidFr():
 
                 data_feature[feature+'_par_habitants'] = data_feature[feature+'_par_habitants'].round(2)
 
-                setattr(self, 'overall_departments_{}'.format(feature)+"_as_json", {"data_"+feature: data_feature.to_json(orient='index'), "quantiles_"+feature: quantiles_feature.to_json(orient='index')})
+                #setattr(self, 'overall_departments_{}'.format(feature)+"_as_json", {"data_"+feature: data_feature.to_json(orient='index'), "quantiles_"+feature: quantiles_feature.to_json(orient='index')})
 
                 overall_dep_data_as_json_dict.update({'overall_departments_{}'.format(feature)+"_as_json": {"data_"+feature: data_feature.to_json(orient='index'), "quantiles_"+feature: quantiles_feature.to_json(orient='index')}})
          
@@ -305,7 +305,7 @@ class CovidFr():
 
                 data_feature[feature] = data_feature[feature].round(2)
 
-                setattr(self, 'overall_departments_{}'.format(feature)+"_as_json", {"data_"+feature: data_feature.to_json(orient='index'), "quantiles_"+feature: quantiles_feature.to_json(orient='index')})
+                #setattr(self, 'overall_departments_{}'.format(feature)+"_as_json", {"data_"+feature: data_feature.to_json(orient='index'), "quantiles_"+feature: quantiles_feature.to_json(orient='index')})
 
                 overall_dep_data_as_json_dict.update({'overall_departments_{}'.format(feature)+"_as_json": {"data_"+feature: data_feature.to_json(orient='index'), "quantiles_"+feature: quantiles_feature.to_json(orient='index')}})
 
@@ -337,7 +337,7 @@ class CovidFr():
 
                 data_feature[feature+'_par_habitants'] = data_feature[feature+'_par_habitants'].round(2)
 
-                setattr(self, 'overall_departments_{}'.format(feature)+"_as_json", {"data_"+feature: data_feature.to_json(orient='index'), "quantiles_"+feature: quantiles_feature.to_json(orient='index')})
+                #setattr(self, 'overall_departments_{}'.format(feature)+"_as_json", {"data_"+feature: data_feature.to_json(orient='index'), "quantiles_"+feature: quantiles_feature.to_json(orient='index')})
 
                 overall_dep_data_as_json_dict.update({'overall_departments_{}'.format(feature)+"_as_json": {"data_"+feature: data_feature.to_json(orient='index'), "quantiles_"+feature: quantiles_feature.to_json(orient='index')}})
 
@@ -550,7 +550,7 @@ class CovidFr():
 
             data_feature[feature+'_par_habitants'] = data_feature[feature+'_par_habitants'].round(2)
 
-            setattr(self, 'overall_regions_{}'.format(feature)+"_as_json", {"data_"+feature: data_feature.to_json(orient='index'), "quantiles_"+feature: quantiles_feature.to_json(orient='index')})
+            #setattr(self, 'overall_regions_{}'.format(feature)+"_as_json", {"data_"+feature: data_feature.to_json(orient='index'), "quantiles_"+feature: quantiles_feature.to_json(orient='index')})
 
             overall_reg_data_as_json_dict.update({'overall_regions_{}'.format(feature)+"_as_json": {"data_"+feature: data_feature.to_json(orient='index'), "quantiles_"+feature: quantiles_feature.to_json(orient='index')}})
 
@@ -595,7 +595,7 @@ class CovidFr():
 
             data_feature[feature+'_par_habitants'] = data_feature[feature+'_par_habitants'].round(2)
 
-            setattr(self, 'overall_departments_{}'.format(feature)+"_as_json", {"data_"+feature: data_feature.to_json(orient='index'), "quantiles_"+feature: quantiles_feature.to_json(orient='index')})
+            #setattr(self, 'overall_departments_{}'.format(feature)+"_as_json", {"data_"+feature: data_feature.to_json(orient='index'), "quantiles_"+feature: quantiles_feature.to_json(orient='index')})
 
             overall_dep_data_as_json_dict.update({'overall_departments_{}'.format(feature)+"_as_json": {"data_"+feature: data_feature.to_json(orient='index'), "quantiles_"+feature: quantiles_feature.to_json(orient='index')}})
 
