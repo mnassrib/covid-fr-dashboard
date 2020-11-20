@@ -25,30 +25,61 @@ function plotDepMap(mapDiv, departments, quantiles, current_label, text, feature
     var departments = departments; 
     var quantiles = quantiles; 
     quantiles = Object.values(quantiles);
-    var slices = [
-        {"max": quantiles[0], "label": "Moins de " + quantiles[0] + " " + text + " *", attrs: {fill: fill_slices}}
-    ];
+    if (feature_name == "r_dc_rad") {
+        var slices = [
+            {"max": quantiles[0], "label": "Taux inférieur à " + quantiles[0], attrs: {fill: fill_slices}}
+        ];
+    } else {
+        var slices = [
+            {"max": quantiles[0], "label": "Moins de " + quantiles[0] + " " + text + " *", attrs: {fill: fill_slices}}
+        ];
+    }
     colors = colors;
-    for (var i = 0; i < quantiles.length; i++) {
-        var slice = {
-                attrs: {
-                    fill: colors[i]
-                }
-            };
-        slice.min = quantiles[i];
-        if (i < quantiles.length -1) {
-            slice.max = quantiles[i + 1];
-            slice.label = "Entre " + slice.min + " et " + slice.max + " " + text + " *";
-        } else {
-            slice.label = "Plus de " + slice.min + " " + text + " *";
+    if (feature_name == "r_dc_rad") {
+        for (var i = 0; i < quantiles.length; i++) {
+            var slice = {
+                    attrs: {
+                        fill: colors[i]
+                    }
+                };
+            slice.min = quantiles[i];
+            if (i < quantiles.length -1) {
+                slice.max = quantiles[i + 1];
+                slice.label = "Taux entre " + slice.min + " et " + slice.max;
+            } else {
+                slice.label = "Taux supérieur à " + slice.min;
+            }
+            slices.push(slice);
         }
-        slices.push(slice);
+    } else {
+        for (var i = 0; i < quantiles.length; i++) {
+            var slice = {
+                    attrs: {
+                        fill: colors[i]
+                    }
+                };
+            slice.min = quantiles[i];
+            if (i < quantiles.length -1) {
+                slice.max = quantiles[i + 1];
+                slice.label = "Entre " + slice.min + " et " + slice.max + " " + text + " *";
+            } else {
+                slice.label = "Plus de " + slice.min + " " + text + " *";
+            }
+            slices.push(slice);
+        }
     }
     for (var id in departments) {
-        departments[id]['value'] = departments[id][feature_par_habitants];
-        departments[id]['tooltip'] = {
-            "content": departments[id]['label'] + " : " + "<b>" + departments[id][feature_name] + "</b>" + " " + text + " (" + "<b>" + departments[id][feature_par_habitants] + "</b>" + " pour 100 000 habitants)"
-        };
+        if (feature_name == "r_dc_rad") {
+            departments[id]['value'] = departments[id][feature_name];
+            departments[id]['tooltip'] = {
+                "content": departments[id]['label'] + " : " + "<b>" + departments[id]["dc"] + "</b>" + " décès, " + "<b>" + departments[id]["rad"] + "</b>" + " guérisons (Taux départemental : " + "<b>" + departments[id][feature_name] + "</b>)"
+            };
+        } else {
+            departments[id]['value'] = departments[id][feature_par_habitants];
+            departments[id]['tooltip'] = {
+                "content": departments[id]['label'] + " : " + "<b>" + departments[id][feature_name] + "</b>" + " " + text + " (" + "<b>" + departments[id][feature_par_habitants] + "</b>" + " pour 100 000 habitants)"
+            };
+        }
         departments[id]['href'] = "/departement/" + departments[id]['insee'] + "#"; 
         if (departments[id]['insee'] === current_label) {
             departments[id]['href'] = "/";
@@ -98,30 +129,61 @@ function plotRegMap(mapDiv, regions, quantiles, current_label, text, feature_nam
     var regions = regions; 
     var quantiles = quantiles; 
     quantiles = Object.values(quantiles);
-    var slices = [
+    if (feature_name == "r_dc_rad") {
+        var slices = [
+            {"max": quantiles[0], "label": "Taux inférieur à " + quantiles[0], attrs: {fill: fill_slices}}
+        ];
+    } else {
+        var slices = [
             {"max": quantiles[0], "label": "Moins de " + quantiles[0] + " " + text + " *", attrs: {fill: fill_slices}}
         ];
+    }
     colors = colors;
-    for (var i = 0; i < quantiles.length; i++) {
-        var slice = {
-                attrs: {
-                    fill: colors[i]
-                }
-            };
-        slice.min = quantiles[i];
-        if (i < quantiles.length -1) {
-            slice.max = quantiles[i + 1];
-            slice.label = "Entre " + slice.min + " et " + slice.max + " " + text + " *";
-        } else {
-            slice.label = "Plus de " + slice.min + " " + text + " *";
+    if (feature_name == "r_dc_rad") {
+        for (var i = 0; i < quantiles.length; i++) {
+            var slice = {
+                    attrs: {
+                        fill: colors[i]
+                    }
+                };
+            slice.min = quantiles[i];
+            if (i < quantiles.length -1) {
+                slice.max = quantiles[i + 1];
+                slice.label = "Taux entre " + slice.min + " et " + slice.max;
+            } else {
+                slice.label = "Taux supérieur à " + slice.min;
+            }
+            slices.push(slice);
         }
-        slices.push(slice);
+    } else {
+        for (var i = 0; i < quantiles.length; i++) {
+            var slice = {
+                    attrs: {
+                        fill: colors[i]
+                    }
+                };
+            slice.min = quantiles[i];
+            if (i < quantiles.length -1) {
+                slice.max = quantiles[i + 1];
+                slice.label = "Entre " + slice.min + " et " + slice.max + " " + text + " *";
+            } else {
+                slice.label = "Plus de " + slice.min + " " + text + " *";
+            }
+            slices.push(slice);
+        }
     }
     for (var id in regions) {
-        regions[id]['value'] = regions[id][feature_par_habitants];
-        regions[id]['tooltip'] = {
-            "content": regions[id]['label'] + " : " + "<b>" + regions[id][feature_name] + "</b>" + " " + text + " (" + "<b>" + regions[id][feature_par_habitants] + "</b>" + " pour 100 000 habitants)"
-        };
+        if (feature_name == "r_dc_rad") {
+            regions[id]['value'] = regions[id][feature_name];
+            regions[id]['tooltip'] = {
+                "content": regions[id]['label'] + " : " + "<b>" + regions[id]["dc"] + "</b>" + " décès, " + "<b>" + regions[id]["rad"] + "</b>" + " guérisons (Taux départemental : " + "<b>" + regions[id][feature_name] + "</b>)"
+            };
+        } else {
+            regions[id]['value'] = regions[id][feature_par_habitants];
+            regions[id]['tooltip'] = {
+                "content": regions[id]['label'] + " : " + "<b>" + regions[id][feature_name] + "</b>" + " " + text + " (" + "<b>" + regions[id][feature_par_habitants] + "</b>" + " pour 100 000 habitants)"
+            };
+        }
         regions[id]['href'] = "/region/" + regions[id]['insee'] + "#"; 
         if (regions[id]['insee'] === current_label) {
             regions[id]['href'] = "/";
@@ -130,7 +192,7 @@ function plotRegMap(mapDiv, regions, quantiles, current_label, text, feature_nam
                 "fill": "#004a9b", 
             };
         }
-    }       
+    }      
     return $(mapDiv).mapael({
         "map": {
             "name": "france_regions_2016_domtom",

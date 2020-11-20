@@ -24,7 +24,7 @@ if covfr.need_covid_data_update() or covfr.need_positive_data_update():
 ###############################
 # required processing settings
 ###############################
-mapchoice = ["Nombre de décès", "Taux décès / (décès + guérisons)", "Nombre de guérisons", "Nombre d'hospitalisations le "+covfr.charts()["counters"]["last_day_fr"], "Nombre de réanimations le "+covfr.charts()["counters"]["last_day_fr"], "Nombre de cas positifs le "+covfr.charts_positive_data()["counters"]["positive_last_day_fr"]]
+mapchoice = ["Nombre de guérisons", "Nombre de décès", "Taux décès / (décès + guérisons)", "Nombre d'hospitalisations le "+covfr.charts()["counters"]["last_day_fr"], "Nombre de réanimations le "+covfr.charts()["counters"]["last_day_fr"], "Nombre de cas positifs le "+covfr.charts_positive_data()["counters"]["positive_last_day_fr"]]
 number_all_dep = list(range(1, covfr.department_base_data.shape[0]+1))
 global_pc = list(range(1, daily.shape[1]+1))
 normalize_states = [True, False]
