@@ -26,12 +26,12 @@
                 <div class="card-body">
                     {% if (label != 'France'): %}
                         {% if (label['type'] == 'department'): %}
-                            <h3>Chiffres clés du {{ counters['last_day_fr'] }} au {{ label['prefix'] }} {{ label['name'] }} (FR-{{ department }})</h3>
+                            <h3>Chiffres clés du {{ last_day_fr }} au {{ label['prefix'] }} {{ label['name'] }} (FR-{{ department }})</h3>
                         {% else : %}
-                            <h3>Chiffres clés du {{ counters['last_day_fr'] }} à la {{ label['prefix'] }} {{ label['name'] }} (FR-{{ region }})</h3>
+                            <h3>Chiffres clés du {{ last_day_fr }} à la {{ label['prefix'] }} {{ label['name'] }} (FR-{{ region }})</h3>
                         {% endif %}
                     {% else : %}
-                        <h3>Chiffres clés du {{ counters['last_day_fr'] }} en {{ label }}</h3> 
+                        <h3>Chiffres clés du {{ last_day_fr }} en {{ label }}</h3> 
                     {% endif %}
                     <div class="row">
                         <div class="col-md-3">
@@ -172,12 +172,12 @@
                 <div class="card-body">
                     {% if (label != 'France'): %}
                         {% if (label['type'] == 'department'): %}
-                            <h3>Taux clés du {{ counters['last_day_fr'] }} pour 100 000 habitants au {{ label['prefix'] }} {{ label['name'] }} (FR-{{ department }})</h3>
+                            <h3>Taux clés du {{ last_day_fr }} pour 100 000 habitants au {{ label['prefix'] }} {{ label['name'] }} (FR-{{ department }})</h3>
                         {% else : %}
-                            <h3>Taux clés du {{ counters['last_day_fr'] }} pour 100 000 habitants à la {{ label['prefix'] }} {{ label['name'] }} (FR-{{ region }})</h3>
+                            <h3>Taux clés du {{ last_day_fr }} pour 100 000 habitants à la {{ label['prefix'] }} {{ label['name'] }} (FR-{{ region }})</h3>
                         {% endif %}
                     {% else : %}
-                        <h3>Taux clés du {{ counters['last_day_fr'] }} pour 100 000 habitants en {{ label }}</h3> 
+                        <h3>Taux clés du {{ last_day_fr }} pour 100 000 habitants en {{ label }}</h3> 
                     {% endif %}
                     <div class="row">
                         <div class="col-md-12">
@@ -287,7 +287,7 @@
                             <div class="form-row align-items-center">
                                 <div class="col-auto my-1">
                                     <select name="map_select" class="custom-select mr-sm-2">
-                                        {% for m in mapchoice %}
+                                        {% for m in map_choice %}
                                             {% if (m == map_select): %}
                                             <option selected="selected">{{ map_select }}</option> 
                                             {% else %}
@@ -473,13 +473,13 @@
                             </div>
                         </div>
                     </div>
-                    {% elif (map_select == "Nombre d'hospitalisations le " + counters['last_day_fr']): %}
+                    {% elif (map_select == "Nombre d'hospitalisations le " + last_day_fr): %}
                     <div class="col-md-6" id="hosp_map_reg">
                         <div class="card mb-4 box-shadow">
                             <div class="card-body">
                                 <div class="pictos">
                                     <a class="picto-item" aria-label="Cliquez sur un département pour afficher le détail">
-                                        <h3>Nombre d'hospitalisations par région le {{ counters['last_day_fr'] }} *
+                                        <h3>Nombre d'hospitalisations par région le {{ last_day_fr }} *
                                     </a>
                                 </div>
                                 <div class="row">
@@ -507,7 +507,7 @@
                             <div class="card-body">
                                 <div class="pictos">
                                     <a class="picto-item" aria-label="Cliquez sur un département pour afficher le détail">
-                                        <h3>Nombre d'hospitalisations par département le {{ counters['last_day_fr'] }} *
+                                        <h3>Nombre d'hospitalisations par département le {{ last_day_fr }} *
                                     </a>
                                 </div>
                                 <div class="row">
@@ -530,13 +530,13 @@
                             </div>
                         </div>
                     </div>
-                    {% elif (map_select == "Nombre de réanimations le " + counters['last_day_fr']): %}
+                    {% elif (map_select == "Nombre de réanimations le " + last_day_fr): %}
                     <div class="col-md-6" id="rea_map_reg">
                         <div class="card mb-4 box-shadow">
                             <div class="card-body">
                                 <div class="pictos">
                                     <a class="picto-item" aria-label="Cliquez sur un département pour afficher le détail">
-                                        <h3>Nombre de réanimations par région le {{ counters['last_day_fr'] }} *
+                                        <h3>Nombre de réanimations par région le {{ last_day_fr }} *
                                     </a>
                                 </div>
                                 <div class="row">
@@ -564,7 +564,7 @@
                             <div class="card-body">
                                 <div class="pictos">
                                     <a class="picto-item" aria-label="Cliquez sur un département pour afficher le détail">
-                                        <h3>Nombre de réanimations par département le {{ counters['last_day_fr'] }} *
+                                        <h3>Nombre de réanimations par département le {{ last_day_fr }} *
                                     </a>
                                 </div>
                                 <div class="row">
@@ -587,13 +587,13 @@
                             </div>
                         </div>
                     </div>
-                    {% elif (map_select == "Nombre de cas positifs le " + positive_counters["positive_last_day_fr"]): %}
+                    {% elif (map_select == "Nombre de cas positifs le " + positive_counters['positive_last_day_fr']): %}
                     <div class="col-md-6" id="positive_map_reg">
                         <div class="card mb-4 box-shadow">
                             <div class="card-body">
                                 <div class="pictos">
                                     <a class="picto-item" aria-label="Cliquez sur un département pour afficher le détail">
-                                        <h3>Nombre de cas positifs par région le {{ positive_counters["positive_last_day_fr"] }} *
+                                        <h3>Nombre de cas positifs par région le {{ positive_counters['positive_last_day_fr'] }} *
                                     </a>
                                 </div>
                                 <div class="row">
@@ -621,7 +621,7 @@
                             <div class="card-body">
                                 <div class="pictos">
                                     <a class="picto-item" aria-label="Cliquez sur un département pour afficher le détail">
-                                        <h3>Nombre de cas positifs par département le {{ positive_counters["positive_last_day_fr"] }} *
+                                        <h3>Nombre de cas positifs par département le {{ positive_counters['positive_last_day_fr'] }} *
                                     </a>
                                 </div>
                                 <div class="row">
@@ -651,7 +651,7 @@
         <div class="col-md-12">
             <div class="card mb-4 box-shadow">
                 <div class="card-body">
-                    <h3 id="patients_quotidiennement">Nombre de cas sur 100 000 habitants par département au {{ counters['last_day_fr'] }} (au  {{ positive_counters['positive_last_day_fr'] }} pour les cas positifs)</h3>
+                    <h3 id="patients_quotidiennement">Nombre de cas sur 100 000 habitants par département au {{ last_day_fr }} (au  {{ positive_counters['positive_last_day_fr'] }} pour les cas positifs)</h3>
                     <div id="Dernier nombre de patients pour 100 000 habitants par département"></div>
                 </div>
             </div>
@@ -659,7 +659,7 @@
         <div class="col-md-12" id="top_dep_results">
             <div class="card mb-4 box-shadow">
                 <div class="card-body">
-                    <h3>Départements les plus touchés au {{ counters['last_day_fr'] }}</h3>
+                    <h3>Départements les plus touchés au {{ last_day_fr }}</h3>
                     <div class="bootstrap-iso">
                         <form method="POST" action="{{ url_for('top_dep_settings') }}">
                             <div class="form-row align-items-center">
@@ -703,20 +703,20 @@
                         </div>
                     </div>
                 </div>
-                {% elif (criterion == "Hospitalisations au "+counters['last_day_fr']): %}
+                {% elif (criterion == "Hospitalisations au "+last_day_fr): %}
                 <div class="col-md-12" id="">
                     <div class="card mb-4 box-shadow">
                         <div class="card-body">
-                            <h3 id="patients_quotidiennement">Top {{ top_dep }} des départements selon le nombre d'hospitalisations pour 100 000 habitants au {{ counters['last_day_fr'] }}</h3>
+                            <h3 id="patients_quotidiennement">Top {{ top_dep }} des départements selon le nombre d'hospitalisations pour 100 000 habitants au {{ last_day_fr }}</h3>
                             <div id="Top des départements selon le nombre d'hospitalisations pour 100 000 habitants"></div>
                         </div>
                     </div>
                 </div>
-                {% elif (criterion == "Réanimations au "+counters['last_day_fr']): %}
+                {% elif (criterion == "Réanimations au "+last_day_fr): %}
                 <div class="col-md-12" id="">
                     <div class="card mb-4 box-shadow">
                         <div class="card-body">
-                            <h3 id="patients_quotidiennement">Top {{ top_dep }} des départements selon le nombre de réanimations pour 100 000 habitants au {{ counters['last_day_fr'] }}</h3>
+                            <h3 id="patients_quotidiennement">Top {{ top_dep }} des départements selon le nombre de réanimations pour 100 000 habitants au {{ last_day_fr }}</h3>
                             <div id="Top des départements selon le nombre de réanimations pour 100 000 habitants"></div>
                         </div>
                     </div>
@@ -993,8 +993,8 @@
                 "autoApply": true,
                 "startDate": {{ start_d_learn_fr|safe }},
                 "endDate": {{ end_d_learn_fr|safe }},
-                "minDate": {{ first_day|safe }},
-                "maxDate": {{ last_day|safe }},
+                "minDate": {{ first_day_fr|safe }},
+                "maxDate": {{ last_day_fr|safe }},
                 "showCustomRangeLabel": true,
                 autoUpdateInput: true,
                 locale: {   format: 'DD/MM/YYYY', 
@@ -1013,8 +1013,8 @@
                 "autoApply": true,
                 "startDate": {{ start_d_learn_fr_reg|safe }},
                 "endDate": {{ end_d_learn_fr_reg|safe }},
-                "minDate": {{ first_day|safe }},
-                "maxDate": {{ last_day|safe }},   
+                "minDate": {{ first_day_fr|safe }},
+                "maxDate": {{ last_day_fr|safe }},   
                 "showCustomRangeLabel": true,
                 autoUpdateInput: true,
                 locale: {   format: 'DD/MM/YYYY', 

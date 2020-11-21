@@ -14,7 +14,6 @@ if covfr.need_covid_data_update() or covfr.need_positive_data_update():
     ordaj_reg = covfr.overall_regions_data_as_json()
 
     daily = covfr.dailycases(data=covid, pca=True)
-    #daily_reg = covfr.regiondailycases(data=covid, feature='dc')
     daily_reg = covfr.regiondailycases(data=covid, feature='hosp')
 
     nprate, rprate, dprate = covfr.load_positive_df()
@@ -24,22 +23,22 @@ if covfr.need_covid_data_update() or covfr.need_positive_data_update():
 ###############################
 # required processing settings
 ###############################
-mapchoice = ["Nombre de guérisons", "Nombre de décès", "Taux décès / (décès + guérisons)", "Nombre d'hospitalisations le "+covfr.charts()["counters"]["last_day_fr"], "Nombre de réanimations le "+covfr.charts()["counters"]["last_day_fr"], "Nombre de cas positifs le "+covfr.charts_positive_data()["counters"]["positive_last_day_fr"]]
+map_choice = ["Nombre de guérisons", "Nombre de décès", "Taux décès / (décès + guérisons)", "Nombre d'hospitalisations le "+covfr.last_day_fr, "Nombre de réanimations le "+covfr.last_day_fr, "Nombre de cas positifs le "+covfr.positive_last_day_fr]
 number_all_dep = list(range(1, covfr.department_base_data.shape[0]+1))
 global_pc = list(range(1, daily.shape[1]+1))
 normalize_states = [True, False]
 alpha_smooth = list(np.arange(0.1, 1, 0.05).round(2))
-pc_reg = list(range(1, covfr.regiondailycases(data=covid, feature='hosp').shape[1]+1))
-criterion_choice = ["Cas positifs au "+covfr.charts_positive_data()["counters"]["positive_last_day_fr"], "Hospitalisations au "+covfr.charts()["counters"]["last_day_fr"], "Réanimations au "+covfr.charts()["counters"]["last_day_fr"]]
+pc_reg = list(range(1, daily_reg.shape[1]+1))
+criterion_choice = ["Cas positifs au "+covfr.positive_last_day_fr, "Hospitalisations au "+covfr.last_day_fr, "Réanimations au "+covfr.last_day_fr]
 
-first_day = json.dumps(covid["jour"][0].strftime("%d/%m/%Y"))
-last_day = json.dumps(datetime.strptime(covfr.last_day, "%Y-%m-%d").strftime("%d/%m/%Y"))
+first_day_fr = covfr.first_day_fr
+last_day_fr = covfr.last_day_fr
 
 ####################
 # default settings
 ####################
 #-- default selected map
-default_map_select = mapchoice[5]
+default_map_select = map_choice[5]
 ## default selected number of top departments
 default_top_dep = 10
 default_criterion = criterion_choice[0]
@@ -133,13 +132,13 @@ def graphs():
         overall_departments_data_P = odpdaj_dep["overall_departments_P_as_json"]['data_P'],
         overall_departments_quantiles_P = odpdaj_dep["overall_departments_P_as_json"]['quantiles_P'],  
 
-        first_day = first_day,
-        last_day = last_day,
+        first_day_fr = first_day_fr,
+        last_day_fr = last_day_fr,
         label = label,
         department = department,
         region = region,
 
-        mapchoice = mapchoice,
+        map_choice = map_choice,
         criterion_choice = criterion_choice,
         number_all_dep = number_all_dep,
         global_pc = global_pc,
@@ -207,13 +206,13 @@ def maps():
         overall_departments_data_P = odpdaj_dep["overall_departments_P_as_json"]['data_P'],
         overall_departments_quantiles_P = odpdaj_dep["overall_departments_P_as_json"]['quantiles_P'],  
 
-        first_day = first_day,
-        last_day = last_day,
+        first_day_fr = first_day_fr,
+        last_day_fr = last_day_fr,
         label = label,
         department = department,
         region = region,
         
-        mapchoice = mapchoice,
+        map_choice = map_choice,
         criterion_choice = criterion_choice,
         number_all_dep = number_all_dep,
         global_pc = global_pc,
@@ -284,13 +283,13 @@ def top_dep_settings():
         overall_departments_data_P = odpdaj_dep["overall_departments_P_as_json"]['data_P'],
         overall_departments_quantiles_P = odpdaj_dep["overall_departments_P_as_json"]['quantiles_P'],  
 
-        first_day = first_day,
-        last_day = last_day,
+        first_day_fr = first_day_fr,
+        last_day_fr = last_day_fr,
         label = label,
         department = department,
         region = region,
         
-        mapchoice = mapchoice,
+        map_choice = map_choice,
         criterion_choice = criterion_choice,
         number_all_dep = number_all_dep,
         global_pc = global_pc,
@@ -369,13 +368,13 @@ def global_monitoring_settings():
         overall_departments_data_P = odpdaj_dep["overall_departments_P_as_json"]['data_P'],
         overall_departments_quantiles_P = odpdaj_dep["overall_departments_P_as_json"]['quantiles_P'],  
 
-        first_day = first_day,
-        last_day = last_day,
+        first_day_fr = first_day_fr,
+        last_day_fr = last_day_fr,
         label = label,
         department = department,
         region = region,
         
-        mapchoice = mapchoice,
+        map_choice = map_choice,
         criterion_choice = criterion_choice,
         number_all_dep = number_all_dep,
         global_pc = global_pc,
@@ -454,13 +453,13 @@ def hosp_monitoring_settings():
         overall_departments_data_P = odpdaj_dep["overall_departments_P_as_json"]['data_P'],
         overall_departments_quantiles_P = odpdaj_dep["overall_departments_P_as_json"]['quantiles_P'],  
 
-        first_day = first_day,
-        last_day = last_day,
+        first_day_fr = first_day_fr,
+        last_day_fr = last_day_fr,
         label = label,
         department = department,
         region = region,
         
-        mapchoice = mapchoice,
+        map_choice = map_choice,
         criterion_choice = criterion_choice,
         number_all_dep = number_all_dep,
         global_pc = global_pc,
@@ -530,13 +529,13 @@ def view_department(department):
         overall_departments_data_P = odpdaj_dep["overall_departments_P_as_json"]['data_P'],
         overall_departments_quantiles_P = odpdaj_dep["overall_departments_P_as_json"]['quantiles_P'],  
 
-        first_day = first_day,
-        last_day = last_day,
+        first_day_fr = first_day_fr,
+        last_day_fr = last_day_fr,
         label = label,
         department = department,
         region = region,
         
-        mapchoice = mapchoice,
+        map_choice = map_choice,
         criterion_choice = criterion_choice,
         number_all_dep = number_all_dep,
         global_pc = global_pc,
@@ -606,13 +605,13 @@ def view_region(region):
         overall_departments_data_P = odpdaj_dep["overall_departments_P_as_json"]['data_P'],
         overall_departments_quantiles_P = odpdaj_dep["overall_departments_P_as_json"]['quantiles_P'],  
 
-        first_day = first_day,
-        last_day = last_day,
+        first_day_fr = first_day_fr,
+        last_day_fr = last_day_fr,
         label = label,
         department = department,
         region = region,
         
-        mapchoice = mapchoice,
+        map_choice = map_choice,
         criterion_choice = criterion_choice,
         number_all_dep = number_all_dep,
         global_pc = global_pc,

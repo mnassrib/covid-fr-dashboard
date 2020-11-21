@@ -56,7 +56,11 @@ class CovidFr():
 
         self.covid = CovidFr.regionadd(data=covid)
 
+        self.first_day_fr = self.covid.jour.min().strftime("%d/%m/%Y")
+
         self.last_day = self.covid.jour.max().strftime("%Y-%m-%d")
+
+        self.last_day_fr = self.covid.jour.max().strftime("%d/%m/%Y")
 
         self.dep_data_norm = {department: ((self.covid[(self.covid.dep == department) & (self.covid.sexe == 0)].groupby(['jour']).sum() / self.department_base_data.at[department, 'population']) * 100000).round(2) for department in self.department_base_data.insee}
         
@@ -87,6 +91,7 @@ class CovidFr():
 
         #other parameters
         self.positive_last_day = self.dprate.jour.max().strftime("%Y-%m-%d")
+        self.positive_last_day_fr =  self.dprate.jour.max().strftime("%d/%m/%Y")
 
         self.dep_positive_norm = {department: ((self.dprate[(self.dprate.dep == department) & (self.dprate.cl_age90 == 0)].groupby(['jour']).sum() / self.department_base_data.at[department, 'population']) * 100000).round(2) for department in self.department_base_data.insee}
         
@@ -469,7 +474,6 @@ class CovidFr():
         before_last_day = cdata.index[-2].strftime("%Y-%m-%d")
 
         counters = {
-                    "last_day_fr": datetime.strptime(self.last_day, "%Y-%m-%d").strftime("%d/%m/%Y"),
                     "last_update_fr": datetime.strptime(self.last_update, "%Y-%m-%dT%H:%M:%S.%f").strftime("%d/%m/%Y à %Hh%M"),
                                 
                     "last_dc": cdata.at[self.last_day, 'dc_j'],
@@ -651,7 +655,7 @@ class CovidFr():
         before_last_day = cdata.index[-2].strftime("%Y-%m-%d")
 
         counters = {
-                "positive_last_day_fr": datetime.strptime(self.positive_last_day, "%Y-%m-%d").strftime("%d/%m/%Y"),
+                "positive_last_day_fr": self.positive_last_day_fr,
                 "positive_last_update_fr": datetime.strptime(self.last_update, "%Y-%m-%dT%H:%M:%S.%f").strftime("%d/%m/%Y à %Hh%M"),
                             
                 "current_positive": cdata.at[self.positive_last_day, 'P'],
