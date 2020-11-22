@@ -53,8 +53,8 @@ default_alpha = 0.6
 default_start_d_learn_fr = json.dumps(datetime.strptime(default_start_d_learn, '%Y-%m-%d').strftime("%d/%m/%Y"))
 default_end_d_learn_fr = json.dumps(datetime.strptime(default_end_d_learn, '%Y-%m-%d').strftime("%d/%m/%Y"))
 #-- default settings for pca-based region hospitalization monitoring
-default_pcdim_reg = 2
-default_normalize_reg = False
+default_pcdim_reg = 3
+default_normalize_reg = True
 default_start_d_learn_reg = '2020-05-15'
 default_end_d_learn_reg = '2020-08-25'
 default_alpha_reg = 0.7
