@@ -34,7 +34,6 @@ class CovidFr():
         department_base_data.index = department_base_data['insee']
         self.department_base_data = department_base_data.sort_index()
 
-        #self.region_base_data = pd.read_csv(data_dir + "/regions.csv", converters={'insee': '{:0>2}'.format})
         #self.region_base_data = pd.read_csv(data_dir + "/regions.csv", dtype={'insee': "string"})
         region_base_data = pd.read_csv(data_dir + "/regions_rectif_pop.csv", dtype={'insee': "string"})
         region_base_data.index = region_base_data['insee']
@@ -656,7 +655,7 @@ class CovidFr():
 
         counters = {
                 "positive_last_day_fr": self.positive_last_day_fr,
-                "positive_last_update_fr": datetime.strptime(self.last_update, "%Y-%m-%dT%H:%M:%S.%f").strftime("%d/%m/%Y à %Hh%M"),
+                "positive_last_update_fr": datetime.strptime(self.positive_last_update, "%Y-%m-%dT%H:%M:%S.%f").strftime("%d/%m/%Y à %Hh%M"),
                             
                 "current_positive": cdata.at[self.positive_last_day, 'P'],
                 "diff_positive": cdata.at[self.positive_last_day, 'P'] - cdata.at[before_last_day, 'P'],

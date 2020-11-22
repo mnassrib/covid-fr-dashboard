@@ -8,17 +8,19 @@ from cutils.covidclass import CovidFr
 app = Flask(__name__)
 
 covfr = CovidFr()
-if covfr.need_covid_data_update() or covfr.need_positive_data_update():
+if covfr.need_covid_data_update():
     covid = covfr.load_df()
-    oddaj_dep = covfr.overall_departments_data_as_json()
-    ordaj_reg = covfr.overall_regions_data_as_json()
-
-    daily = covfr.dailycases(data=covid, pca=True)
-    daily_reg = covfr.regiondailycases(data=covid, feature='hosp')
-
+if covfr.need_positive_data_update():
     nprate, rprate, dprate = covfr.load_positive_df()
-    odpdaj_dep = covfr.overall_departments_positive_data_as_json()
-    orpdaj_reg = covfr.overall_regions_positive_data_as_json()
+
+oddaj_dep = covfr.overall_departments_data_as_json()
+ordaj_reg = covfr.overall_regions_data_as_json()
+
+daily = covfr.dailycases(data=covid, pca=True)
+daily_reg = covfr.regiondailycases(data=covid, feature='hosp')
+
+odpdaj_dep = covfr.overall_departments_positive_data_as_json()
+orpdaj_reg = covfr.overall_regions_positive_data_as_json()
   
 ###############################
 # required processing settings
