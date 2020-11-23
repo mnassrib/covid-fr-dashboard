@@ -39,12 +39,47 @@ class CovidFr():
         region_base_data.index = region_base_data['insee']
         self.region_base_data = region_base_data.sort_index()
 
-        self.last_update = ""
+        self.last_update = CovidFr.updatefunction(json_url="https://www.data.gouv.fr/datasets/5e7e104ace2080d9162b61d8/rdf.json", data_request_url=CovidFr.synthesis_covid_url)
+        #self.last_update = ""
 
         self.features = ["dc", "r_dc_rad", "rad", "hosp", "rea"]
 
-        self.positive_last_update = ""
-   
+        self.positive_last_update = CovidFr.updatefunction(json_url="https://www.data.gouv.fr/datasets/5ed1175ca00bbe1e4941a46a/rdf.json", data_request_url=CovidFr.synthesis_dprate_url)
+        #self.positive_last_update = ""
+        
+        ###############################
+        # required process settings
+        ###############################
+        self.number_all_dep = list(range(1, self.department_base_data.shape[0]+1))
+        self.global_pc = list(range(1, len(['dc', 'rad', 'hosp', 'rea'])+1))
+        self.normalize_states = [True, False]
+        self.alpha_smooth = list(np.arange(0.1, 1, 0.05).round(2))
+        self.pc_reg = list(range(1, self.region_base_data.shape[0]+1))
+        ##############################
+        # independent default settings
+        ##############################
+        ## default selected number of top departments
+        self.default_top_dep = 10
+        #-- default settings for pca-based global monitoring
+        self.default_pcdim = 2
+        self.default_normalize = self.normalize_states[0]
+        self.default_start_d_learn = '2020-05-15'
+        self.default_end_d_learn = '2020-08-25'
+        self.default_alpha = 0.6
+        self.default_start_d_learn_fr = json.dumps(datetime.strptime(self.default_start_d_learn, '%Y-%m-%d').strftime("%d/%m/%Y"))
+        self.default_end_d_learn_fr = json.dumps(datetime.strptime(self.default_end_d_learn, '%Y-%m-%d').strftime("%d/%m/%Y"))
+        #-- default settings for pca-based region hospitalization monitoring
+        self.default_pcdim_reg = 3
+        self.default_normalize_reg = self.normalize_states[0]
+        self.default_start_d_learn_reg = '2020-05-15'
+        self.default_end_d_learn_reg = '2020-08-25'
+        self.default_alpha_reg = 0.7
+        self.default_start_d_learn_fr_reg = json.dumps(datetime.strptime(self.default_start_d_learn_reg, '%Y-%m-%d').strftime("%d/%m/%Y"))
+        self.default_end_d_learn_fr_reg = json.dumps(datetime.strptime(self.default_end_d_learn_reg, '%Y-%m-%d').strftime("%d/%m/%Y"))
+        #-- other default settings
+        self.department = None
+        self.region = None
+
     def load_df(self):
         """
         Loading dataframes
@@ -95,6 +130,14 @@ class CovidFr():
         self.dep_positive_norm = {department: ((self.dprate[(self.dprate.dep == department) & (self.dprate.cl_age90 == 0)].groupby(['jour']).sum() / self.department_base_data.at[department, 'population']) * 100000).round(2) for department in self.department_base_data.insee}
         
         self.dep_positive_norm_col = CovidFr.normrate(ddn=self.dep_positive_norm, cdu=list(self.dprate.dep.unique()), featurelist = ['P'])
+        
+        ###############################
+        # required process settings
+        ###############################
+        self.map_choice = ["Nombre de guérisons", "Nombre de décès", "Taux décès / (décès + guérisons)", "Nombre d'hospitalisations le "+self.last_day_fr, "Nombre de réanimations le "+self.last_day_fr, "Nombre de cas positifs le "+self.positive_last_day_fr]
+        self.criterion_choice = ["Cas positifs au "+self.positive_last_day_fr, "Hospitalisations au "+self.last_day_fr, "Réanimations au "+self.last_day_fr]
+        self.default_map_select = self.map_choice[5]
+        self.default_criterion = self.criterion_choice[0]
 
         return self.nprate, self.rprate, self.dprate
 
@@ -108,10 +151,9 @@ class CovidFr():
             for dataset in data['@graph']:
                 if 'accessURL' in dataset.keys() and dataset['accessURL'] == CovidFr.synthesis_covid_url:
                     if self.last_update == "" or self.last_update < dataset['modified']:
-                        self.last_update = dataset['modified']
                         return True
         return False
-    
+
     def need_positive_data_update(self):
         """Check the last update of the datasets on data.gouv.fr and tells whether we need to refresh the data or not
         Returns:
@@ -122,7 +164,6 @@ class CovidFr():
             for dataset in data['@graph']:
                 if 'accessURL' in dataset.keys() and dataset['accessURL'] == CovidFr.synthesis_dprate_url:
                     if self.positive_last_update == "" or self.positive_last_update < dataset['modified']:
-                        self.positive_last_update = dataset['modified']
                         return True
         return False
 
@@ -1017,3 +1058,11 @@ class CovidFr():
             annotations = annotations,
         )
         return output 
+
+    @staticmethod
+    def updatefunction(json_url, data_request_url):
+        with urllib.request.urlopen(json_url) as url:
+            data = json.loads(url.read().decode())
+            for dataset in data['@graph']:
+                if 'accessURL' in dataset.keys() and dataset['accessURL'] == data_request_url:
+                    return dataset['modified']
