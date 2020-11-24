@@ -7,31 +7,31 @@
 {% block content %} 
 <div id="data">
     <h2>
-        {% if (cv["label"] != 'France'): %}
+        {% if (label != 'France'): %}
             <a href="/#">France</a> &gt; 
         {% endif %} 
-        {% if (cv["label"] != 'France'): %}
-            {% if (cv["label"]['type'] == 'department'): %}
-                {{ cv["label"]['prefix'] }} : {{ cv["label"]['name'] }} (FR-{{ cv["department"] }})
+        {% if (label != 'France'): %}
+            {% if (label['type'] == 'department'): %}
+                {{ label['prefix'] }} : {{ label['name'] }} (FR-{{ department }})
             {% else : %}
-                {{ cv["label"]['prefix'] }} : {{ cv["label"]['name'] }} (FR-{{ cv["region"] }})
+                {{ label['prefix'] }} : {{ label['name'] }} (FR-{{ region }})
             {% endif %}
         {% else : %}
-            {{ cv["label"] }}
+            {{ label }}
         {% endif %} 
     </h2>
     <div class="row">
         <div class="col-md-12">     
             <div class="card mb-4 box-shadow">
                 <div class="card-body">
-                    {% if (cv["label"] != 'France'): %}
-                        {% if (cv["label"]['type'] == 'department'): %}
-                            <h3>Chiffres clés du {{ cv["last_day_fr"] }} au {{ cv["label"]['prefix'] }} {{ cv["label"]['name'] }} (FR-{{ cv["department"] }})</h3>
+                    {% if (label != 'France'): %}
+                        {% if (label['type'] == 'department'): %}
+                            <h3>Chiffres clés du {{ last_day_fr }} au {{ label['prefix'] }} {{ label['name'] }} (FR-{{ department }})</h3>
                         {% else : %}
-                            <h3>Chiffres clés du {{ cv["last_day_fr"] }} à la {{ cv["label"]['prefix'] }} {{ cv["label"]['name'] }} (FR-{{ cv["region"] }})</h3>
+                            <h3>Chiffres clés du {{ last_day_fr }} à la {{ label['prefix'] }} {{ label['name'] }} (FR-{{ region }})</h3>
                         {% endif %}
                     {% else : %}
-                        <h3>Chiffres clés du {{ cv["last_day_fr"] }} en {{ cv["label"] }}</h3> 
+                        <h3>Chiffres clés du {{ last_day_fr }} en {{ label }}</h3> 
                     {% endif %}
                     <div class="row">
                         <div class="col-md-3">
@@ -40,21 +40,21 @@
                                     <div class="row">
                                         <div class="col-md-12">
                                             <button onclick="window.location.href='#patients_décédés_quotidiennement';" class="button death">
-                                                <span class="key-value">{{ cv["counters"]['last_dc'] }}</span>
-                                                {% if (cv["counters"]['diff_dc'] < 0): %}
-                                                    <br /> <font size="2">({{ cv["counters"]['diff_dc'] }})</font>
+                                                <span class="key-value">{{ counters['last_dc'] }}</span>
+                                                {% if (counters['diff_dc'] < 0): %}
+                                                    <br /> <font size="2">({{ counters['diff_dc'] }})</font>
                                                 {% else: %}
-                                                    <br /> <font size="2">(+{{ cv["counters"]['diff_dc'] }})</font>
+                                                    <br /> <font size="2">(+{{ counters['diff_dc'] }})</font>
                                                 {% endif %}
-                                                {% if (cv["counters"]['last_dc']>1): %}
+                                                {% if (counters['last_dc']>1): %}
                                                     <br /> nouveaux décès
                                                 {% else: %}
                                                     <br /> nouveau décès
                                                 {% endif %}
                                             </button>
                                             <button onclick="window.location.href='#total_patients_décédés';" class="button death">
-                                                <span class="key-value" style="font-size:21px">{{ cv["counters"]['all_dc'] }}</span>
-                                                {% if (cv["counters"]['all_dc']>1): %}
+                                                <span class="key-value" style="font-size:21px">{{ counters['all_dc'] }}</span>
+                                                {% if (counters['all_dc']>1): %}
                                                     <br /> décès au total
                                                 {% else: %}
                                                     <br /> décès au total
@@ -71,14 +71,14 @@
                                     <div class="col-md-3"></div>
                                     <div class="col-md-6">
                                         <button onclick="window.location.href='#cas_positifs';" class="button positive">
-                                            <span class="key-value">{{ cv["positive_counters"]['current_positive'] }}</span>
-                                            {% if (cv["positive_counters"]['diff_positive'] < 0): %}
-                                                <br /> <font size="2">({{ cv["positive_counters"]['diff_positive'] }})</font>
+                                            <span class="key-value">{{ positive_counters['current_positive'] }}</span>
+                                            {% if (positive_counters['diff_positive'] < 0): %}
+                                                <br /> <font size="2">({{ positive_counters['diff_positive'] }})</font>
                                             {% else: %}
-                                                <br /> <font size="2">(+{{ cv["positive_counters"]['diff_positive'] }})</font>
+                                                <br /> <font size="2">(+{{ positive_counters['diff_positive'] }})</font>
                                             {% endif %}
-                                            {% if (cv["positive_counters"]['current_positive']>1): %}
-                                                <br /> cas positifs <font size="2">au {{ cv["positive_counters"]['positive_last_day_fr'] }}</font>
+                                            {% if (positive_counters['current_positive']>1): %}
+                                                <br /> cas positifs <font size="2">au {{ positive_counters['positive_last_day_fr'] }}</font>
                                             {% else: %}
                                                 <br /> cas positif
                                             {% endif %}
@@ -101,13 +101,13 @@
                                 <div class="row">
                                     <div class="col-md-6">
                                         <button onclick="window.location.href='#patients_en_réanimation';" class="button resuscitation">
-                                            <span class="key-value">{{ cv["counters"]['current_rea'] }}</span>
-                                            {% if (cv["counters"]['diff_rea'] < 0): %}
-                                                <br /> <font size="2">({{ cv["counters"]['diff_rea'] }})</font>
+                                            <span class="key-value">{{ counters['current_rea'] }}</span>
+                                            {% if (counters['diff_rea'] < 0): %}
+                                                <br /> <font size="2">({{ counters['diff_rea'] }})</font>
                                             {% else: %}
-                                                <br /> <font size="2">(+{{ cv["counters"]['diff_rea'] }})</font>
+                                                <br /> <font size="2">(+{{ counters['diff_rea'] }})</font>
                                             {% endif %}
-                                            {% if (cv["counters"]['current_rea']>1): %}
+                                            {% if (counters['current_rea']>1): %}
                                                 <br /> réanimations
                                             {% else: %}
                                                 <br /> réanimation
@@ -116,13 +116,13 @@
                                     </div>
                                     <div class="col-md-6">
                                         <button onclick="window.location.href='#patients_en_hospitalisation';" class="button hospitalized">
-                                            <span class="key-value">{{ cv["counters"]['current_hosp'] }}</span>
-                                            {% if (cv["counters"]['diff_hosp'] < 0): %}
-                                                <br /> <font size="2">({{ cv["counters"]['diff_hosp'] }})</font>
+                                            <span class="key-value">{{ counters['current_hosp'] }}</span>
+                                            {% if (counters['diff_hosp'] < 0): %}
+                                                <br /> <font size="2">({{ counters['diff_hosp'] }})</font>
                                             {% else: %}
-                                                <br /> <font size="2">(+{{ cv["counters"]['diff_hosp'] }})</font>
+                                                <br /> <font size="2">(+{{ counters['diff_hosp'] }})</font>
                                             {% endif %}
-                                            {% if (cv["counters"]['current_hosp']>1): %}
+                                            {% if (counters['current_hosp']>1): %}
                                                 <br /> hospitalisations
                                             {% else: %}
                                                 <br /> hospitalisation
@@ -138,21 +138,21 @@
                                     <div class="row">
                                         <div class="col-md-12">
                                             <button onclick="window.location.href='#patients_guéris_quotidiennement';" class="button healed">
-                                                <span class="key-value">{{ cv["counters"]['last_rad'] }}</span>
-                                                {% if (cv["counters"]['diff_rad'] < 0): %}
-                                                    <br /> <font size="2">({{ cv["counters"]['diff_rad'] }})</font>
+                                                <span class="key-value">{{ counters['last_rad'] }}</span>
+                                                {% if (counters['diff_rad'] < 0): %}
+                                                    <br /> <font size="2">({{ counters['diff_rad'] }})</font>
                                                 {% else: %}
-                                                    <br /> <font size="2">(+{{ cv["counters"]['diff_rad'] }})</font>
+                                                    <br /> <font size="2">(+{{ counters['diff_rad'] }})</font>
                                                 {% endif %}
-                                                {% if (cv["counters"]['last_rad']>1): %}
+                                                {% if (counters['last_rad']>1): %}
                                                     <br /> nouvelles guérisons
                                                 {% else: %}
                                                     <br /> nouvelle guérison
                                                 {% endif %}
                                             </button>
                                             <button onclick="window.location.href='#total_patients_guéris';" class="button healed">
-                                                <span class="key-value" style="font-size:21px">{{ cv["counters"]['all_rad'] }}</span>
-                                                {% if (cv["counters"]['all_rad']>1): %}
+                                                <span class="key-value" style="font-size:21px">{{ counters['all_rad'] }}</span>
+                                                {% if (counters['all_rad']>1): %}
                                                     <br /> guérisons au total
                                                 {% else: %}
                                                     <br /> guérison au total
@@ -170,14 +170,14 @@
         <div class="col-md-12">     
             <div class="card mb-4 box-shadow">
                 <div class="card-body">
-                    {% if (cv["label"] != 'France'): %}
-                        {% if (cv["label"]['type'] == 'department'): %}
-                            <h3>Taux clés du {{ cv["last_day_fr"] }} pour 100 000 habitants au {{ cv["label"]['prefix'] }} {{ cv["label"]['name'] }} (FR-{{ cv["department"] }})</h3>
+                    {% if (label != 'France'): %}
+                        {% if (label['type'] == 'department'): %}
+                            <h3>Taux clés du {{ last_day_fr }} pour 100 000 habitants au {{ label['prefix'] }} {{ label['name'] }} (FR-{{ department }})</h3>
                         {% else : %}
-                            <h3>Taux clés du {{ cv["last_day_fr"] }} pour 100 000 habitants à la {{ cv["label"]['prefix'] }} {{ cv["label"]['name'] }} (FR-{{ cv["region"] }})</h3>
+                            <h3>Taux clés du {{ last_day_fr }} pour 100 000 habitants à la {{ label['prefix'] }} {{ label['name'] }} (FR-{{ region }})</h3>
                         {% endif %}
                     {% else : %}
-                        <h3>Taux clés du {{ cv["last_day_fr"] }} pour 100 000 habitants en {{ cv["label"] }}</h3> 
+                        <h3>Taux clés du {{ last_day_fr }} pour 100 000 habitants en {{ label }}</h3> 
                     {% endif %}
                     <div class="row">
                         <div class="col-md-12">
@@ -185,13 +185,13 @@
                                 <div class="row">
                                     <div class="col-md-3">
                                         <button onclick="window.location.href='#map_view';" class="button death">
-                                            <span class="key-value">{{ cv["counters"]['rates']['dc'] }}</span>
-                                            {% if (cv["counters"]['rates']['d_dc'] < 0): %}
-                                                <br /> <font size="2">({{ cv["counters"]['rates']['d_dc'] }})</font>
+                                            <span class="key-value">{{ counters['rates']['dc'] }}</span>
+                                            {% if (counters['rates']['d_dc'] < 0): %}
+                                                <br /> <font size="2">({{ counters['rates']['d_dc'] }})</font>
                                             {% else: %}
-                                                <br /> <font size="2">(+{{ cv["counters"]['rates']['d_dc'] }})</font>
+                                                <br /> <font size="2">(+{{ counters['rates']['d_dc'] }})</font>
                                             {% endif %}
-                                            {% if (cv["counters"]['rates']['dc']>1): %}
+                                            {% if (counters['rates']['dc']>1): %}
                                                 <br /> total décès
                                             {% else: %}
                                                 <br /> total décès
@@ -200,13 +200,13 @@
                                     </div>
                                     <div class="col-md-3">
                                         <button onclick="window.location.href='#map_view';" class="button resuscitation">
-                                            <span class="key-value">{{ cv["counters"]['rates']['rea'] }}</span>
-                                            {% if (cv["counters"]['rates']['d_rea'] < 0): %}
-                                                <br /> <font size="2">({{ cv["counters"]['rates']['d_rea'] }})</font>
+                                            <span class="key-value">{{ counters['rates']['rea'] }}</span>
+                                            {% if (counters['rates']['d_rea'] < 0): %}
+                                                <br /> <font size="2">({{ counters['rates']['d_rea'] }})</font>
                                             {% else: %}
-                                                <br /> <font size="2">(+{{ cv["counters"]['rates']['d_rea'] }})</font>
+                                                <br /> <font size="2">(+{{ counters['rates']['d_rea'] }})</font>
                                             {% endif %}
-                                            {% if (cv["counters"]['rates']['rea']>1): %}
+                                            {% if (counters['rates']['rea']>1): %}
                                                 <br /> réanimations
                                             {% else: %}
                                                 <br /> réanimation
@@ -215,13 +215,13 @@
                                     </div>
                                     <div class="col-md-3">
                                         <button onclick="window.location.href='#map_view';" class="button hospitalized">
-                                            <span class="key-value">{{ cv["counters"]['rates']['hosp'] }}</span>
-                                            {% if (cv["counters"]['rates']['d_hosp'] < 0): %}
-                                                <br /> <font size="2">({{ cv["counters"]['rates']['d_hosp'] }})</font>
+                                            <span class="key-value">{{ counters['rates']['hosp'] }}</span>
+                                            {% if (counters['rates']['d_hosp'] < 0): %}
+                                                <br /> <font size="2">({{ counters['rates']['d_hosp'] }})</font>
                                             {% else: %}
-                                                <br /> <font size="2">(+{{ cv["counters"]['rates']['d_hosp'] }})</font>
+                                                <br /> <font size="2">(+{{ counters['rates']['d_hosp'] }})</font>
                                             {% endif %}
-                                            {% if (cv["counters"]['rates']['hosp']>1): %}
+                                            {% if (counters['rates']['hosp']>1): %}
                                                 <br /> hospitalisations
                                             {% else: %}
                                                 <br /> hospitalisation
@@ -230,13 +230,13 @@
                                     </div>
                                     <div class="col-md-3">
                                         <button onclick="window.location.href='#map_view';" class="button healed">
-                                            <span class="key-value">{{ cv["counters"]['rates']['rad'] }}</span>
-                                            {% if (cv["counters"]['rates']['d_rad'] < 0): %}
-                                                <br /> <font size="2">({{ cv["counters"]['rates']['d_rad'] }})</font>
+                                            <span class="key-value">{{ counters['rates']['rad'] }}</span>
+                                            {% if (counters['rates']['d_rad'] < 0): %}
+                                                <br /> <font size="2">({{ counters['rates']['d_rad'] }})</font>
                                             {% else: %}
-                                                <br /> <font size="2">(+{{ cv["counters"]['rates']['d_rad'] }})</font>
+                                                <br /> <font size="2">(+{{ counters['rates']['d_rad'] }})</font>
                                             {% endif %}
-                                            {% if (cv["counters"]['rates']['rad']>1): %}
+                                            {% if (counters['rates']['rad']>1): %}
                                                 <br /> total guérisons
                                             {% else: %}
                                                 <br /> total guérison
@@ -249,24 +249,24 @@
                                     </div>
                                     <div class="col-md-4">
                                         <button onclick="window.location.href='#map_view';" class="button">
-                                            <span class="key-value">{{ cv["counters"]['rates']['r_dc_rad'] }}%</span>
-                                            {% if (cv["counters"]['rates']['d_r_dc_rad'] < 0): %}
-                                                <br /> <font size="2">({{ cv["counters"]['rates']['d_r_dc_rad'] }}%)</font>
+                                            <span class="key-value">{{ counters['rates']['r_dc_rad'] }}%</span>
+                                            {% if (counters['rates']['d_r_dc_rad'] < 0): %}
+                                                <br /> <font size="2">({{ counters['rates']['d_r_dc_rad'] }}%)</font>
                                             {% else: %}
-                                                <br /> <font size="2">(+{{ cv["counters"]['rates']['d_r_dc_rad'] }}%)</font>
+                                                <br /> <font size="2">(+{{ counters['rates']['d_r_dc_rad'] }}%)</font>
                                             {% endif %}
                                                 <br /> décès/guérisons
                                         </button>
                                     </div>
                                     <div class="col-md-4">
                                         <button onclick="window.location.href='#map_view';" class="button positive">
-                                            <span class="key-value">{{ cv["positive_counters"]['rates']['positive'] }}</span>
-                                            {% if (cv["positive_counters"]['rates']['d_positive'] < 0): %}
-                                                <br /> <font size="2">({{ cv["positive_counters"]['rates']['d_positive'] }})</font>
+                                            <span class="key-value">{{ positive_counters['rates']['positive'] }}</span>
+                                            {% if (positive_counters['rates']['d_positive'] < 0): %}
+                                                <br /> <font size="2">({{ positive_counters['rates']['d_positive'] }})</font>
                                             {% else: %}
-                                                <br /> <font size="2">(+{{ cv["positive_counters"]['rates']['d_positive'] }})</font>
+                                                <br /> <font size="2">(+{{ positive_counters['rates']['d_positive'] }})</font>
                                             {% endif %}
-                                                <br /> cas positifs <font size="2">au {{ cv["positive_counters"]['positive_last_day_fr'] }}</font>
+                                                <br /> cas positifs <font size="2">au {{ positive_counters['positive_last_day_fr'] }}</font>
                                         </button>
                                     </div>
                                     <div class="col-md-2">
@@ -287,9 +287,9 @@
                             <div class="form-row align-items-center">
                                 <div class="col-auto my-1">
                                     <select name="map_select" class="custom-select mr-sm-2">
-                                        {% for m in cv["map_choice"] %}
-                                            {% if (m == cv["map_select"]): %}
-                                            <option selected="selected">{{ cv["map_select"] }}</option> 
+                                        {% for m in map_choice %}
+                                            {% if (m == map_select): %}
+                                            <option selected="selected">{{ map_select }}</option> 
                                             {% else %}
                                                 <option value="{{ m }}">{{ m }}</option>
                                             {% endif %}
@@ -304,12 +304,12 @@
                     </div>
                 </div>
                 <div class="row">
-                    {% if (cv["map_select"] == "Nombre de décès"): %}
+                    {% if (map_select == "Nombre de décès"): %}
                     <div class="col-md-6" id="death_map_reg">
                         <div class="card mb-4 box-shadow">
                             <div class="card-body">
                                 <div class="pictos">
-                                    <a class="picto-item" aria-cv["label"]="Cliquez sur une région pour afficher le détail">
+                                    <a class="picto-item" aria-label="Cliquez sur une région pour afficher le détail">
                                         <h3>Nombre de décès à l'hôpital par région *</h3>
                                     </a>
                                 </div>
@@ -320,11 +320,11 @@
                                     <div class="col-md-12">
                                         <div class="card mb-4 box-shadow">
                                             <div class="card-body">
-                                                <a class="picto-item" aria-cv["label"]="Sélectionnez les couleurs que vous souhaitez afficher sur la carte">
+                                                <a class="picto-item" aria-label="Sélectionnez les couleurs que vous souhaitez afficher sur la carte">
                                                     <p>Légende</p>
                                                 </a>
                                                 <div class="areaLegend"></div>
-                                                <p style="color:red">&#x26A0; Niveau national : {{ cv["counters"]['nat_refs']['nat_dc'] }} décès *</p>
+                                                <p style="color:red">&#x26A0; Niveau national : {{ counters['nat_refs']['nat_dc'] }} décès *</p>
                                                 <p style="color:black"><small>(* : pour 100 000 habitants)</small></p>
                                             </div>
                                         </div>
@@ -337,7 +337,7 @@
                         <div class="card mb-4 box-shadow">
                             <div class="card-body">
                                 <div class="pictos">
-                                    <a class="picto-item" aria-cv["label"]="Cliquez sur un département pour afficher le détail">
+                                    <a class="picto-item" aria-label="Cliquez sur un département pour afficher le détail">
                                         <h3>Nombre de décès à l'hôpital par département *</h3>
                                     </a>
                                 </div>
@@ -348,11 +348,11 @@
                                     <div class="col-md-12">
                                         <div class="card mb-4 box-shadow">
                                             <div class="card-body">
-                                                <a class="picto-item" aria-cv["label"]="Sélectionnez les couleurs que vous souhaitez afficher sur la carte">
+                                                <a class="picto-item" aria-label="Sélectionnez les couleurs que vous souhaitez afficher sur la carte">
                                                     <p>Légende</p>
                                                 </a>
                                                 <div class="areaLegend"></div>
-                                                <p style="color:red">&#x26A0; Niveau national : {{ cv["counters"]['nat_refs']['nat_dc'] }} décès *</p>
+                                                <p style="color:red">&#x26A0; Niveau national : {{ counters['nat_refs']['nat_dc'] }} décès *</p>
                                                 <p style="color:black"><small>(* : pour 100 000 habitants)</small></p>
                                             </div>
                                         </div>
@@ -361,12 +361,12 @@
                             </div>
                         </div>
                     </div>
-                    {% elif (cv["map_select"] == "Taux décès / (décès + guérisons)"): %}
+                    {% elif (map_select == "Taux décès / (décès + guérisons)"): %}
                     <div class="col-md-6" id="rate_death_map_reg">
                         <div class="card mb-4 box-shadow">
                             <div class="card-body">
                                 <div class="pictos">
-                                    <a class="picto-item" aria-cv["label"]="Cliquez sur un département pour afficher le détail">
+                                    <a class="picto-item" aria-label="Cliquez sur un département pour afficher le détail">
                                         <h3>Taux décès / (décès + guérisons) par région</h3>
                                     </a>
                                 </div>
@@ -377,11 +377,11 @@
                                     <div class="col-md-12">
                                         <div class="card mb-4 box-shadow">
                                             <div class="card-body">
-                                                <a class="picto-item" aria-cv["label"]="Sélectionnez les couleurs que vous souhaitez afficher sur la carte">
+                                                <a class="picto-item" aria-label="Sélectionnez les couleurs que vous souhaitez afficher sur la carte">
                                                     <p>Légende</p>
                                                 </a>
                                                 <div class="areaLegend"></div>
-                                                <p style="color:red">&#x26A0; Taux national : {{ cv["counters"]['nat_refs']['nat_r_dc_rad'] }}</p>
+                                                <p style="color:red">&#x26A0; Taux national : {{ counters['nat_refs']['nat_r_dc_rad'] }}</p>
                                             </div>
                                         </div>
                                     </div>
@@ -393,7 +393,7 @@
                         <div class="card mb-4 box-shadow">
                             <div class="card-body">
                                 <div class="pictos">
-                                    <a class="picto-item" aria-cv["label"]="Cliquez sur un département pour afficher le détail">
+                                    <a class="picto-item" aria-label="Cliquez sur un département pour afficher le détail">
                                         <h3>Taux décès / (décès + guérisons) par département</h3>
                                     </a>
                                 </div>
@@ -404,11 +404,11 @@
                                     <div class="col-md-12">
                                         <div class="card mb-4 box-shadow">
                                             <div class="card-body">
-                                                <a class="picto-item" aria-cv["label"]="Sélectionnez les couleurs que vous souhaitez afficher sur la carte">
+                                                <a class="picto-item" aria-label="Sélectionnez les couleurs que vous souhaitez afficher sur la carte">
                                                     <p>Légende</p>
                                                 </a>
                                                 <div class="areaLegend"></div>
-                                                <p style="color:red">&#x26A0; Taux national : {{ cv["counters"]['nat_refs']['nat_r_dc_rad'] }}</p>
+                                                <p style="color:red">&#x26A0; Taux national : {{ counters['nat_refs']['nat_r_dc_rad'] }}</p>
                                             </div>
                                         </div>
                                     </div>
@@ -416,12 +416,12 @@
                             </div>
                         </div>
                     </div>
-                    {% elif (cv["map_select"] == "Nombre de guérisons"): %}
+                    {% elif (map_select == "Nombre de guérisons"): %}
                     <div class="col-md-6" id="rad_map_reg">
                         <div class="card mb-4 box-shadow">
                             <div class="card-body">
                                 <div class="pictos">
-                                    <a class="picto-item" aria-cv["label"]="Cliquez sur un département pour afficher le détail">
+                                    <a class="picto-item" aria-label="Cliquez sur un département pour afficher le détail">
                                         <h3>Nombre de guérisons à l'hôpital par région *</h3>
                                     </a>
                                 </div>
@@ -432,11 +432,11 @@
                                     <div class="col-md-12">
                                         <div class="card mb-4 box-shadow">
                                             <div class="card-body">
-                                                <a class="picto-item" aria-cv["label"]="Sélectionnez les couleurs que vous souhaitez afficher sur la carte">
+                                                <a class="picto-item" aria-label="Sélectionnez les couleurs que vous souhaitez afficher sur la carte">
                                                     <p>Légende</p>
                                                 </a>
                                                 <div class="areaLegend"></div>
-                                                <p style="color:green">&#x26A0; Niveau national : {{ cv["counters"]['nat_refs']['nat_rad'] }} guérisons *</p>
+                                                <p style="color:green">&#x26A0; Niveau national : {{ counters['nat_refs']['nat_rad'] }} guérisons *</p>
                                                 <p style="color:black"><small>(* : pour 100 000 habitants)</small></p>
                                             </div>
                                         </div>
@@ -449,7 +449,7 @@
                         <div class="card mb-4 box-shadow">
                             <div class="card-body">
                                 <div class="pictos">
-                                    <a class="picto-item" aria-cv["label"]="Cliquez sur un département pour afficher le détail">
+                                    <a class="picto-item" aria-label="Cliquez sur un département pour afficher le détail">
                                         <h3>Nombre de guérisons à l'hôpital par département *</h3>
                                     </a>
                                 </div>
@@ -460,11 +460,11 @@
                                     <div class="col-md-12">
                                         <div class="card mb-4 box-shadow">
                                             <div class="card-body">
-                                                <a class="picto-item" aria-cv["label"]="Sélectionnez les couleurs que vous souhaitez afficher sur la carte">
+                                                <a class="picto-item" aria-label="Sélectionnez les couleurs que vous souhaitez afficher sur la carte">
                                                     <p>Légende</p>
                                                 </a>
                                                 <div class="areaLegend"></div>
-                                                <p style="color:green">&#x26A0; Niveau national : {{ cv["counters"]['nat_refs']['nat_rad'] }} guérisons *</p>
+                                                <p style="color:green">&#x26A0; Niveau national : {{ counters['nat_refs']['nat_rad'] }} guérisons *</p>
                                                 <p style="color:black"><small>(* : pour 100 000 habitants)</small></p>
                                             </div>
                                         </div>
@@ -473,13 +473,13 @@
                             </div>
                         </div>
                     </div>
-                    {% elif (cv["map_select"] == "Nombre d'hospitalisations le " + cv["last_day_fr"]): %}
+                    {% elif (map_select == "Nombre d'hospitalisations le " + last_day_fr): %}
                     <div class="col-md-6" id="hosp_map_reg">
                         <div class="card mb-4 box-shadow">
                             <div class="card-body">
                                 <div class="pictos">
-                                    <a class="picto-item" aria-cv["label"]="Cliquez sur un département pour afficher le détail">
-                                        <h3>Nombre d'hospitalisations par région le {{ cv["last_day_fr"] }} *
+                                    <a class="picto-item" aria-label="Cliquez sur un département pour afficher le détail">
+                                        <h3>Nombre d'hospitalisations par région le {{ last_day_fr }} *
                                     </a>
                                 </div>
                                 <div class="row">
@@ -489,11 +489,11 @@
                                     <div class="col-md-12">
                                         <div class="card mb-4 box-shadow">
                                             <div class="card-body">
-                                                <a class="picto-item" aria-cv["label"]="Sélectionnez les couleurs que vous souhaitez afficher sur la carte">
+                                                <a class="picto-item" aria-label="Sélectionnez les couleurs que vous souhaitez afficher sur la carte">
                                                     <p>Légende</p>
                                                 </a>
                                                 <div class="areaLegend"></div>
-                                                <p style="color:red">&#x26A0; Niveau national : {{ cv["counters"]['nat_refs']['nat_hosp'] }} hospitalisations *</p>
+                                                <p style="color:red">&#x26A0; Niveau national : {{ counters['nat_refs']['nat_hosp'] }} hospitalisations *</p>
                                                 <p style="color:black"><small>(* : pour 100 000 habitants)</small></p>
                                             </div>
                                         </div>
@@ -506,8 +506,8 @@
                         <div class="card mb-4 box-shadow">
                             <div class="card-body">
                                 <div class="pictos">
-                                    <a class="picto-item" aria-cv["label"]="Cliquez sur un département pour afficher le détail">
-                                        <h3>Nombre d'hospitalisations par département le {{ cv["last_day_fr"] }} *
+                                    <a class="picto-item" aria-label="Cliquez sur un département pour afficher le détail">
+                                        <h3>Nombre d'hospitalisations par département le {{ last_day_fr }} *
                                     </a>
                                 </div>
                                 <div class="row">
@@ -517,11 +517,11 @@
                                     <div class="col-md-12">
                                         <div class="card mb-4 box-shadow">
                                             <div class="card-body">
-                                                <a class="picto-item" aria-cv["label"]="Sélectionnez les couleurs que vous souhaitez afficher sur la carte">
+                                                <a class="picto-item" aria-label="Sélectionnez les couleurs que vous souhaitez afficher sur la carte">
                                                     <p>Légende</p>
                                                 </a>
                                                 <div class="areaLegend"></div>
-                                                <p style="color:red">&#x26A0; Niveau national : {{ cv["counters"]['nat_refs']['nat_hosp'] }} hospitalisations *</p>
+                                                <p style="color:red">&#x26A0; Niveau national : {{ counters['nat_refs']['nat_hosp'] }} hospitalisations *</p>
                                                 <p style="color:black"><small>(* : pour 100 000 habitants)</small></p>
                                             </div>
                                         </div>
@@ -530,13 +530,13 @@
                             </div>
                         </div>
                     </div>
-                    {% elif (cv["map_select"] == "Nombre de réanimations le " + cv["last_day_fr"]): %}
+                    {% elif (map_select == "Nombre de réanimations le " + last_day_fr): %}
                     <div class="col-md-6" id="rea_map_reg">
                         <div class="card mb-4 box-shadow">
                             <div class="card-body">
                                 <div class="pictos">
-                                    <a class="picto-item" aria-cv["label"]="Cliquez sur un département pour afficher le détail">
-                                        <h3>Nombre de réanimations par région le {{ cv["last_day_fr"] }} *
+                                    <a class="picto-item" aria-label="Cliquez sur un département pour afficher le détail">
+                                        <h3>Nombre de réanimations par région le {{ last_day_fr }} *
                                     </a>
                                 </div>
                                 <div class="row">
@@ -546,11 +546,11 @@
                                     <div class="col-md-12">
                                         <div class="card mb-4 box-shadow">
                                             <div class="card-body">
-                                                <a class="picto-item" aria-cv["label"]="Sélectionnez les couleurs que vous souhaitez afficher sur la carte">
+                                                <a class="picto-item" aria-label="Sélectionnez les couleurs que vous souhaitez afficher sur la carte">
                                                     <p>Légende</p>
                                                 </a>
                                                 <div class="areaLegend"></div>
-                                                <p style="color:red">&#x26A0; Niveau national : {{ cv["counters"]['nat_refs']['nat_rea'] }} réanimations *</p>
+                                                <p style="color:red">&#x26A0; Niveau national : {{ counters['nat_refs']['nat_rea'] }} réanimations *</p>
                                                 <p style="color:black"><small>(* : pour 100 000 habitants)</small></p>
                                             </div>
                                         </div>
@@ -563,8 +563,8 @@
                         <div class="card mb-4 box-shadow">
                             <div class="card-body">
                                 <div class="pictos">
-                                    <a class="picto-item" aria-cv["label"]="Cliquez sur un département pour afficher le détail">
-                                        <h3>Nombre de réanimations par département le {{ cv["last_day_fr"] }} *
+                                    <a class="picto-item" aria-label="Cliquez sur un département pour afficher le détail">
+                                        <h3>Nombre de réanimations par département le {{ last_day_fr }} *
                                     </a>
                                 </div>
                                 <div class="row">
@@ -574,11 +574,11 @@
                                     <div class="col-md-12">
                                         <div class="card mb-4 box-shadow">
                                             <div class="card-body">
-                                                <a class="picto-item" aria-cv["label"]="Sélectionnez les couleurs que vous souhaitez afficher sur la carte">
+                                                <a class="picto-item" aria-label="Sélectionnez les couleurs que vous souhaitez afficher sur la carte">
                                                     <p>Légende</p>
                                                 </a>
                                                 <div class="areaLegend"></div>
-                                                <p style="color:red">&#x26A0; Niveau national : {{ cv["counters"]['nat_refs']['nat_rea'] }} réanimations *</p>
+                                                <p style="color:red">&#x26A0; Niveau national : {{ counters['nat_refs']['nat_rea'] }} réanimations *</p>
                                                 <p style="color:black"><small>(* : pour 100 000 habitants)</small></p>
                                             </div>
                                         </div>
@@ -587,13 +587,13 @@
                             </div>
                         </div>
                     </div>
-                    {% elif (cv["map_select"] == "Nombre de cas positifs le " + cv["positive_counters"]['positive_last_day_fr']): %}
+                    {% elif (map_select == "Nombre de cas positifs le " + positive_counters['positive_last_day_fr']): %}
                     <div class="col-md-6" id="positive_map_reg">
                         <div class="card mb-4 box-shadow">
                             <div class="card-body">
                                 <div class="pictos">
-                                    <a class="picto-item" aria-cv["label"]="Cliquez sur un département pour afficher le détail">
-                                        <h3>Nombre de cas positifs par région le {{ cv["positive_counters"]['positive_last_day_fr'] }} *
+                                    <a class="picto-item" aria-label="Cliquez sur un département pour afficher le détail">
+                                        <h3>Nombre de cas positifs par région le {{ positive_counters['positive_last_day_fr'] }} *
                                     </a>
                                 </div>
                                 <div class="row">
@@ -603,11 +603,11 @@
                                     <div class="col-md-12">
                                         <div class="card mb-4 box-shadow">
                                             <div class="card-body">
-                                                <a class="picto-item" aria-cv["label"]="Sélectionnez les couleurs que vous souhaitez afficher sur la carte">
+                                                <a class="picto-item" aria-label="Sélectionnez les couleurs que vous souhaitez afficher sur la carte">
                                                     <p>Légende</p>
                                                 </a>
                                                 <div class="areaLegend"></div>
-                                                <p style="color:red">&#x26A0; Niveau national : {{ cv["positive_counters"]["nat_refs"]['nat_positive'] }} cas positifs *</p>
+                                                <p style="color:red">&#x26A0; Niveau national : {{ positive_counters["nat_refs"]['nat_positive'] }} cas positifs *</p>
                                                 <p style="color:black"><small>(* : pour 100 000 habitants)</small></p>
                                             </div>
                                         </div>
@@ -620,8 +620,8 @@
                         <div class="card mb-4 box-shadow">
                             <div class="card-body">
                                 <div class="pictos">
-                                    <a class="picto-item" aria-cv["label"]="Cliquez sur un département pour afficher le détail">
-                                        <h3>Nombre de cas positifs par département le {{ cv["positive_counters"]['positive_last_day_fr'] }} *
+                                    <a class="picto-item" aria-label="Cliquez sur un département pour afficher le détail">
+                                        <h3>Nombre de cas positifs par département le {{ positive_counters['positive_last_day_fr'] }} *
                                     </a>
                                 </div>
                                 <div class="row">
@@ -631,11 +631,11 @@
                                     <div class="col-md-12">
                                         <div class="card mb-4 box-shadow">
                                             <div class="card-body">
-                                                <a class="picto-item" aria-cv["label"]="Sélectionnez les couleurs que vous souhaitez afficher sur la carte">
+                                                <a class="picto-item" aria-label="Sélectionnez les couleurs que vous souhaitez afficher sur la carte">
                                                     <p>Légende</p>
                                                 </a>
                                                 <div class="areaLegend"></div>
-                                                <p style="color:red">&#x26A0; Niveau national : {{ cv["positive_counters"]["nat_refs"]['nat_positive'] }} cas positifs *</p>
+                                                <p style="color:red">&#x26A0; Niveau national : {{ positive_counters["nat_refs"]['nat_positive'] }} cas positifs *</p>
                                                 <p style="color:black"><small>(* : pour 100 000 habitants)</small></p>
                                             </div>
                                         </div>
@@ -651,7 +651,7 @@
         <div class="col-md-12">
             <div class="card mb-4 box-shadow">
                 <div class="card-body">
-                    <h3 id="patients_quotidiennement">Nombre de cas sur 100 000 habitants par département au {{ cv["last_day_fr"] }} (au  {{ cv["positive_counters"]['positive_last_day_fr'] }} pour les cas positifs)</h3>
+                    <h3 id="patients_quotidiennement">Nombre de cas sur 100 000 habitants par département au {{ last_day_fr }} (au  {{ positive_counters['positive_last_day_fr'] }} pour les cas positifs)</h3>
                     <div id="Dernier nombre de patients pour 100 000 habitants par département"></div>
                 </div>
             </div>
@@ -659,16 +659,16 @@
         <div class="col-md-12" id="top_dep_results">
             <div class="card mb-4 box-shadow">
                 <div class="card-body">
-                    <h3>Départements les plus touchés au {{ cv["last_day_fr"] }}</h3>
+                    <h3>Départements les plus touchés au {{ last_day_fr }}</h3>
                     <div class="bootstrap-iso">
                         <form method="POST" action="{{ url_for('top_dep_settings') }}">
                             <div class="form-row align-items-center">
                                 <div class="col-auto my-1">
-                                    <cv["label"] class="mr-sm-2" for="inlineFormCustomSelect">Nombre de dépt. à afficher</cv["label"]>
+                                    <label class="mr-sm-2" for="inlineFormCustomSelect">Nombre de dépt. à afficher</label>
                                     <select name="top_dep_settings" class="custom-select mr-sm-2">
-                                        {% for t in cv["number_all_dep"] %}
-                                            {% if (t == cv["top_dep"]): %}
-                                                <option selected="selected">{{ cv["top_dep"] }}</option> 
+                                        {% for t in number_all_dep %}
+                                            {% if (t == top_dep): %}
+                                                <option selected="selected">{{ top_dep }}</option> 
                                             {% else %}
                                                 <option value="{{ t }}">{{ t }}</option>
                                             {% endif %}
@@ -676,11 +676,11 @@
                                     </select>
                                 </div>
                                 <div class="col-auto my-1">
-                                    <cv["label"] class="mr-sm-2" for="inlineFormCustomSelect">Critère à afficher</cv["label"]>
+                                    <label class="mr-sm-2" for="inlineFormCustomSelect">Critère à afficher</label>
                                     <select name="top_dep_settings" class="custom-select mr-sm-2">
-                                        {% for c in cv["criterion_choice"] %}
-                                            {% if (c == cv["criterion"]): %}
-                                                <option selected="selected">{{ cv["criterion"] }}</option> 
+                                        {% for c in criterion_choice %}
+                                            {% if (c == criterion): %}
+                                                <option selected="selected">{{ criterion }}</option> 
                                             {% else %}
                                                 <option value="{{ c }}">{{ c }}</option>
                                             {% endif %}
@@ -694,29 +694,29 @@
                         </form> 
                     </div>
                 </div>
-                {% if (cv["criterion"] == "Cas positifs au "+cv["positive_counters"]['positive_last_day_fr']): %}
+                {% if (criterion == "Cas positifs au "+positive_counters['positive_last_day_fr']): %}
                 <div class="col-md-12" id="">
                     <div class="card mb-4 box-shadow">
                         <div class="card-body">
-                            <h3 id="patients_quotidiennement">Top {{ cv["top_dep"] }} des départements selon le nombre de cas positifs pour 100 000 habitants au {{ cv["positive_counters"]['positive_last_day_fr'] }}</h3>
+                            <h3 id="patients_quotidiennement">Top {{ top_dep }} des départements selon le nombre de cas positifs pour 100 000 habitants au {{ positive_counters['positive_last_day_fr'] }}</h3>
                             <div id="Top des départements selon le nombre de cas positifs pour 100 000 habitants"></div>
                         </div>
                     </div>
                 </div>
-                {% elif (cv["criterion"] == "Hospitalisations au "+cv["last_day_fr"]): %}
+                {% elif (criterion == "Hospitalisations au "+last_day_fr): %}
                 <div class="col-md-12" id="">
                     <div class="card mb-4 box-shadow">
                         <div class="card-body">
-                            <h3 id="patients_quotidiennement">Top {{ cv["top_dep"] }} des départements selon le nombre d'hospitalisations pour 100 000 habitants au {{ cv["last_day_fr"] }}</h3>
+                            <h3 id="patients_quotidiennement">Top {{ top_dep }} des départements selon le nombre d'hospitalisations pour 100 000 habitants au {{ last_day_fr }}</h3>
                             <div id="Top des départements selon le nombre d'hospitalisations pour 100 000 habitants"></div>
                         </div>
                     </div>
                 </div>
-                {% elif (cv["criterion"] == "Réanimations au "+cv["last_day_fr"]): %}
+                {% elif (criterion == "Réanimations au "+last_day_fr): %}
                 <div class="col-md-12" id="">
                     <div class="card mb-4 box-shadow">
                         <div class="card-body">
-                            <h3 id="patients_quotidiennement">Top {{ cv["top_dep"] }} des départements selon le nombre de réanimations pour 100 000 habitants au {{ cv["last_day_fr"] }}</h3>
+                            <h3 id="patients_quotidiennement">Top {{ top_dep }} des départements selon le nombre de réanimations pour 100 000 habitants au {{ last_day_fr }}</h3>
                             <div id="Top des départements selon le nombre de réanimations pour 100 000 habitants"></div>
                         </div>
                     </div>
@@ -727,14 +727,14 @@
         <div class="col-md-12">
             <div class="card mb-4 box-shadow">
                 <div class="card-body">
-                    {% if (cv["label"] != 'France'): %}
-                        {% if (cv["label"]['type'] == 'department'): %}
-                            <h3 id="cas_positifs">Nombre quotidien de personnes détectées positives au {{ cv["label"]['prefix'] }} {{ cv["label"]['name'] }} (FR-{{ cv["department"] }})</h3>
+                    {% if (label != 'France'): %}
+                        {% if (label['type'] == 'department'): %}
+                            <h3 id="cas_positifs">Nombre quotidien de personnes détectées positives au {{ label['prefix'] }} {{ label['name'] }} (FR-{{ department }})</h3>
                         {% else : %}
-                            <h3 id="cas_positifs">Nombre quotidien de personnes détectées positives à la {{ cv["label"]['prefix'] }} {{ cv["label"]['name'] }} (FR-{{ cv["region"] }})</h3>
+                            <h3 id="cas_positifs">Nombre quotidien de personnes détectées positives à la {{ label['prefix'] }} {{ label['name'] }} (FR-{{ region }})</h3>
                         {% endif %}
                     {% else : %}
-                        <h3 id="cas_positifs">Nombre quotidien de personnes détectées positives en {{ cv["label"] }}</h3> 
+                        <h3 id="cas_positifs">Nombre quotidien de personnes détectées positives en {{ label }}</h3> 
                     {% endif %}
                     <div id="Nombre de personnes actuellement positives"></div>
                 </div>
@@ -743,14 +743,14 @@
         <div class="col-md-6">
             <div class="card mb-4 box-shadow">
                 <div class="card-body">
-                    {% if (cv["label"] != 'France'): %}
-                        {% if (cv["label"]['type'] == 'department'): %}
-                            <h3 id="patients_en_hospitalisation">Nombre de patients actuellement hospitalisés au {{ cv["label"]['prefix'] }} {{ cv["label"]['name'] }} (FR-{{ cv["department"] }})</h3>
+                    {% if (label != 'France'): %}
+                        {% if (label['type'] == 'department'): %}
+                            <h3 id="patients_en_hospitalisation">Nombre de patients actuellement hospitalisés au {{ label['prefix'] }} {{ label['name'] }} (FR-{{ department }})</h3>
                         {% else : %}
-                            <h3 id="patients_en_hospitalisation">Nombre de patients actuellement hospitalisés à la {{ cv["label"]['prefix'] }} {{ cv["label"]['name'] }} (FR-{{ cv["region"] }})</h3></h3>
+                            <h3 id="patients_en_hospitalisation">Nombre de patients actuellement hospitalisés à la {{ label['prefix'] }} {{ label['name'] }} (FR-{{ region }})</h3></h3>
                         {% endif %}
                     {% else : %}
-                        <h3 id="patients_en_hospitalisation">Nombre de patients actuellement hospitalisés en {{ cv["label"] }}</h3>
+                        <h3 id="patients_en_hospitalisation">Nombre de patients actuellement hospitalisés en {{ label }}</h3>
                     {% endif %}
                     <div id="Nombre de personnes actuellement hospitalisées"></div>
                 </div>
@@ -759,14 +759,14 @@
         <div class="col-md-6">
             <div class="card mb-4 box-shadow">
                 <div class="card-body">
-                    {% if (cv["label"] != 'France'): %}
-                        {% if (cv["label"]['type'] == 'department'): %}
-                            <h3 id="patients_en_réanimation">Nombre de patients actuellement en réanimation au {{ cv["label"]['prefix'] }} {{ cv["label"]['name'] }} (FR-{{ cv["department"] }})</h3>
+                    {% if (label != 'France'): %}
+                        {% if (label['type'] == 'department'): %}
+                            <h3 id="patients_en_réanimation">Nombre de patients actuellement en réanimation au {{ label['prefix'] }} {{ label['name'] }} (FR-{{ department }})</h3>
                         {% else : %}
-                            <h3 id="patients_en_réanimation">Nombre de patients actuellement en réanimation à la {{ cv["label"]['prefix'] }} {{ cv["label"]['name'] }} (FR-{{ cv["region"] }})</h3>
+                            <h3 id="patients_en_réanimation">Nombre de patients actuellement en réanimation à la {{ label['prefix'] }} {{ label['name'] }} (FR-{{ region }})</h3>
                         {% endif %}
                     {% else : %}
-                        <h3 id="patients_en_réanimation">Nombre de patients actuellement en réanimation en {{ cv["label"] }}</h3>
+                        <h3 id="patients_en_réanimation">Nombre de patients actuellement en réanimation en {{ label }}</h3>
                     {% endif %}
                     <div id="Nombre de personnes actuellement en réanimation"></div>
                 </div>
@@ -775,14 +775,14 @@
         <div class="col-md-6">
             <div class="card mb-4 box-shadow">
                 <div class="card-body">
-                    {% if (cv["label"] != 'France'): %}
-                        {% if (cv["label"]['type'] == 'department'): %}
-                            <h3 id="total_patients_décédés">Nombre cumulé de patients décédés à l'hôpital au {{ cv["label"]['prefix'] }} {{ cv["label"]['name'] }} (FR-{{ cv["department"] }})</h3>
+                    {% if (label != 'France'): %}
+                        {% if (label['type'] == 'department'): %}
+                            <h3 id="total_patients_décédés">Nombre cumulé de patients décédés à l'hôpital au {{ label['prefix'] }} {{ label['name'] }} (FR-{{ department }})</h3>
                         {% else : %}
-                            <h3 id="total_patients_décédés">Nombre cumulé de patients décédés à l'hôpital à la {{ cv["label"]['prefix'] }} {{ cv["label"]['name'] }} (FR-{{ cv["region"] }})</h3>
+                            <h3 id="total_patients_décédés">Nombre cumulé de patients décédés à l'hôpital à la {{ label['prefix'] }} {{ label['name'] }} (FR-{{ region }})</h3>
                         {% endif %}
                     {% else : %}
-                        <h3 id="total_patients_décédés">Nombre cumulé de patients décédés à l'hôpital en {{ cv["label"] }}</h3>
+                        <h3 id="total_patients_décédés">Nombre cumulé de patients décédés à l'hôpital en {{ label }}</h3>
                     {% endif %}
                     <div id="Nombre cumulé de personnes décédées à l'hôpital"></div>
                 </div>
@@ -791,14 +791,14 @@
         <div class="col-md-6">
             <div class="card mb-4 box-shadow">
                 <div class="card-body">
-                    {% if (cv["label"] != 'France'): %}
-                        {% if (cv["label"]['type'] == 'department'): %}
-                            <h3 id="total_patients_guéris">Nombre cumulé de patients retournés à domicile au {{ cv["label"]['prefix'] }} {{ cv["label"]['name'] }} (FR-{{ cv["department"] }})</h3>
+                    {% if (label != 'France'): %}
+                        {% if (label['type'] == 'department'): %}
+                            <h3 id="total_patients_guéris">Nombre cumulé de patients retournés à domicile au {{ label['prefix'] }} {{ label['name'] }} (FR-{{ department }})</h3>
                         {% else : %}
-                            <h3 id="total_patients_guéris">Nombre cumulé de patients retournés à domicile à la {{ cv["label"]['prefix'] }} {{ cv["label"]['name'] }} (FR-{{ cv["region"] }})</h3>
+                            <h3 id="total_patients_guéris">Nombre cumulé de patients retournés à domicile à la {{ label['prefix'] }} {{ label['name'] }} (FR-{{ region }})</h3>
                         {% endif %}
                     {% else : %}
-                        <h3 id="total_patients_guéris">Nombre cumulé de patients retournés à domicile en {{ cv["label"] }}</h3>
+                        <h3 id="total_patients_guéris">Nombre cumulé de patients retournés à domicile en {{ label }}</h3>
                     {% endif %}
                     <div id="Nombre cumulé de personnes retournées à domicile"></div>
                 </div>
@@ -807,14 +807,14 @@
         <div class="col-md-12">
             <div class="card mb-4 box-shadow">
                 <div class="card-body">
-                    {% if (cv["label"] != 'France'): %}
-                        {% if (cv["label"]['type'] == 'department'): %}
-                            <h3 id="patients_décédés_quotidiennement">Nombre quotidien de patients décédés à l'hôpital au {{ cv["label"]['prefix'] }} {{ cv["label"]['name'] }} (FR-{{ cv["department"] }})</h3>
+                    {% if (label != 'France'): %}
+                        {% if (label['type'] == 'department'): %}
+                            <h3 id="patients_décédés_quotidiennement">Nombre quotidien de patients décédés à l'hôpital au {{ label['prefix'] }} {{ label['name'] }} (FR-{{ department }})</h3>
                         {% else : %}
-                            <h3 id="patients_décédés_quotidiennement">Nombre quotidien de patients décédés à l'hôpital à la {{ cv["label"]['prefix'] }} {{ cv["label"]['name'] }} (FR-{{ cv["region"] }})</h3>
+                            <h3 id="patients_décédés_quotidiennement">Nombre quotidien de patients décédés à l'hôpital à la {{ label['prefix'] }} {{ label['name'] }} (FR-{{ region }})</h3>
                         {% endif %}
                     {% else : %}
-                        <h3 id="patients_décédés_quotidiennement">Nombre quotidien de patients décédés à l'hôpital en {{ cv["label"] }}</h3> 
+                        <h3 id="patients_décédés_quotidiennement">Nombre quotidien de patients décédés à l'hôpital en {{ label }}</h3> 
                     {% endif %}
                     <div id="Nombre quotidien de personnes décédées à l'hôpital"></div>
                 </div>
@@ -823,14 +823,14 @@
         <div class="col-md-12">
             <div class="card mb-4 box-shadow">
                 <div class="card-body">
-                    {% if (cv["label"] != 'France'): %}
-                        {% if (cv["label"]['type'] == 'department'): %}
-                            <h3 id="patients_guéris_quotidiennement">Nombre quotidien de patients retournés à domicile au {{ cv["label"]['prefix'] }} {{ cv["label"]['name'] }} (FR-{{ cv["department"] }})</h3>
+                    {% if (label != 'France'): %}
+                        {% if (label['type'] == 'department'): %}
+                            <h3 id="patients_guéris_quotidiennement">Nombre quotidien de patients retournés à domicile au {{ label['prefix'] }} {{ label['name'] }} (FR-{{ department }})</h3>
                         {% else : %}
-                            <h3 id="patients_guéris_quotidiennement">Nombre quotidien de patients retournés à domicile à la {{ cv["label"]['prefix'] }} {{ cv["label"]['name'] }} (FR-{{ cv["region"] }})</h3>
+                            <h3 id="patients_guéris_quotidiennement">Nombre quotidien de patients retournés à domicile à la {{ label['prefix'] }} {{ label['name'] }} (FR-{{ region }})</h3>
                         {% endif %}
                     {% else : %}
-                        <h3 id="patients_guéris_quotidiennement">Nombre quotidien de patients retournés à domicile en {{ cv["label"] }}</h3> 
+                        <h3 id="patients_guéris_quotidiennement">Nombre quotidien de patients retournés à domicile en {{ label }}</h3> 
                     {% endif %}
                     <div id="Nombre quotidien de personnes retournées à domicile"></div>
                 </div>
@@ -844,11 +844,11 @@
                         <form method="POST" action="{{ url_for('global_monitoring_settings') }}">
                             <div class="form-row align-items-center">
                                 <div class="col-auto my-1">
-                                    <cv["label"] class="mr-sm-2" for="inlineFormCustomSelect">pc number</cv["label"]>
+                                    <label class="mr-sm-2" for="inlineFormCustomSelect">pc number</label>
                                     <select name="global_parameters" class="custom-select mr-sm-2">
-                                        {% for pc in cv["global_pc"] %}
-                                            {% if (pc == cv["pcdim"]): %}
-                                                <option selected="selected">{{ cv["pcdim"] }}</option>
+                                        {% for pc in global_pc %}
+                                            {% if (pc == pcdim): %}
+                                                <option selected="selected">{{ pcdim }}</option>
                                             {% else %}
                                                 <option value="{{ pc }}">{{ pc }}</option>
                                             {% endif %}
@@ -856,11 +856,11 @@
                                     </select>
                                 </div>
                                 <div class="col-auto my-1">
-                                    <cv["label"] class="mr-sm-2" for="inlineFormCustomSelect">data normalization</cv["label"]>
+                                    <label class="mr-sm-2" for="inlineFormCustomSelect">data normalization</label>
                                     <select name="global_parameters" class="custom-select mr-sm-2">
-                                        {% for b in cv["normalize_states"] %}
-                                            {% if (b == cv["normalize"]): %}
-                                                <option selected="selected">{{ cv["normalize"] }}</option> 
+                                        {% for b in normalize_states %}
+                                            {% if (b == normalize): %}
+                                                <option selected="selected">{{ normalize }}</option> 
                                             {% else %}
                                                 <option value="{{ b }}">{{ b }}</option>
                                             {% endif %}
@@ -868,15 +868,15 @@
                                     </select>
                                 </div>
                                 <div class="col-auto my-1">
-                                    <cv["label"] class="control-cv["label"]" for="date">date range (model learning)</cv["label"]>
+                                    <label class="control-label" for="date">date range (model learning)</label>
                                     <input type="text" class="form-control" data-filter-type="date-range" data-toggle="daterangepicker" name="global_parameters">
                                 </div>
                                 <div class="col-auto my-1">
-                                    <cv["label"] class="mr-sm-2" for="inlineFormCustomSelect">smoothing filter</cv["label"]>
+                                    <label class="mr-sm-2" for="inlineFormCustomSelect">smoothing filter</label>
                                     <select name="global_parameters" class="custom-select mr-sm-2">
-                                        {% for s in cv["alpha_smooth"] %}
-                                            {% if (s == cv["alpha"]): %}
-                                                <option selected="selected">{{ cv["alpha"] }}</option> 
+                                        {% for s in alpha_smooth %}
+                                            {% if (s == alpha): %}
+                                                <option selected="selected">{{ alpha }}</option> 
                                             {% else %}
                                                 <option value="{{ s }}">{{ s }}</option>
                                             {% endif %}
@@ -916,11 +916,11 @@
                         <form method="POST" action="{{ url_for('hosp_monitoring_settings') }}">
                             <div class="form-row align-items-center">
                                 <div class="col-auto my-1">
-                                    <cv["label"] class="mr-sm-2" for="inlineFormCustomSelect">pc number</cv["label"]>
+                                    <label class="mr-sm-2" for="inlineFormCustomSelect">pc number</label>
                                     <select name="hosp_parameters" class="custom-select mr-sm-2">
-                                        {% for pc in cv["pc_reg"] %}
-                                            {% if (pc == cv["pcdim_reg"]): %}
-                                                <option selected="selected">{{ cv["pcdim_reg"] }}</option> 
+                                        {% for pc in pc_reg %}
+                                            {% if (pc == pcdim_reg): %}
+                                                <option selected="selected">{{ pcdim_reg }}</option> 
                                             {% else %}
                                                 <option value="{{ pc }}">{{ pc }}</option>
                                             {% endif %}
@@ -928,11 +928,11 @@
                                     </select>
                                 </div>
                                 <div class="col-auto my-1">
-                                    <cv["label"] class="mr-sm-2" for="inlineFormCustomSelect">data normalization</cv["label"]>
+                                    <label class="mr-sm-2" for="inlineFormCustomSelect">data normalization</label>
                                     <select name="hosp_parameters" class="custom-select mr-sm-2">
-                                        {% for b in cv["normalize_states"] %}
-                                            {% if (b == cv["normalize_reg"]): %}
-                                                <option selected="selected">{{ cv["normalize_reg"] }}</option>
+                                        {% for b in normalize_states %}
+                                            {% if (b == normalize_reg): %}
+                                                <option selected="selected">{{ normalize_reg }}</option>
                                             {% else %}
                                                 <option value="{{ b }}">{{ b }}</option>
                                             {% endif %}
@@ -940,15 +940,15 @@
                                     </select>
                                 </div>
                                 <div class="col-auto my-1">
-                                    <cv["label"] class="control-cv["label"]" for="date">date range (model learning)</cv["label"]>
+                                    <label class="control-label" for="date">date range (model learning)</label>
                                     <input type="text" class="form-control" data-filter-type="date-range" data-toggle="daterangepicker" name="hosp_parameters">
                                 </div>
                                 <div class="col-auto my-1">
-                                    <cv["label"] class="mr-sm-2" for="inlineFormCustomSelect">smoothing filter</cv["label"]>
+                                    <label class="mr-sm-2" for="inlineFormCustomSelect">smoothing filter</label>
                                     <select name="hosp_parameters" class="custom-select mr-sm-2">
-                                        {% for s in cv["alpha_smooth"] %}
-                                            {% if (s == cv["alpha_reg"]): %}
-                                                <option selected="selected">{{ cv["alpha_reg"] }}</option> 
+                                        {% for s in alpha_smooth %}
+                                            {% if (s == alpha_reg): %}
+                                                <option selected="selected">{{ alpha_reg }}</option> 
                                             {% else %}
                                                 <option value="{{ s }}">{{ s }}</option>
                                             {% endif %}
@@ -991,10 +991,10 @@
             $('input[name="global_parameters"]').daterangepicker({
                 "showDropdowns": true,
                 "autoApply": true,
-                "startDate": {{ cv["start_d_learn_fr"]|tojson }},
-                "endDate": {{ cv["end_d_learn_fr"]|tojson }},
-                "minDate": {{ cv["first_day_fr"]|tojson }},
-                "maxDate": {{ cv["last_day_fr"]|tojson }},
+                "startDate": {{ start_d_learn_fr|tojson }},
+                "endDate": {{ end_d_learn_fr|tojson }},
+                "minDate": {{ first_day_fr|tojson }},
+                "maxDate": {{ last_day_fr|tojson }},
                 "showCustomRangeLabel": true,
                 autoUpdateInput: true,
                 locale: {   format: 'DD/MM/YYYY', 
@@ -1011,10 +1011,10 @@
             $('input[name="hosp_parameters"]').daterangepicker({
                 "showDropdowns": true,
                 "autoApply": true,
-                "startDate": {{ cv["start_d_learn_fr_reg"]|tojson }},
-                "endDate": {{ cv["end_d_learn_fr_reg"]|tojson }},
-                "minDate": {{ cv["first_day_fr"]|tojson }},
-                "maxDate": {{ cv["last_day_fr"]|tojson }},   
+                "startDate": {{ start_d_learn_fr_reg|tojson }},
+                "endDate": {{ end_d_learn_fr_reg|tojson }},
+                "minDate": {{ first_day_fr|tojson }},
+                "maxDate": {{ last_day_fr|tojson }},   
                 "showCustomRangeLabel": true,
                 autoUpdateInput: true,
                 locale: {   format: 'DD/MM/YYYY', 
@@ -1029,9 +1029,9 @@
     <!-- positive map regions-->
     <script type="text/javascript">
         mapDiv = "#positive_map_reg";
-        regions = {{ cv["overall_regions_data_P"] | safe }};
-        quantiles = {{ cv["overall_regions_quantiles_P"] | safe }};
-        current_label = "{{ cv["region"] }}";
+        regions = {{ overall_regions_data_P | safe }};
+        quantiles = {{ overall_regions_quantiles_P | safe }};
+        current_label = "{{ region }}";
         text = "cas positifs";
         feature_par_habitants = "P_par_habitants";
         feature_name = "P";
@@ -1042,9 +1042,9 @@
     <!-- death map regions-->
     <script type="text/javascript">
         mapDiv = "#death_map_reg";
-        regions = {{ cv["overall_regions_data_dc"] | safe }};
-        quantiles = {{ cv["overall_regions_quantiles_dc"] | safe }};
-        current_label = "{{ cv["region"] }}";
+        regions = {{ overall_regions_data_dc | safe }};
+        quantiles = {{ overall_regions_quantiles_dc | safe }};
+        current_label = "{{ region }}";
         text = "décès";
         feature_par_habitants = "dc_par_habitants";
         feature_name = "dc";
@@ -1055,9 +1055,9 @@
     <!-- rad map regions-->
     <script type="text/javascript">
         mapDiv = "#rad_map_reg";
-        regions = {{ cv["overall_regions_data_rad"] | safe }};
-        quantiles = {{ cv["overall_regions_quantiles_rad"] | safe }};
-        current_label = "{{ cv["region"] }}";
+        regions = {{ overall_regions_data_rad | safe }};
+        quantiles = {{ overall_regions_quantiles_rad | safe }};
+        current_label = "{{ region }}";
         text = "guérisons";
         feature_par_habitants = "rad_par_habitants";
         feature_name = "rad";
@@ -1068,9 +1068,9 @@
     <!-- hosp map regions-->
     <script type="text/javascript">
         mapDiv = "#hosp_map_reg";
-        regions = {{ cv["overall_regions_data_hosp"] | safe }};
-        quantiles = {{ cv["overall_regions_quantiles_hosp"] | safe }};
-        current_label = "{{ cv["region"] }}";
+        regions = {{ overall_regions_data_hosp | safe }};
+        quantiles = {{ overall_regions_quantiles_hosp | safe }};
+        current_label = "{{ region }}";
         text = "hospitalisations";
         feature_par_habitants = "hosp_par_habitants";
         feature_name = "hosp";
@@ -1081,9 +1081,9 @@
     <!-- rea map regions-->
     <script type="text/javascript">
         mapDiv = "#rea_map_reg";
-        regions = {{ cv["overall_regions_data_rea"] | safe }};
-        quantiles = {{ cv["overall_regions_quantiles_rea"] | safe }};
-        current_label = "{{ cv["region"] }}";
+        regions = {{ overall_regions_data_rea | safe }};
+        quantiles = {{ overall_regions_quantiles_rea | safe }};
+        current_label = "{{ region }}";
         text = "réanimations";
         feature_par_habitants = "rea_par_habitants";
         feature_name = "rea";
@@ -1094,9 +1094,9 @@
 	<!-- rate dc/rad map regions-->
     <script type="text/javascript">
         mapDiv = "#rate_death_map_reg";
-        regions = {{ cv["overall_regions_data_r_dc_rad"] | safe }};
-        quantiles = {{ cv["overall_regions_quantiles_r_dc_rad"] | safe }};
-        current_label = "{{ cv["region"] }}";
+        regions = {{ overall_regions_data_r_dc_rad | safe }};
+        quantiles = {{ overall_regions_quantiles_r_dc_rad | safe }};
+        current_label = "{{ region }}";
         text = null;
         feature_par_habitants = null;
         feature_name = "r_dc_rad";
@@ -1108,9 +1108,9 @@
     <!-- positive map departments-->
     <script type="text/javascript">
         mapDiv = "#positive_map_dep";
-        departments = {{ cv["overall_departments_data_P"] | safe }};
-        quantiles = {{ cv["overall_departments_quantiles_P"] | safe }};
-        current_label = "{{ cv["department"] }}";
+        departments = {{ overall_departments_data_P | safe }};
+        quantiles = {{ overall_departments_quantiles_P | safe }};
+        current_label = "{{ department }}";
         text = "cas positifs";
         feature_par_habitants = "P_par_habitants";
         feature_name = "P";
@@ -1121,9 +1121,9 @@
     <!-- death map departments-->
     <script type="text/javascript">
         mapDiv = "#death_map_dep";
-        departments = {{ cv["overall_departments_data_dc"] | safe }};
-        quantiles = {{ cv["overall_departments_quantiles_dc"] | safe }};
-        current_label = "{{ cv["department"] }}";
+        departments = {{ overall_departments_data_dc | safe }};
+        quantiles = {{ overall_departments_quantiles_dc | safe }};
+        current_label = "{{ department }}";
         text = "décès";
         feature_par_habitants = "dc_par_habitants";
         feature_name = "dc";
@@ -1134,9 +1134,9 @@
     <!-- rad map departments-->
     <script type="text/javascript">
         mapDiv = "#rad_map_dep";
-        departments = {{ cv["overall_departments_data_rad"] | safe }};
-        quantiles = {{ cv["overall_departments_quantiles_rad"] | safe }};
-        current_label = "{{ cv["department"] }}";
+        departments = {{ overall_departments_data_rad | safe }};
+        quantiles = {{ overall_departments_quantiles_rad | safe }};
+        current_label = "{{ department }}";
         text = "guérisons";
         feature_par_habitants = "rad_par_habitants";
         feature_name = "rad";
@@ -1147,9 +1147,9 @@
     <!-- hosp map departments-->
     <script type="text/javascript">
         mapDiv = "#hosp_map_dep";
-        departments = {{ cv["overall_departments_data_hosp"] | safe }};
-        quantiles = {{ cv["overall_departments_quantiles_hosp"] | safe }};
-        current_label = "{{ cv["department"] }}";
+        departments = {{ overall_departments_data_hosp | safe }};
+        quantiles = {{ overall_departments_quantiles_hosp | safe }};
+        current_label = "{{ department }}";
         text = "hospitalisations";
         feature_par_habitants = "hosp_par_habitants";
         feature_name = "hosp";
@@ -1160,9 +1160,9 @@
     <!-- rea map departments-->
     <script type="text/javascript">
         mapDiv = "#rea_map_dep";
-        departments = {{ cv["overall_departments_data_rea"] | safe }};
-        quantiles = {{ cv["overall_departments_quantiles_rea"] | safe }};
-        current_label = "{{ cv["department"] }}";
+        departments = {{ overall_departments_data_rea | safe }};
+        quantiles = {{ overall_departments_quantiles_rea | safe }};
+        current_label = "{{ department }}";
         text = "réanimations";
         feature_par_habitants = "rea_par_habitants";
         feature_name = "rea";
@@ -1173,9 +1173,9 @@
     <!-- rate dc/rad map departments-->
     <script type="text/javascript">
         mapDiv = "#rate_death_map_dep";
-        departments = {{ cv["overall_departments_data_r_dc_rad"] | safe }};
-        quantiles = {{ cv["overall_departments_quantiles_r_dc_rad"] | safe }};
-        current_label = "{{ cv["department"] }}";
+        departments = {{ overall_departments_data_r_dc_rad | safe }};
+        quantiles = {{ overall_departments_quantiles_r_dc_rad | safe }};
+        current_label = "{{ department }}";
         text = null;
         feature_par_habitants = null;
         feature_name = "r_dc_rad";
@@ -1186,71 +1186,71 @@
 
     <!-- charts -->
     <script type="text/javascript">
-        var graphs = {{ cv["graphJSON"]["graphJSON0"] | safe }};
+        var graphs = {{ graphJSON["graphJSON0"] | safe }};
         var text = "";
         plotGraphs(graphs, text);
     </script>
     <script type="text/javascript">
-        var graphs = {{ cv["graphJSON"]["graphJSON1"] | safe }};
+        var graphs = {{ graphJSON["graphJSON1"] | safe }};
         var text = "";
         plotGraphs(graphs, text);
     </script>
     <script type="text/javascript">
-        var graphs = {{ cv["graphJSON"]["graphJSON2"] | safe }};
+        var graphs = {{ graphJSON["graphJSON2"] | safe }};
         var text = "";
         plotGraphs(graphs, text);
     </script>
     <script type="text/javascript">
-        var graphs = {{ cv["graphJSON"]["graphJSON3"] | safe }};
+        var graphs = {{ graphJSON["graphJSON3"] | safe }};
         var text = "";
         plotGraphs(graphs, text);
     </script>
     <script type="text/javascript">
-        var graphs = {{ cv["graphJSON"]["graphJSON4"] | safe }};
+        var graphs = {{ graphJSON["graphJSON4"] | safe }};
         var text = "";
         plotGraphs(graphs, text);
     </script>
     <script type="text/javascript">
-        var graphs = {{ cv["graphJSON"]["graphJSON5"] | safe }};
+        var graphs = {{ graphJSON["graphJSON5"] | safe }};
         var text = "";
         plotGraphs(graphs, text);
     </script>
     <script type="text/javascript">
-        var graphs = {{ cv["graphJSON"]["graphJSON6"] | safe }};
+        var graphs = {{ graphJSON["graphJSON6"] | safe }};
         var text = "";
         plotGraphs(graphs, text);
     </script>
     <script type="text/javascript">
-        var graphs = {{ cv["graphJSON"]["graphJSON7"] | safe }};
+        var graphs = {{ graphJSON["graphJSON7"] | safe }};
         var text = "";
         plotGraphs(graphs, text);
     </script>
     <script type="text/javascript">
-        var graphs = {{ cv["graphJSON"]["graphJSON8"] | safe }};
+        var graphs = {{ graphJSON["graphJSON8"] | safe }};
         var text = "";
         plotGraphs(graphs, text);
     </script>
 
     <!-- positive data charts-->
     <script type="text/javascript">
-        var graphs = {{ cv["positive_graphJSON"]["graphJSON0"] | safe }};
+        var graphs = {{ positive_graphJSON["graphJSON0"] | safe }};
         var text = "";
         plotGraphs(graphs, text);
     </script>
     <script type="text/javascript">
-        var graphs = {{ cv["positive_graphJSON"]["graphJSON1"] | safe }};
+        var graphs = {{ positive_graphJSON["graphJSON1"] | safe }};
         var text = "";
         plotGraphs(graphs, text);
     </script>
 
     <!-- charts pca-->
     <script type="text/javascript">
-        var graphs = {{ cv["graphJSONquadratics"] | safe }};
+        var graphs = {{ graphJSONquadratics | safe }};
         var text = "";
         plotGraphs(graphs, text);
     </script>
     <script type="text/javascript">
-        var graphs = {{ cv["graphJSONquadratics_reg"] | safe }};
+        var graphs = {{ graphJSONquadratics_reg | safe }};
         var text = "_reg";
         plotGraphs(graphs, text);
     </script>

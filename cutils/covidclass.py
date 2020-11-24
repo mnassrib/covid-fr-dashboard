@@ -18,11 +18,8 @@ class CovidFr():
 
     ### URL source for loading covid data
     synthesis_covid_url = 'https://www.data.gouv.fr/fr/datasets/r/63352e38-d353-4b54-bfd1-f1b3ee1cabd7'
-
     synthesis_dprate_url = 'https://www.data.gouv.fr/fr/datasets/r/19a91d64-3cd3-42fc-9943-d635491a4d76'
-
     synthesis_rprate_url = 'https://www.data.gouv.fr/fr/datasets/r/ad09241e-52fa-4be8-8298-e5760b43cae2'
-
     synthesis_nprate_url = 'https://www.data.gouv.fr/fr/datasets/r/57d44bd6-c9fd-424f-9a72-7834454f9e3c'
 
     def __init__(self):
@@ -39,12 +36,12 @@ class CovidFr():
         region_base_data.index = region_base_data['insee']
         self.region_base_data = region_base_data.sort_index()
 
-        self.last_update = CovidFr.updatefunction(json_url="https://www.data.gouv.fr/datasets/5e7e104ace2080d9162b61d8/rdf.json", data_request_url=CovidFr.synthesis_covid_url)
+        self.last_update = CovidFr.updatechecking(json_url="https://www.data.gouv.fr/datasets/5e7e104ace2080d9162b61d8/rdf.json", data_request_url=CovidFr.synthesis_covid_url)
         #self.last_update = ""
 
         self.features = ["dc", "r_dc_rad", "rad", "hosp", "rea"]
 
-        self.positive_last_update = CovidFr.updatefunction(json_url="https://www.data.gouv.fr/datasets/5ed1175ca00bbe1e4941a46a/rdf.json", data_request_url=CovidFr.synthesis_dprate_url)
+        self.positive_last_update = CovidFr.updatechecking(json_url="https://www.data.gouv.fr/datasets/5ed1175ca00bbe1e4941a46a/rdf.json", data_request_url=CovidFr.synthesis_dprate_url)
         #self.positive_last_update = ""
         
         ###############################
@@ -63,19 +60,15 @@ class CovidFr():
         #-- default settings for pca-based global monitoring
         self.default_pcdim = 2
         self.default_normalize = self.normalize_states[0]
-        self.default_start_d_learn = '2020-05-15'
-        self.default_end_d_learn = '2020-08-25'
+        self.default_start_d_learn_fr = '15/05/2020'
+        self.default_end_d_learn_fr = '25/08/2020'
         self.default_alpha = 0.6
-        self.default_start_d_learn_fr = pd.Timestamp(self.default_start_d_learn).strftime("%d/%m/%Y")
-        self.default_end_d_learn_fr = pd.Timestamp(self.default_end_d_learn).strftime("%d/%m/%Y")
         #-- default settings for pca-based region hospitalization monitoring
         self.default_pcdim_reg = 3
         self.default_normalize_reg = self.normalize_states[0]
-        self.default_start_d_learn_reg = '2020-05-15'
-        self.default_end_d_learn_reg = '2020-08-25'
+        self.default_start_d_learn_fr_reg = '15/05/2020'
+        self.default_end_d_learn_fr_reg = '25/08/2020'
         self.default_alpha_reg = 0.7
-        self.default_start_d_learn_fr_reg = pd.Timestamp(self.default_start_d_learn_reg).strftime("%d/%m/%Y")
-        self.default_end_d_learn_fr_reg = pd.Timestamp(self.default_end_d_learn_reg).strftime("%d/%m/%Y")
         #-- other default settings
         self.department = None
         self.region = None
@@ -733,7 +726,7 @@ class CovidFr():
             return ""
         return "France"
 
-    def pca_charts(self, data, pcdim, q=0.975, normalize=False, start_d_learn='2020-05-15', end_d_learn='2020-08-20', alpha=1-0.4):
+    def pca_charts(self, data, pcdim, q=0.975, normalize=False, start_d_learn='15/05/2020', end_d_learn='20/08/2020', alpha=1-0.4):
         
         results = CovidFr.pca(data, pcdim, q, normalize, start_d_learn, end_d_learn, alpha)
 
@@ -744,7 +737,7 @@ class CovidFr():
                 y = 3*max(results["Hotelling"]["t2"])/4,
                 xref = "x",
                 yref = "y",
-                text = 'rpc: {} pc (ev: {}%)<br>normalized data: {}<br>model building: {} <br>to {}<br>smoothing filter: {}'.format(pcdim, ((np.trace(np.diag(results["eigenvalues"][:pcdim]))/np.trace(np.diag(results["eigenvalues"])))*100).round(2), normalize, datetime.strptime(start_d_learn, "%Y-%m-%d").strftime("%d/%m/%Y"), datetime.strptime(end_d_learn, "%Y-%m-%d").strftime("%d/%m/%Y"), alpha),
+                text = 'rpc: {} pc (ev: {}%)<br>normalized data: {}<br>model building: {} <br>to {}<br>smoothing filter: {}'.format(pcdim, ((np.trace(np.diag(results["eigenvalues"][:pcdim]))/np.trace(np.diag(results["eigenvalues"])))*100).round(2), normalize, start_d_learn, end_d_learn, alpha),
                 showarrow = False,
                 font = dict(
                     family = "Courier New, monospace",
@@ -934,8 +927,8 @@ class CovidFr():
         Get PCA on data
         """
         dataindex = data.index
-        learn_data = data[(data.index>=start_d_learn) & (data.index<=end_d_learn)].copy()
-        
+        #learn_data = data[(data.index>=start_d_learn) & (data.index<=end_d_learn)].copy()
+        learn_data = data[(data.index>=datetime.strptime(start_d_learn, '%d/%m/%Y').strftime("%Y-%m-%d")) & (data.index<=datetime.strptime(end_d_learn, '%d/%m/%Y').strftime("%Y-%m-%d"))].copy()
         if normalize is True:
             std = StandardScaler().fit(learn_data)
             learn_data = std.transform(learn_data)
@@ -1060,7 +1053,7 @@ class CovidFr():
         return output 
 
     @staticmethod
-    def updatefunction(json_url, data_request_url):
+    def updatechecking(json_url, data_request_url):
         with urllib.request.urlopen(json_url) as url:
             data = json.loads(url.read().decode())
             for dataset in data['@graph']:
