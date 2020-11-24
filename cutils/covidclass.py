@@ -66,16 +66,16 @@ class CovidFr():
         self.default_start_d_learn = '2020-05-15'
         self.default_end_d_learn = '2020-08-25'
         self.default_alpha = 0.6
-        self.default_start_d_learn_fr = json.dumps(datetime.strptime(self.default_start_d_learn, '%Y-%m-%d').strftime("%d/%m/%Y"))
-        self.default_end_d_learn_fr = json.dumps(datetime.strptime(self.default_end_d_learn, '%Y-%m-%d').strftime("%d/%m/%Y"))
+        self.default_start_d_learn_fr = pd.Timestamp(self.default_start_d_learn).strftime("%d/%m/%Y")
+        self.default_end_d_learn_fr = pd.Timestamp(self.default_end_d_learn).strftime("%d/%m/%Y")
         #-- default settings for pca-based region hospitalization monitoring
         self.default_pcdim_reg = 3
         self.default_normalize_reg = self.normalize_states[0]
         self.default_start_d_learn_reg = '2020-05-15'
         self.default_end_d_learn_reg = '2020-08-25'
         self.default_alpha_reg = 0.7
-        self.default_start_d_learn_fr_reg = json.dumps(datetime.strptime(self.default_start_d_learn_reg, '%Y-%m-%d').strftime("%d/%m/%Y"))
-        self.default_end_d_learn_fr_reg = json.dumps(datetime.strptime(self.default_end_d_learn_reg, '%Y-%m-%d').strftime("%d/%m/%Y"))
+        self.default_start_d_learn_fr_reg = pd.Timestamp(self.default_start_d_learn_reg).strftime("%d/%m/%Y")
+        self.default_end_d_learn_fr_reg = pd.Timestamp(self.default_end_d_learn_reg).strftime("%d/%m/%Y")
         #-- other default settings
         self.department = None
         self.region = None

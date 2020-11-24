@@ -35,14 +35,14 @@
                             <a class="nav-link" href="/">
                                 <i class="fa fa-fw fa-dashboard"></i>
                                 dashboard - 
-                                {% if (label != 'France'): %}
-                                    {% if (label['type'] == 'department'): %}
-                                        {{ label['prefix'] }} {{ label['name'] }} (FR-{{ department }})
+                                {% if (cv["label"] != 'France'): %}
+                                    {% if (cv["label"]['type'] == 'department'): %}
+                                        {{ cv["label"]['prefix'] }} {{ cv["label"]['name'] }} (FR-{{ cv["department"] }})
                                     {% else : %}
-                                        {{ label['prefix'] }} {{ label['name'] }} (FR-{{ region }})
+                                        {{ cv["label"]['prefix'] }} {{ cv["label"]['name'] }} (FR-{{ cv["region"] }})
                                     {% endif %}
                                 {% else : %}
-                                    {{ label }}
+                                    {{ cv["label"] }}
                                 {% endif %} 
                                 <span class="sr-only">(current)</span>
                             </a>
@@ -76,8 +76,8 @@
                 <div class="footer-copyright text-left">
                     &copy; <script>document.write(new Date().getFullYear())</script><a> </a><a href="https://www.linkedin.com/in/baligh-mnassri/?locale=en_US">Baligh Mnassri</a>
                     <p class="float-right">
-                        <!-- <small> <a href="#">Dernière mise à jour automatique des données : {{ counters['last_update_fr'] }}</a></small> -->
-                        <a style="font-size: 9px" href="#">Dernières mises à jour des données : {{ positive_counters['positive_last_update_fr'] }} pour les cas positifs & {{ counters['last_update_fr'] }} pour les autres données.
+                        <!-- <small> <a href="#">Dernière mise à jour automatique des données : {{ cv["counters"]['last_update_fr'] }}</a></small> -->
+                        <a style="font-size: 9px" href="#">Dernières mises à jour des données : {{ cv["positive_counters"]['positive_last_update_fr'] }} pour les cas positifs & {{ cv["counters"]['last_update_fr'] }} pour les autres données.
                     </a>
                     </p>
                 </div>
