@@ -5,7 +5,7 @@ import plotly
 import os
 
 import urllib.request
-from datetime import datetime, timedelta
+from datetime import datetime
 
 from sklearn.preprocessing import StandardScaler
 from scipy.stats import chi2
@@ -39,7 +39,7 @@ class CovidFr():
         self.last_update = CovidFr.updatechecking(json_url="https://www.data.gouv.fr/datasets/5e7e104ace2080d9162b61d8/rdf.json", data_request_url=CovidFr.synthesis_covid_url)
         #self.last_update = ""
 
-        self.features = ["dc", "r_dc_rad", "rad", "hosp", "rea"]
+        self.features = ["rad", "dc", "r_dc_rad", "hosp", "rea"]
 
         self.positive_last_update = CovidFr.updatechecking(json_url="https://www.data.gouv.fr/datasets/5ed1175ca00bbe1e4941a46a/rdf.json", data_request_url=CovidFr.synthesis_dprate_url)
         #self.positive_last_update = ""
@@ -70,8 +70,8 @@ class CovidFr():
         self.default_end_d_learn_fr_reg = '25/08/2020'
         self.default_alpha_reg = 0.7
         #-- other default settings
-        self.department = None
-        self.region = None
+        self.default_department = None
+        self.default_region = None
 
     def load_df(self):
         """
@@ -85,9 +85,9 @@ class CovidFr():
 
         self.first_day_fr = self.covid.jour.min().strftime("%d/%m/%Y")
 
-        self.last_day = self.covid.jour.max().strftime("%Y-%m-%d")
-
         self.last_day_fr = self.covid.jour.max().strftime("%d/%m/%Y")
+
+        self.last_day = self.covid.jour.max().strftime("%Y-%m-%d")
 
         self.dep_data_norm = {department: ((self.covid[(self.covid.dep == department) & (self.covid.sexe == 0)].groupby(['jour']).sum() / self.department_base_data.at[department, 'population']) * 100000).round(2) for department in self.department_base_data.insee}
         
@@ -130,7 +130,7 @@ class CovidFr():
         self.map_choice = ["Nombre de guérisons", "Nombre de décès", "Taux décès / (décès + guérisons)", "Nombre d'hospitalisations le "+self.last_day_fr, "Nombre de réanimations le "+self.last_day_fr, "Nombre de cas positifs le "+self.positive_last_day_fr]
         self.criterion_choice = ["Cas positifs au "+self.positive_last_day_fr, "Hospitalisations au "+self.last_day_fr, "Réanimations au "+self.last_day_fr]
         self.default_map_select = self.map_choice[5]
-        self.default_criterion = self.criterion_choice[0]
+        self.default_criterion_select = self.criterion_choice[0]
 
         return self.nprate, self.rprate, self.dprate
 

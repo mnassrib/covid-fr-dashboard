@@ -15,7 +15,7 @@ daily = covfr.dailycases(data=covid, pca=True)
 daily_reg = covfr.regiondailycases(data=covid, feature='hosp')
 charts_and_parameters = covfr.charts(top_number=covfr.default_top_dep)
 charts_and_parameters_positive_data = covfr.charts_positive_data(top_number=covfr.default_top_dep)
-label = covfr.request_label(department=covfr.department, region=covfr.region)
+label = covfr.request_label(department=covfr.default_department, region=covfr.default_region)
 graphJSONquadratics = covfr.pca_charts(data=daily, pcdim=covfr.default_pcdim, normalize=covfr.default_normalize, start_d_learn=covfr.default_start_d_learn_fr, end_d_learn=covfr.default_end_d_learn_fr, alpha=covfr.default_alpha)
 graphJSONquadratics_reg = covfr.pca_charts(data=daily_reg, pcdim=covfr.default_pcdim_reg, normalize=covfr.default_normalize_reg, start_d_learn=covfr.default_start_d_learn_fr_reg, end_d_learn=covfr.default_end_d_learn_fr_reg, alpha=covfr.default_alpha_reg)
 
@@ -24,8 +24,8 @@ graphJSONquadratics_reg = covfr.pca_charts(data=daily_reg, pcdim=covfr.default_p
 ###############################
 first_day_fr = covfr.first_day_fr
 last_day_fr = covfr.last_day_fr
-department = covfr.department
-region = covfr.region
+department = covfr.default_department
+region = covfr.default_region
 map_choice = covfr.map_choice
 criterion_choice = covfr.criterion_choice
 number_all_dep = covfr.number_all_dep
@@ -35,7 +35,7 @@ alpha_smooth = covfr.alpha_smooth
 pc_reg = covfr.pc_reg
 map_select = covfr.default_map_select
 top_dep = covfr.default_top_dep
-criterion = covfr.default_criterion
+criterion_select = covfr.default_criterion_select
 pcdim = covfr.default_pcdim
 normalize = covfr.default_normalize
 alpha = covfr.default_alpha
@@ -106,7 +106,7 @@ def graphs():
 
         map_select = map_select,
         top_dep = top_dep,
-        criterion = criterion,
+        criterion_select = criterion_select,
         pcdim = pcdim,
         normalize = normalize,
         start_d_learn_fr = start_d_learn_fr,
@@ -180,7 +180,7 @@ def maps():
 
         map_select = map_select,
         top_dep = top_dep,
-        criterion = criterion,
+        criterion_select = criterion_select,
         pcdim = pcdim,
         normalize = normalize,
         start_d_learn_fr = start_d_learn_fr,
@@ -200,7 +200,7 @@ def maps():
 def top_dep_settings():
 
     top_dep = int(request.form.getlist('top_dep_settings')[0])
-    criterion = request.form.getlist('top_dep_settings')[1]
+    criterion_select = request.form.getlist('top_dep_settings')[1]
     charts_and_parameters = covfr.charts(top_number=top_dep)
     charts_and_parameters_positive_data = covfr.charts_positive_data(top_number=top_dep)
 
@@ -257,7 +257,7 @@ def top_dep_settings():
 
         map_select = map_select,
         top_dep = top_dep,
-        criterion = criterion,
+        criterion_select = criterion_select,
         pcdim = pcdim,
         normalize = normalize,
         start_d_learn_fr = start_d_learn_fr,
@@ -339,7 +339,7 @@ def global_monitoring_settings():
 
         map_select = map_select,
         top_dep = top_dep,
-        criterion = criterion,
+        criterion_select = criterion_select,
         pcdim = pcdim,
         normalize = normalize,
         start_d_learn_fr = start_d_learn_fr,
@@ -421,7 +421,7 @@ def hosp_monitoring_settings():
 
         map_select = map_select,
         top_dep = top_dep,
-        criterion = criterion,
+        criterion_select = criterion_select,
         pcdim = pcdim,
         normalize = normalize,
         start_d_learn_fr = start_d_learn_fr,
@@ -497,7 +497,7 @@ def view_department(department):
 
         map_select = map_select,
         top_dep = top_dep,
-        criterion = criterion,
+        criterion_select = criterion_select,
         pcdim = pcdim,
         normalize = normalize,
         start_d_learn_fr = start_d_learn_fr,
@@ -573,7 +573,7 @@ def view_region(region):
 
         map_select = map_select,
         top_dep = top_dep,
-        criterion = criterion,
+        criterion_select = criterion_select,
         pcdim = pcdim,
         normalize = normalize,
         start_d_learn_fr = start_d_learn_fr,

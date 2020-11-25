@@ -679,8 +679,8 @@
                                     <label class="mr-sm-2" for="inlineFormCustomSelect">Critère à afficher</label>
                                     <select name="top_dep_settings" class="custom-select mr-sm-2">
                                         {% for c in criterion_choice %}
-                                            {% if (c == criterion): %}
-                                                <option selected="selected">{{ criterion }}</option> 
+                                            {% if (c == criterion_select): %}
+                                                <option selected="selected">{{ criterion_select }}</option> 
                                             {% else %}
                                                 <option value="{{ c }}">{{ c }}</option>
                                             {% endif %}
@@ -694,7 +694,7 @@
                         </form> 
                     </div>
                 </div>
-                {% if (criterion == "Cas positifs au "+positive_counters['positive_last_day_fr']): %}
+                {% if (criterion_select == "Cas positifs au "+positive_counters['positive_last_day_fr']): %}
                 <div class="col-md-12" id="">
                     <div class="card mb-4 box-shadow">
                         <div class="card-body">
@@ -703,7 +703,7 @@
                         </div>
                     </div>
                 </div>
-                {% elif (criterion == "Hospitalisations au "+last_day_fr): %}
+                {% elif (criterion_select == "Hospitalisations au "+last_day_fr): %}
                 <div class="col-md-12" id="">
                     <div class="card mb-4 box-shadow">
                         <div class="card-body">
@@ -712,7 +712,7 @@
                         </div>
                     </div>
                 </div>
-                {% elif (criterion == "Réanimations au "+last_day_fr): %}
+                {% elif (criterion_select == "Réanimations au "+last_day_fr): %}
                 <div class="col-md-12" id="">
                     <div class="card mb-4 box-shadow">
                         <div class="card-body">
