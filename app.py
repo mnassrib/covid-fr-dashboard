@@ -5,19 +5,26 @@ from cutils.covidclass import CovidFr
 app = Flask(__name__)
 
 covfr = CovidFr()
+
 covid = covfr.load_df()
 nprate, rprate, dprate = covfr.load_positive_df()
+
 ordaj_reg = covfr.overall_regions_data_as_json()
 oddaj_dep = covfr.overall_departments_data_as_json()
 orpdaj_reg = covfr.overall_regions_positive_data_as_json()
 odpdaj_dep = covfr.overall_departments_positive_data_as_json()
+
+charts_impact_dep = covfr.charts_impacted_dep()
+charts_and_parameters_covid_data = covfr.charts()
+charts_and_parameters_positive_data = covfr.charts_positive_data()
+
+label = covfr.request_label()
+
 daily = covfr.dailycases(data=covid, pca=True)
 daily_reg = covfr.regiondailycases(data=covid, feature='hosp')
-charts_and_parameters = covfr.charts(top_number=covfr.default_top_dep)
-charts_and_parameters_positive_data = covfr.charts_positive_data(top_number=covfr.default_top_dep)
-label = covfr.request_label(department=covfr.default_department, region=covfr.default_region)
-graphJSONquadratics = covfr.pca_charts(data=daily, pcdim=covfr.default_pcdim, normalize=covfr.default_normalize, start_d_learn=covfr.default_start_d_learn_fr, end_d_learn=covfr.default_end_d_learn_fr, alpha=covfr.default_alpha)
-graphJSONquadratics_reg = covfr.pca_charts(data=daily_reg, pcdim=covfr.default_pcdim_reg, normalize=covfr.default_normalize_reg, start_d_learn=covfr.default_start_d_learn_fr_reg, end_d_learn=covfr.default_end_d_learn_fr_reg, alpha=covfr.default_alpha_reg)
+
+graphJSON_pca_global = covfr.pca_charts(data=daily, pcdim=covfr.default_pcdim, normalize=covfr.default_normalize, start_d_learn=covfr.default_start_d_learn_fr, end_d_learn=covfr.default_end_d_learn_fr, alpha=covfr.default_alpha)
+graphJSON_pca_hosp_reg = covfr.pca_charts(data=daily_reg, pcdim=covfr.default_pcdim_reg, normalize=covfr.default_normalize_reg, start_d_learn=covfr.default_start_d_learn_fr_reg, end_d_learn=covfr.default_end_d_learn_fr_reg, alpha=covfr.default_alpha_reg)
 
 ##########################################################
 # required html page variables
@@ -51,15 +58,8 @@ end_d_learn_fr_reg = covfr.default_end_d_learn_fr_reg
 @app.route('/', methods=['GET', 'POST'])
 def graphs():
 
-    #return view("graphs.html")
-
     return render_template(
         "graphs.html",
-        graphJSON = charts_and_parameters,
-        positive_graphJSON = charts_and_parameters_positive_data,
-        counters = charts_and_parameters["counters"],
-        positive_counters = charts_and_parameters_positive_data["counters"],
-
         overall_regions_data_dc = ordaj_reg["overall_regions_dc_as_json"]['data_dc'],
         overall_regions_quantiles_dc = ordaj_reg["overall_regions_dc_as_json"]['quantiles_dc'],
         overall_departments_data_dc = oddaj_dep["overall_departments_dc_as_json"]['data_dc'],
@@ -90,6 +90,12 @@ def graphs():
         overall_departments_data_P = odpdaj_dep["overall_departments_P_as_json"]['data_P'],
         overall_departments_quantiles_P = odpdaj_dep["overall_departments_P_as_json"]['quantiles_P'],
 
+        impacted_dep_graphJSON = charts_impact_dep,
+        positive_graphJSON = charts_and_parameters_positive_data,
+        covid_graphJSON = charts_and_parameters_covid_data,
+        positive_counters = charts_and_parameters_positive_data["counters"],
+        covid_counters = charts_and_parameters_covid_data["counters"],
+
         first_day_fr = first_day_fr,
         last_day_fr = last_day_fr,
         label = label,
@@ -118,8 +124,8 @@ def graphs():
         end_d_learn_fr_reg = end_d_learn_fr_reg,
         alpha_reg = alpha_reg,
 
-        graphJSONquadratics = graphJSONquadratics["graphJSON"],
-        graphJSONquadratics_reg = graphJSONquadratics_reg["graphJSON"],
+        graphJSON_pca_global = graphJSON_pca_global["graphJSON"],
+        graphJSON_pca_hosp_reg = graphJSON_pca_hosp_reg["graphJSON"],
     )
 
 @app.route('/maps', methods=['GET', 'POST'])
@@ -129,11 +135,6 @@ def maps():
 
     return render_template(
         "graphs.html",
-        graphJSON = charts_and_parameters,
-        positive_graphJSON = charts_and_parameters_positive_data,
-        counters = charts_and_parameters["counters"],
-        positive_counters = charts_and_parameters_positive_data["counters"],
-
         overall_regions_data_dc = ordaj_reg["overall_regions_dc_as_json"]['data_dc'],
         overall_regions_quantiles_dc = ordaj_reg["overall_regions_dc_as_json"]['quantiles_dc'],
         overall_departments_data_dc = oddaj_dep["overall_departments_dc_as_json"]['data_dc'],
@@ -164,6 +165,12 @@ def maps():
         overall_departments_data_P = odpdaj_dep["overall_departments_P_as_json"]['data_P'],
         overall_departments_quantiles_P = odpdaj_dep["overall_departments_P_as_json"]['quantiles_P'],
 
+        impacted_dep_graphJSON = charts_impact_dep,
+        positive_graphJSON = charts_and_parameters_positive_data,
+        covid_graphJSON = charts_and_parameters_covid_data,
+        positive_counters = charts_and_parameters_positive_data["counters"],
+        covid_counters = charts_and_parameters_covid_data["counters"],
+
         first_day_fr = first_day_fr,
         last_day_fr = last_day_fr,
         label = label,
@@ -192,8 +199,8 @@ def maps():
         end_d_learn_fr_reg = end_d_learn_fr_reg,
         alpha_reg = alpha_reg,
 
-        graphJSONquadratics = graphJSONquadratics["graphJSON"],
-        graphJSONquadratics_reg = graphJSONquadratics_reg["graphJSON"],
+        graphJSON_pca_global = graphJSON_pca_global["graphJSON"],
+        graphJSON_pca_hosp_reg = graphJSON_pca_hosp_reg["graphJSON"],
     )
 
 @app.route("/top_dep_settings", methods=['GET', 'POST'])
@@ -201,16 +208,10 @@ def top_dep_settings():
 
     top_dep = int(request.form.getlist('top_dep_settings')[0])
     criterion_select = request.form.getlist('top_dep_settings')[1]
-    charts_and_parameters = covfr.charts(top_number=top_dep)
-    charts_and_parameters_positive_data = covfr.charts_positive_data(top_number=top_dep)
-
+    impacted_dep_graphJSON = covfr.charts_impacted_dep(top_number=top_dep)
+    
     return render_template(
         "graphs.html",
-        graphJSON = charts_and_parameters,
-        positive_graphJSON = charts_and_parameters_positive_data,
-        counters = charts_and_parameters["counters"],
-        positive_counters = charts_and_parameters_positive_data["counters"],
-
         overall_regions_data_dc = ordaj_reg["overall_regions_dc_as_json"]['data_dc'],
         overall_regions_quantiles_dc = ordaj_reg["overall_regions_dc_as_json"]['quantiles_dc'],
         overall_departments_data_dc = oddaj_dep["overall_departments_dc_as_json"]['data_dc'],
@@ -241,6 +242,12 @@ def top_dep_settings():
         overall_departments_data_P = odpdaj_dep["overall_departments_P_as_json"]['data_P'],
         overall_departments_quantiles_P = odpdaj_dep["overall_departments_P_as_json"]['quantiles_P'],
 
+        impacted_dep_graphJSON = charts_impact_dep,
+        positive_graphJSON = charts_and_parameters_positive_data,
+        covid_graphJSON = charts_and_parameters_covid_data,
+        positive_counters = charts_and_parameters_positive_data["counters"],
+        covid_counters = charts_and_parameters_covid_data["counters"],
+
         first_day_fr = first_day_fr,
         last_day_fr = last_day_fr,
         label = label,
@@ -269,8 +276,8 @@ def top_dep_settings():
         end_d_learn_fr_reg = end_d_learn_fr_reg,
         alpha_reg = alpha_reg,
 
-        graphJSONquadratics = graphJSONquadratics["graphJSON"],
-        graphJSONquadratics_reg = graphJSONquadratics_reg["graphJSON"],
+        graphJSON_pca_global = graphJSON_pca_global["graphJSON"],
+        graphJSON_pca_hosp_reg = graphJSON_pca_hosp_reg["graphJSON"],
     )
 
 @app.route("/global_monitoring_settings", methods=['GET', 'POST'])
@@ -284,15 +291,10 @@ def global_monitoring_settings():
     end_d_learn_fr = global_select[2].split(" - ")[1]
     alpha = float(global_select[3])
 
-    graphJSONquadratics = covfr.pca_charts(data=daily, pcdim=pcdim, normalize=normalize, start_d_learn=start_d_learn_fr, end_d_learn=end_d_learn_fr, alpha=alpha)
+    graphJSON_pca_global = covfr.pca_charts(data=daily, pcdim=pcdim, normalize=normalize, start_d_learn=start_d_learn_fr, end_d_learn=end_d_learn_fr, alpha=alpha)
 
     return render_template(
         "graphs.html",
-        graphJSON = charts_and_parameters,
-        positive_graphJSON = charts_and_parameters_positive_data,
-        counters = charts_and_parameters["counters"],
-        positive_counters = charts_and_parameters_positive_data["counters"],
-
         overall_regions_data_dc = ordaj_reg["overall_regions_dc_as_json"]['data_dc'],
         overall_regions_quantiles_dc = ordaj_reg["overall_regions_dc_as_json"]['quantiles_dc'],
         overall_departments_data_dc = oddaj_dep["overall_departments_dc_as_json"]['data_dc'],
@@ -323,6 +325,12 @@ def global_monitoring_settings():
         overall_departments_data_P = odpdaj_dep["overall_departments_P_as_json"]['data_P'],
         overall_departments_quantiles_P = odpdaj_dep["overall_departments_P_as_json"]['quantiles_P'],
 
+        impacted_dep_graphJSON = charts_impact_dep,
+        positive_graphJSON = charts_and_parameters_positive_data,
+        covid_graphJSON = charts_and_parameters_covid_data,
+        positive_counters = charts_and_parameters_positive_data["counters"],
+        covid_counters = charts_and_parameters_covid_data["counters"],
+
         first_day_fr = first_day_fr,
         last_day_fr = last_day_fr,
         label = label,
@@ -351,8 +359,8 @@ def global_monitoring_settings():
         end_d_learn_fr_reg = end_d_learn_fr_reg,
         alpha_reg = alpha_reg,
 
-        graphJSONquadratics = graphJSONquadratics["graphJSON"],
-        graphJSONquadratics_reg = graphJSONquadratics_reg["graphJSON"],
+        graphJSON_pca_global = graphJSON_pca_global["graphJSON"],
+        graphJSON_pca_hosp_reg = graphJSON_pca_hosp_reg["graphJSON"],
     )
 
 @app.route("/hosp_monitoring_settings", methods=['GET', 'POST'])
@@ -366,15 +374,10 @@ def hosp_monitoring_settings():
     end_d_learn_fr_reg = hosp_select[2].split(" - ")[1]
     alpha_reg = float(hosp_select[3])
 
-    graphJSONquadratics_reg = covfr.pca_charts(data=daily_reg, pcdim=pcdim_reg, normalize=normalize_reg, start_d_learn=start_d_learn_fr_reg, end_d_learn=end_d_learn_fr_reg, alpha=alpha_reg)
+    graphJSON_pca_hosp_reg = covfr.pca_charts(data=daily_reg, pcdim=pcdim_reg, normalize=normalize_reg, start_d_learn=start_d_learn_fr_reg, end_d_learn=end_d_learn_fr_reg, alpha=alpha_reg)
 
     return render_template(
         "graphs.html",
-        graphJSON = charts_and_parameters,
-        positive_graphJSON = charts_and_parameters_positive_data,
-        counters = charts_and_parameters["counters"],
-        positive_counters = charts_and_parameters_positive_data["counters"],
-
         overall_regions_data_dc = ordaj_reg["overall_regions_dc_as_json"]['data_dc'],
         overall_regions_quantiles_dc = ordaj_reg["overall_regions_dc_as_json"]['quantiles_dc'],
         overall_departments_data_dc = oddaj_dep["overall_departments_dc_as_json"]['data_dc'],
@@ -405,6 +408,12 @@ def hosp_monitoring_settings():
         overall_departments_data_P = odpdaj_dep["overall_departments_P_as_json"]['data_P'],
         overall_departments_quantiles_P = odpdaj_dep["overall_departments_P_as_json"]['quantiles_P'],
 
+        impacted_dep_graphJSON = charts_impact_dep,
+        positive_graphJSON = charts_and_parameters_positive_data,
+        covid_graphJSON = charts_and_parameters_covid_data,
+        positive_counters = charts_and_parameters_positive_data["counters"],
+        covid_counters = charts_and_parameters_covid_data["counters"],
+
         first_day_fr = first_day_fr,
         last_day_fr = last_day_fr,
         label = label,
@@ -433,24 +442,19 @@ def hosp_monitoring_settings():
         end_d_learn_fr_reg = end_d_learn_fr_reg,
         alpha_reg = alpha_reg,
 
-        graphJSONquadratics = graphJSONquadratics["graphJSON"],
-        graphJSONquadratics_reg = graphJSONquadratics_reg["graphJSON"],
+        graphJSON_pca_global = graphJSON_pca_global["graphJSON"],
+        graphJSON_pca_hosp_reg = graphJSON_pca_hosp_reg["graphJSON"],
     )
 
 @app.route('/departement/<string:department>', methods=['GET', 'POST'])
 def view_department(department):
 
-    charts_and_parameters = covfr.charts(data=None, department=department, region=region, top_number=top_dep)
-    charts_and_parameters_positive_data = covfr.charts_positive_data(data=None, department=department, region=region, top_number=top_dep)
-    label = covfr.request_label(department=department, region=region)
+    charts_and_parameters_covid_data = covfr.charts(department=department)
+    charts_and_parameters_positive_data = covfr.charts_positive_data(department=department)
+    label = covfr.request_label(department=department)
 
     return render_template(
         "graphs.html",
-        graphJSON = charts_and_parameters,
-        positive_graphJSON = charts_and_parameters_positive_data,
-        counters = charts_and_parameters["counters"],
-        positive_counters = charts_and_parameters_positive_data["counters"],
-
         overall_regions_data_dc = ordaj_reg["overall_regions_dc_as_json"]['data_dc'],
         overall_regions_quantiles_dc = ordaj_reg["overall_regions_dc_as_json"]['quantiles_dc'],
         overall_departments_data_dc = oddaj_dep["overall_departments_dc_as_json"]['data_dc'],
@@ -481,6 +485,12 @@ def view_department(department):
         overall_departments_data_P = odpdaj_dep["overall_departments_P_as_json"]['data_P'],
         overall_departments_quantiles_P = odpdaj_dep["overall_departments_P_as_json"]['quantiles_P'],
 
+        impacted_dep_graphJSON = charts_impact_dep,
+        positive_graphJSON = charts_and_parameters_positive_data,
+        covid_graphJSON = charts_and_parameters_covid_data,
+        positive_counters = charts_and_parameters_positive_data["counters"],
+        covid_counters = charts_and_parameters_covid_data["counters"],
+
         first_day_fr = first_day_fr,
         last_day_fr = last_day_fr,
         label = label,
@@ -509,24 +519,19 @@ def view_department(department):
         end_d_learn_fr_reg = end_d_learn_fr_reg,
         alpha_reg = alpha_reg,
 
-        graphJSONquadratics = graphJSONquadratics["graphJSON"],
-        graphJSONquadratics_reg = graphJSONquadratics_reg["graphJSON"],
+        graphJSON_pca_global = graphJSON_pca_global["graphJSON"],
+        graphJSON_pca_hosp_reg = graphJSON_pca_hosp_reg["graphJSON"],
     )
 
 @app.route('/region/<string:region>', methods=['GET', 'POST'])
 def view_region(region):
 
-    charts_and_parameters = covfr.charts(data=None, department=department, region=region, top_number=top_dep)
-    charts_and_parameters_positive_data = covfr.charts_positive_data(data=None, department=department, region=region, top_number=top_dep)
-    label = covfr.request_label(department=department, region=region)
+    charts_and_parameters_covid_data = covfr.charts(region=region)
+    charts_and_parameters_positive_data = covfr.charts_positive_data(region=region)
+    label = covfr.request_label(region=region)
 
     return render_template(
         "graphs.html",
-        graphJSON = charts_and_parameters,
-        positive_graphJSON = charts_and_parameters_positive_data,
-        counters = charts_and_parameters["counters"],
-        positive_counters = charts_and_parameters_positive_data["counters"],
-
         overall_regions_data_dc = ordaj_reg["overall_regions_dc_as_json"]['data_dc'],
         overall_regions_quantiles_dc = ordaj_reg["overall_regions_dc_as_json"]['quantiles_dc'],
         overall_departments_data_dc = oddaj_dep["overall_departments_dc_as_json"]['data_dc'],
@@ -557,6 +562,12 @@ def view_region(region):
         overall_departments_data_P = odpdaj_dep["overall_departments_P_as_json"]['data_P'],
         overall_departments_quantiles_P = odpdaj_dep["overall_departments_P_as_json"]['quantiles_P'],
 
+        impacted_dep_graphJSON = charts_impact_dep,
+        positive_graphJSON = charts_and_parameters_positive_data,
+        covid_graphJSON = charts_and_parameters_covid_data,
+        positive_counters = charts_and_parameters_positive_data["counters"],
+        covid_counters = charts_and_parameters_covid_data["counters"],
+
         first_day_fr = first_day_fr,
         last_day_fr = last_day_fr,
         label = label,
@@ -585,8 +596,8 @@ def view_region(region):
         end_d_learn_fr_reg = end_d_learn_fr_reg,
         alpha_reg = alpha_reg,
 
-        graphJSONquadratics = graphJSONquadratics["graphJSON"],
-        graphJSONquadratics_reg = graphJSONquadratics_reg["graphJSON"],
+        graphJSON_pca_global = graphJSON_pca_global["graphJSON"],
+        graphJSON_pca_hosp_reg = graphJSON_pca_hosp_reg["graphJSON"],
     )
 
 if __name__ == '__main__':

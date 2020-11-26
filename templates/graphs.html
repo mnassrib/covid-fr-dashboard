@@ -40,21 +40,21 @@
                                     <div class="row">
                                         <div class="col-md-12">
                                             <button onclick="window.location.href='#patients_décédés_quotidiennement';" class="button death">
-                                                <span class="key-value">{{ counters['last_dc'] }}</span>
-                                                {% if (counters['diff_dc'] < 0): %}
-                                                    <br /> <font size="2">({{ counters['diff_dc'] }})</font>
+                                                <span class="key-value">{{ covid_counters['last_dc'] }}</span>
+                                                {% if (covid_counters['diff_dc'] < 0): %}
+                                                    <br /> <font size="2">({{ covid_counters['diff_dc'] }})</font>
                                                 {% else: %}
-                                                    <br /> <font size="2">(+{{ counters['diff_dc'] }})</font>
+                                                    <br /> <font size="2">(+{{ covid_counters['diff_dc'] }})</font>
                                                 {% endif %}
-                                                {% if (counters['last_dc']>1): %}
+                                                {% if (covid_counters['last_dc']>1): %}
                                                     <br /> nouveaux décès
                                                 {% else: %}
                                                     <br /> nouveau décès
                                                 {% endif %}
                                             </button>
                                             <button onclick="window.location.href='#total_patients_décédés';" class="button death">
-                                                <span class="key-value" style="font-size:21px">{{ counters['all_dc'] }}</span>
-                                                {% if (counters['all_dc']>1): %}
+                                                <span class="key-value" style="font-size:21px">{{ covid_counters['all_dc'] }}</span>
+                                                {% if (covid_counters['all_dc']>1): %}
                                                     <br /> décès au total
                                                 {% else: %}
                                                     <br /> décès au total
@@ -101,13 +101,13 @@
                                 <div class="row">
                                     <div class="col-md-6">
                                         <button onclick="window.location.href='#patients_en_réanimation';" class="button resuscitation">
-                                            <span class="key-value">{{ counters['current_rea'] }}</span>
-                                            {% if (counters['diff_rea'] < 0): %}
-                                                <br /> <font size="2">({{ counters['diff_rea'] }})</font>
+                                            <span class="key-value">{{ covid_counters['current_rea'] }}</span>
+                                            {% if (covid_counters['diff_rea'] < 0): %}
+                                                <br /> <font size="2">({{ covid_counters['diff_rea'] }})</font>
                                             {% else: %}
-                                                <br /> <font size="2">(+{{ counters['diff_rea'] }})</font>
+                                                <br /> <font size="2">(+{{ covid_counters['diff_rea'] }})</font>
                                             {% endif %}
-                                            {% if (counters['current_rea']>1): %}
+                                            {% if (covid_counters['current_rea']>1): %}
                                                 <br /> réanimations
                                             {% else: %}
                                                 <br /> réanimation
@@ -116,13 +116,13 @@
                                     </div>
                                     <div class="col-md-6">
                                         <button onclick="window.location.href='#patients_en_hospitalisation';" class="button hospitalized">
-                                            <span class="key-value">{{ counters['current_hosp'] }}</span>
-                                            {% if (counters['diff_hosp'] < 0): %}
-                                                <br /> <font size="2">({{ counters['diff_hosp'] }})</font>
+                                            <span class="key-value">{{ covid_counters['current_hosp'] }}</span>
+                                            {% if (covid_counters['diff_hosp'] < 0): %}
+                                                <br /> <font size="2">({{ covid_counters['diff_hosp'] }})</font>
                                             {% else: %}
-                                                <br /> <font size="2">(+{{ counters['diff_hosp'] }})</font>
+                                                <br /> <font size="2">(+{{ covid_counters['diff_hosp'] }})</font>
                                             {% endif %}
-                                            {% if (counters['current_hosp']>1): %}
+                                            {% if (covid_counters['current_hosp']>1): %}
                                                 <br /> hospitalisations
                                             {% else: %}
                                                 <br /> hospitalisation
@@ -138,21 +138,21 @@
                                     <div class="row">
                                         <div class="col-md-12">
                                             <button onclick="window.location.href='#patients_guéris_quotidiennement';" class="button healed">
-                                                <span class="key-value">{{ counters['last_rad'] }}</span>
-                                                {% if (counters['diff_rad'] < 0): %}
-                                                    <br /> <font size="2">({{ counters['diff_rad'] }})</font>
+                                                <span class="key-value">{{ covid_counters['last_rad'] }}</span>
+                                                {% if (covid_counters['diff_rad'] < 0): %}
+                                                    <br /> <font size="2">({{ covid_counters['diff_rad'] }})</font>
                                                 {% else: %}
-                                                    <br /> <font size="2">(+{{ counters['diff_rad'] }})</font>
+                                                    <br /> <font size="2">(+{{ covid_counters['diff_rad'] }})</font>
                                                 {% endif %}
-                                                {% if (counters['last_rad']>1): %}
+                                                {% if (covid_counters['last_rad']>1): %}
                                                     <br /> nouvelles guérisons
                                                 {% else: %}
                                                     <br /> nouvelle guérison
                                                 {% endif %}
                                             </button>
                                             <button onclick="window.location.href='#total_patients_guéris';" class="button healed">
-                                                <span class="key-value" style="font-size:21px">{{ counters['all_rad'] }}</span>
-                                                {% if (counters['all_rad']>1): %}
+                                                <span class="key-value" style="font-size:21px">{{ covid_counters['all_rad'] }}</span>
+                                                {% if (covid_counters['all_rad']>1): %}
                                                     <br /> guérisons au total
                                                 {% else: %}
                                                     <br /> guérison au total
@@ -185,13 +185,13 @@
                                 <div class="row">
                                     <div class="col-md-3">
                                         <button onclick="window.location.href='#map_view';" class="button death">
-                                            <span class="key-value">{{ counters['rates']['dc'] }}</span>
-                                            {% if (counters['rates']['d_dc'] < 0): %}
-                                                <br /> <font size="2">({{ counters['rates']['d_dc'] }})</font>
+                                            <span class="key-value">{{ covid_counters['rates']['dc'] }}</span>
+                                            {% if (covid_counters['rates']['d_dc'] < 0): %}
+                                                <br /> <font size="2">({{ covid_counters['rates']['d_dc'] }})</font>
                                             {% else: %}
-                                                <br /> <font size="2">(+{{ counters['rates']['d_dc'] }})</font>
+                                                <br /> <font size="2">(+{{ covid_counters['rates']['d_dc'] }})</font>
                                             {% endif %}
-                                            {% if (counters['rates']['dc']>1): %}
+                                            {% if (covid_counters['rates']['dc']>1): %}
                                                 <br /> total décès
                                             {% else: %}
                                                 <br /> total décès
@@ -200,13 +200,13 @@
                                     </div>
                                     <div class="col-md-3">
                                         <button onclick="window.location.href='#map_view';" class="button resuscitation">
-                                            <span class="key-value">{{ counters['rates']['rea'] }}</span>
-                                            {% if (counters['rates']['d_rea'] < 0): %}
-                                                <br /> <font size="2">({{ counters['rates']['d_rea'] }})</font>
+                                            <span class="key-value">{{ covid_counters['rates']['rea'] }}</span>
+                                            {% if (covid_counters['rates']['d_rea'] < 0): %}
+                                                <br /> <font size="2">({{ covid_counters['rates']['d_rea'] }})</font>
                                             {% else: %}
-                                                <br /> <font size="2">(+{{ counters['rates']['d_rea'] }})</font>
+                                                <br /> <font size="2">(+{{ covid_counters['rates']['d_rea'] }})</font>
                                             {% endif %}
-                                            {% if (counters['rates']['rea']>1): %}
+                                            {% if (covid_counters['rates']['rea']>1): %}
                                                 <br /> réanimations
                                             {% else: %}
                                                 <br /> réanimation
@@ -215,13 +215,13 @@
                                     </div>
                                     <div class="col-md-3">
                                         <button onclick="window.location.href='#map_view';" class="button hospitalized">
-                                            <span class="key-value">{{ counters['rates']['hosp'] }}</span>
-                                            {% if (counters['rates']['d_hosp'] < 0): %}
-                                                <br /> <font size="2">({{ counters['rates']['d_hosp'] }})</font>
+                                            <span class="key-value">{{ covid_counters['rates']['hosp'] }}</span>
+                                            {% if (covid_counters['rates']['d_hosp'] < 0): %}
+                                                <br /> <font size="2">({{ covid_counters['rates']['d_hosp'] }})</font>
                                             {% else: %}
-                                                <br /> <font size="2">(+{{ counters['rates']['d_hosp'] }})</font>
+                                                <br /> <font size="2">(+{{ covid_counters['rates']['d_hosp'] }})</font>
                                             {% endif %}
-                                            {% if (counters['rates']['hosp']>1): %}
+                                            {% if (covid_counters['rates']['hosp']>1): %}
                                                 <br /> hospitalisations
                                             {% else: %}
                                                 <br /> hospitalisation
@@ -230,13 +230,13 @@
                                     </div>
                                     <div class="col-md-3">
                                         <button onclick="window.location.href='#map_view';" class="button healed">
-                                            <span class="key-value">{{ counters['rates']['rad'] }}</span>
-                                            {% if (counters['rates']['d_rad'] < 0): %}
-                                                <br /> <font size="2">({{ counters['rates']['d_rad'] }})</font>
+                                            <span class="key-value">{{ covid_counters['rates']['rad'] }}</span>
+                                            {% if (covid_counters['rates']['d_rad'] < 0): %}
+                                                <br /> <font size="2">({{ covid_counters['rates']['d_rad'] }})</font>
                                             {% else: %}
-                                                <br /> <font size="2">(+{{ counters['rates']['d_rad'] }})</font>
+                                                <br /> <font size="2">(+{{ covid_counters['rates']['d_rad'] }})</font>
                                             {% endif %}
-                                            {% if (counters['rates']['rad']>1): %}
+                                            {% if (covid_counters['rates']['rad']>1): %}
                                                 <br /> total guérisons
                                             {% else: %}
                                                 <br /> total guérison
@@ -249,11 +249,11 @@
                                     </div>
                                     <div class="col-md-4">
                                         <button onclick="window.location.href='#map_view';" class="button">
-                                            <span class="key-value">{{ counters['rates']['r_dc_rad'] }}%</span>
-                                            {% if (counters['rates']['d_r_dc_rad'] < 0): %}
-                                                <br /> <font size="2">({{ counters['rates']['d_r_dc_rad'] }}%)</font>
+                                            <span class="key-value">{{ covid_counters['rates']['r_dc_rad'] }}%</span>
+                                            {% if (covid_counters['rates']['d_r_dc_rad'] < 0): %}
+                                                <br /> <font size="2">({{ covid_counters['rates']['d_r_dc_rad'] }}%)</font>
                                             {% else: %}
-                                                <br /> <font size="2">(+{{ counters['rates']['d_r_dc_rad'] }}%)</font>
+                                                <br /> <font size="2">(+{{ covid_counters['rates']['d_r_dc_rad'] }}%)</font>
                                             {% endif %}
                                                 <br /> décès/guérisons
                                         </button>
@@ -324,7 +324,7 @@
                                                     <p>Légende</p>
                                                 </a>
                                                 <div class="areaLegend"></div>
-                                                <p style="color:red">&#x26A0; Niveau national : {{ counters['nat_refs']['nat_dc'] }} décès *</p>
+                                                <p style="color:red">&#x26A0; Niveau national : {{ covid_counters['nat_refs']['nat_dc'] }} décès *</p>
                                                 <p style="color:black"><small>(* : pour 100 000 habitants)</small></p>
                                             </div>
                                         </div>
@@ -352,7 +352,7 @@
                                                     <p>Légende</p>
                                                 </a>
                                                 <div class="areaLegend"></div>
-                                                <p style="color:red">&#x26A0; Niveau national : {{ counters['nat_refs']['nat_dc'] }} décès *</p>
+                                                <p style="color:red">&#x26A0; Niveau national : {{ covid_counters['nat_refs']['nat_dc'] }} décès *</p>
                                                 <p style="color:black"><small>(* : pour 100 000 habitants)</small></p>
                                             </div>
                                         </div>
@@ -381,7 +381,7 @@
                                                     <p>Légende</p>
                                                 </a>
                                                 <div class="areaLegend"></div>
-                                                <p style="color:red">&#x26A0; Taux national : {{ counters['nat_refs']['nat_r_dc_rad'] }}</p>
+                                                <p style="color:red">&#x26A0; Taux national : {{ covid_counters['nat_refs']['nat_r_dc_rad'] }}</p>
                                             </div>
                                         </div>
                                     </div>
@@ -408,7 +408,7 @@
                                                     <p>Légende</p>
                                                 </a>
                                                 <div class="areaLegend"></div>
-                                                <p style="color:red">&#x26A0; Taux national : {{ counters['nat_refs']['nat_r_dc_rad'] }}</p>
+                                                <p style="color:red">&#x26A0; Taux national : {{ covid_counters['nat_refs']['nat_r_dc_rad'] }}</p>
                                             </div>
                                         </div>
                                     </div>
@@ -436,7 +436,7 @@
                                                     <p>Légende</p>
                                                 </a>
                                                 <div class="areaLegend"></div>
-                                                <p style="color:green">&#x26A0; Niveau national : {{ counters['nat_refs']['nat_rad'] }} guérisons *</p>
+                                                <p style="color:green">&#x26A0; Niveau national : {{ covid_counters['nat_refs']['nat_rad'] }} guérisons *</p>
                                                 <p style="color:black"><small>(* : pour 100 000 habitants)</small></p>
                                             </div>
                                         </div>
@@ -464,7 +464,7 @@
                                                     <p>Légende</p>
                                                 </a>
                                                 <div class="areaLegend"></div>
-                                                <p style="color:green">&#x26A0; Niveau national : {{ counters['nat_refs']['nat_rad'] }} guérisons *</p>
+                                                <p style="color:green">&#x26A0; Niveau national : {{ covid_counters['nat_refs']['nat_rad'] }} guérisons *</p>
                                                 <p style="color:black"><small>(* : pour 100 000 habitants)</small></p>
                                             </div>
                                         </div>
@@ -493,7 +493,7 @@
                                                     <p>Légende</p>
                                                 </a>
                                                 <div class="areaLegend"></div>
-                                                <p style="color:red">&#x26A0; Niveau national : {{ counters['nat_refs']['nat_hosp'] }} hospitalisations *</p>
+                                                <p style="color:red">&#x26A0; Niveau national : {{ covid_counters['nat_refs']['nat_hosp'] }} hospitalisations *</p>
                                                 <p style="color:black"><small>(* : pour 100 000 habitants)</small></p>
                                             </div>
                                         </div>
@@ -521,7 +521,7 @@
                                                     <p>Légende</p>
                                                 </a>
                                                 <div class="areaLegend"></div>
-                                                <p style="color:red">&#x26A0; Niveau national : {{ counters['nat_refs']['nat_hosp'] }} hospitalisations *</p>
+                                                <p style="color:red">&#x26A0; Niveau national : {{ covid_counters['nat_refs']['nat_hosp'] }} hospitalisations *</p>
                                                 <p style="color:black"><small>(* : pour 100 000 habitants)</small></p>
                                             </div>
                                         </div>
@@ -550,7 +550,7 @@
                                                     <p>Légende</p>
                                                 </a>
                                                 <div class="areaLegend"></div>
-                                                <p style="color:red">&#x26A0; Niveau national : {{ counters['nat_refs']['nat_rea'] }} réanimations *</p>
+                                                <p style="color:red">&#x26A0; Niveau national : {{ covid_counters['nat_refs']['nat_rea'] }} réanimations *</p>
                                                 <p style="color:black"><small>(* : pour 100 000 habitants)</small></p>
                                             </div>
                                         </div>
@@ -578,7 +578,7 @@
                                                     <p>Légende</p>
                                                 </a>
                                                 <div class="areaLegend"></div>
-                                                <p style="color:red">&#x26A0; Niveau national : {{ counters['nat_refs']['nat_rea'] }} réanimations *</p>
+                                                <p style="color:red">&#x26A0; Niveau national : {{ covid_counters['nat_refs']['nat_rea'] }} réanimations *</p>
                                                 <p style="color:black"><small>(* : pour 100 000 habitants)</small></p>
                                             </div>
                                         </div>
@@ -1184,49 +1184,24 @@
         plotDepMap(mapDiv, departments, quantiles, current_label, text, feature_name, feature_par_habitants, colors, fill_slices);
     </script>
 
-    <!-- charts -->
+   <!-- impacted dep charts-->
     <script type="text/javascript">
-        var graphs = {{ graphJSON["graphJSON0"] | safe }};
+        var graphs = {{ impacted_dep_graphJSON["graphJSON0"] | safe }};
         var text = "";
         plotGraphs(graphs, text);
     </script>
     <script type="text/javascript">
-        var graphs = {{ graphJSON["graphJSON1"] | safe }};
+        var graphs = {{ impacted_dep_graphJSON["graphJSON1"] | safe }};
         var text = "";
         plotGraphs(graphs, text);
     </script>
     <script type="text/javascript">
-        var graphs = {{ graphJSON["graphJSON2"] | safe }};
+        var graphs = {{ impacted_dep_graphJSON["graphJSON2"] | safe }};
         var text = "";
         plotGraphs(graphs, text);
     </script>
     <script type="text/javascript">
-        var graphs = {{ graphJSON["graphJSON3"] | safe }};
-        var text = "";
-        plotGraphs(graphs, text);
-    </script>
-    <script type="text/javascript">
-        var graphs = {{ graphJSON["graphJSON4"] | safe }};
-        var text = "";
-        plotGraphs(graphs, text);
-    </script>
-    <script type="text/javascript">
-        var graphs = {{ graphJSON["graphJSON5"] | safe }};
-        var text = "";
-        plotGraphs(graphs, text);
-    </script>
-    <script type="text/javascript">
-        var graphs = {{ graphJSON["graphJSON6"] | safe }};
-        var text = "";
-        plotGraphs(graphs, text);
-    </script>
-    <script type="text/javascript">
-        var graphs = {{ graphJSON["graphJSON7"] | safe }};
-        var text = "";
-        plotGraphs(graphs, text);
-    </script>
-    <script type="text/javascript">
-        var graphs = {{ graphJSON["graphJSON8"] | safe }};
+        var graphs = {{ impacted_dep_graphJSON["graphJSON3"] | safe }};
         var text = "";
         plotGraphs(graphs, text);
     </script>
@@ -1237,20 +1212,47 @@
         var text = "";
         plotGraphs(graphs, text);
     </script>
+
+    <!-- charts rad, dc, rea and hosp -->
     <script type="text/javascript">
-        var graphs = {{ positive_graphJSON["graphJSON1"] | safe }};
+        var graphs = {{ covid_graphJSON["graphJSON0"] | safe }};
+        var text = "";
+        plotGraphs(graphs, text);
+    </script>
+    <script type="text/javascript">
+        var graphs = {{ covid_graphJSON["graphJSON1"] | safe }};
+        var text = "";
+        plotGraphs(graphs, text);
+    </script>
+    <script type="text/javascript">
+        var graphs = {{ covid_graphJSON["graphJSON2"] | safe }};
+        var text = "";
+        plotGraphs(graphs, text);
+    </script>
+    <script type="text/javascript">
+        var graphs = {{ covid_graphJSON["graphJSON3"] | safe }};
+        var text = "";
+        plotGraphs(graphs, text);
+    </script>
+    <script type="text/javascript">
+        var graphs = {{ covid_graphJSON["graphJSON4"] | safe }};
+        var text = "";
+        plotGraphs(graphs, text);
+    </script>
+    <script type="text/javascript">
+        var graphs = {{ covid_graphJSON["graphJSON5"] | safe }};
         var text = "";
         plotGraphs(graphs, text);
     </script>
 
     <!-- charts pca-->
     <script type="text/javascript">
-        var graphs = {{ graphJSONquadratics | safe }};
+        var graphs = {{ graphJSON_pca_global | safe }};
         var text = "";
         plotGraphs(graphs, text);
     </script>
     <script type="text/javascript">
-        var graphs = {{ graphJSONquadratics_reg | safe }};
+        var graphs = {{ graphJSON_pca_hosp_reg | safe }};
         var text = "_reg";
         plotGraphs(graphs, text);
     </script>

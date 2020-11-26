@@ -89,10 +89,6 @@ class CovidFr():
 
         self.last_day = self.covid.jour.max().strftime("%Y-%m-%d")
 
-        self.dep_data_norm = {department: ((self.covid[(self.covid.dep == department) & (self.covid.sexe == 0)].groupby(['jour']).sum() / self.department_base_data.at[department, 'population']) * 100000).round(2) for department in self.department_base_data.insee}
-        
-        self.dep_data_norm_col = CovidFr.normrate(ddn=self.dep_data_norm, cdu=list(self.covid.dep.unique()), featurelist = ['hosp', 'rea', 'rad', 'dc'])
-
         return self.covid 
         
     def load_positive_df(self):
@@ -119,10 +115,6 @@ class CovidFr():
         #other parameters
         self.positive_last_day = self.dprate.jour.max().strftime("%Y-%m-%d")
         self.positive_last_day_fr =  self.dprate.jour.max().strftime("%d/%m/%Y")
-
-        self.dep_positive_norm = {department: ((self.dprate[(self.dprate.dep == department) & (self.dprate.cl_age90 == 0)].groupby(['jour']).sum() / self.department_base_data.at[department, 'population']) * 100000).round(2) for department in self.department_base_data.insee}
-        
-        self.dep_positive_norm_col = CovidFr.normrate(ddn=self.dep_positive_norm, cdu=list(self.dprate.dep.unique()), featurelist = ['P'])
         
         ###############################
         # required process settings
@@ -381,7 +373,74 @@ class CovidFr():
 
         return overall_dep_data_as_json_dict
 
-    def charts(self, data=None, department=None, region=None, top_number=None): 
+    def charts_impacted_dep(self, top_number=None): 
+        if top_number is None:
+            top_number = self.default_top_dep
+        ratedf = self.covid[(self.covid.sexe == 0) & (self.covid.jour == self.last_day)].groupby(['dep']).sum().copy()
+        ratedf = ratedf.drop(['sexe',], axis=1)
+        ratedf = (ratedf[['hosp', 'rea', 'rad', 'dc']].div(self.department_base_data['population'], axis=0) * 100000).round(2)
+        ratedf = pd.concat([ratedf, self.department_base_data], axis=1)
+        ratedf.sort_values(by=['hosp'], inplace=True, ascending=False)
+
+        dep_data_norm = {department: ((self.covid[(self.covid.dep == department) & (self.covid.sexe == 0)].groupby(['jour']).sum() / self.department_base_data.at[department, 'population']) * 100000).round(2) for department in self.department_base_data.insee}
+        dep_data_norm_col = CovidFr.normrate(ddn=dep_data_norm, cdu=list(self.covid.dep.unique()), featurelist = ['hosp', 'rea', 'rad', 'dc'])
+
+        tddv_hosp = CovidFr.topdepdataviz(data=dep_data_norm_col["hosp"], top=True, top_number=top_number, threshold=65)
+        tddv_rea = CovidFr.topdepdataviz(data=dep_data_norm_col["rea"], top=True, top_number=top_number, threshold=65)
+
+        # start of integration of the positive cases
+        pratedf = self.dprate[(self.dprate.cl_age90 == 0) & (self.dprate.jour == self.positive_last_day)].groupby(['dep']).sum().copy()
+        pratedf = pratedf.drop(['cl_age90'], axis=1)
+        pratedf = (pratedf[['P']].div(self.department_base_data['population'], axis=0) * 100000).round(2)
+        pratedf = pd.concat([pratedf, self.department_base_data], axis=1)
+
+        dep_positive_norm = {department: ((self.dprate[(self.dprate.dep == department) & (self.dprate.cl_age90 == 0)].groupby(['jour']).sum() / self.department_base_data.at[department, 'population']) * 100000).round(2) for department in self.department_base_data.insee}
+        dep_positive_norm_col = CovidFr.normrate(ddn=dep_positive_norm, cdu=list(self.dprate.dep.unique()), featurelist = ['P'])
+
+        tddv_positive = CovidFr.topdepdataviz(data=dep_positive_norm_col["P"], top=True, top_number=top_number, threshold=65)
+        # end integration of the positive cases
+
+        graphs = [
+            dict(
+                id = "Dernier nombre de patients pour 100 000 habitants par département",
+                data = [
+                    CovidFr.dataviz(x=ratedf.label, y=ratedf['hosp'], curve_type='bar', color='#ff7f00', width=1.5, name="Nbre d'hospitalisations", opacity=0.9, text = [i for i in ratedf.index], hovertemplate = '<b>%{y:.2f}</b> hospitalisations<br>dépt. <b>%{x} (FR-%{text})</b><extra></extra>'), 
+
+                    CovidFr.dataviz(x=ratedf.label, y=ratedf['dc'], curve_type='bar', color='#730800', width=1.5, name="Nbre de décès", opacity=0.9, text = [i for i in ratedf.index], hovertemplate = '<b>%{y:.2f}</b> décès<br>dépt. <b>%{x} (FR-%{text})</b><extra></extra>'), 
+
+                    CovidFr.dataviz(x=ratedf.label, y=ratedf['rea'], curve_type='bar', color='#ff0000', width=1.5, name="Nbre de réanimations", opacity=0.9, text = [i for i in ratedf.index], hovertemplate = '<b>%{y:.2f}</b> réanimations<br>dépt. <b>%{x} (FR-%{text})</b><extra></extra>'),
+
+                    CovidFr.dataviz(x=pratedf.label, y=pratedf['P'], curve_type='bar', color='#f84ed3', width=1.5, name="Nbre de cas positifs", opacity=0.9, text = [i for i in pratedf.index], hovertemplate = '<b>%{y:.2f}</b> cas positifs<br>dépt. <b>%{x} (FR-%{text})</b><extra></extra>'),
+                ],
+                layout = CovidFr.layoutoption(margin=dict(l=30, r=10, b=30, t=30), barmode='group', linemode='overlay', legend_orientation="h"),
+            ),
+
+            dict(
+                id = "Top des départements selon le nombre d'hospitalisations pour 100 000 habitants",
+                data = [CovidFr.dataviz(x=tddv_hosp.index, y=tddv_hosp[dep], curve_type='Scatter', name=self.department_base_data.at[dep, "label"], text=[self.department_base_data.at[dep, "label"]+" (FR-"+dep+")"]*len(tddv_hosp.index), hovertemplate='<b>%{y:.2f}</b> '+'hospitalisations'+'<br>'+'dépt. %{text}<extra></extra>') for dep in list(tddv_hosp.columns.unique())],
+                layout = CovidFr.layoutoption(margin=dict(l=30, r=10, b=30, t=30), linemode='overlay', legend_orientation="h"),
+            ),
+
+            dict(
+                id = "Top des départements selon le nombre de réanimations pour 100 000 habitants",
+                data = [CovidFr.dataviz(x=tddv_rea.index, y=tddv_rea[dep], curve_type='Scatter', name=self.department_base_data.at[dep, "label"], text=[self.department_base_data.at[dep, "label"]+" (FR-"+dep+")"]*len(tddv_rea.index), hovertemplate='<b>%{y:.2f}</b> '+'réanimations'+'<br>'+'dépt. %{text}<extra></extra>') for dep in list(tddv_rea.columns.unique())],
+                layout = CovidFr.layoutoption(margin=dict(l=30, r=10, b=30, t=30), linemode='overlay', legend_orientation="h"),
+            ),
+
+            dict(
+                id = "Top des départements selon le nombre de cas positifs pour 100 000 habitants",
+                data = [CovidFr.dataviz(x=tddv_positive.index, y=tddv_positive[dep], curve_type='Scatter', name=self.department_base_data.at[dep, "label"], text=[self.department_base_data.at[dep, "label"]+" (FR-"+dep+")"]*len(tddv_positive.index), hovertemplate='<b>%{y:.2f}</b> '+'cas positifs'+'<br>'+'dépt. %{text}<extra></extra>') for dep in list(tddv_positive.columns.unique())],
+                layout = CovidFr.layoutoption(margin=dict(l=30, r=10, b=30, t=30), linemode='overlay', legend_orientation="h"),
+            ),
+        ]
+        #############################################################
+        gJ = {}
+        for g in range(len(graphs)):
+            gJ.update({'graphJSON{}'.format(g): json.dumps([graphs[g]], cls=plotly.utils.PlotlyJSONEncoder)})
+        #############################################################
+        return gJ
+
+    def charts(self, data=None, department=None, region=None): 
         if region is None and department is None:
             if data is None:
                 cdata = self.covid[self.covid.sexe == 0].groupby(['jour']).sum().copy()
@@ -414,51 +473,7 @@ class CovidFr():
                 cdata = reduce(lambda x, y: x.add(y, fill_value=0), regdep)
                 cpop = self.region_base_data.at[region, 'population']
 
-        ratedf = self.covid[(self.covid.sexe == 0) & (self.covid.jour == self.last_day)].groupby(['dep']).sum().copy()
-        ratedf = ratedf.drop(['sexe',], axis=1)
-        ratedf = (ratedf[['hosp', 'rea', 'rad', 'dc']].div(self.department_base_data['population'], axis=0) * 100000).round(2)
-        ratedf = pd.concat([ratedf, self.department_base_data], axis=1)
-        ratedf.sort_values(by=['hosp'], inplace=True, ascending=False)
-
-        tddv_hosp = CovidFr.topdepdataviz(data=self.dep_data_norm_col["hosp"], top=True, top_number=top_number, threshold=65)
-        tddv_rea = CovidFr.topdepdataviz(data=self.dep_data_norm_col["rea"], top=True, top_number=top_number, threshold=65)
-
-        # start of integration of the positive cases
-        pratedf = self.dprate[(self.dprate.cl_age90 == 0) & (self.dprate.jour == self.positive_last_day)].groupby(['dep']).sum().copy()
-        pratedf = pratedf.drop(['cl_age90'], axis=1)
-        pratedf = (pratedf[['P']].div(self.department_base_data['population'], axis=0) * 100000).round(2)
-        pratedf = pd.concat([pratedf, self.department_base_data], axis=1)
-        
-        dep_positive_cases = CovidFr.dataviz(x=pratedf.label, y=pratedf['P'], curve_type='bar', color='#f84ed3', width=1.5, name="Nbre de cas positifs", opacity=0.9, text = [i for i in pratedf.index], hovertemplate = '<b>%{y:.2f}</b> cas positifs<br>dépt. <b>%{x} (FR-%{text})</b><extra></extra>')
-        # end integratation of the positive cases
-
         graphs = [
-            dict(
-                id = "Dernier nombre de patients pour 100 000 habitants par département",
-                data = [
-                    CovidFr.dataviz(x=ratedf.label, y=ratedf['hosp'], curve_type='bar', color='#ff7f00', width=1.5, name="Nbre d'hospitalisations", opacity=0.9, text = [i for i in ratedf.index], hovertemplate = '<b>%{y:.2f}</b> hospitalisations<br>dépt. <b>%{x} (FR-%{text})</b><extra></extra>'), 
-
-                    CovidFr.dataviz(x=ratedf.label, y=ratedf['dc'], curve_type='bar', color='#730800', width=1.5, name="Nbre de décès", opacity=0.9, text = [i for i in ratedf.index], hovertemplate = '<b>%{y:.2f}</b> décès<br>dépt. <b>%{x} (FR-%{text})</b><extra></extra>'), 
-
-                    CovidFr.dataviz(x=ratedf.label, y=ratedf['rea'], curve_type='bar', color='#ff0000', width=1.5, name="Nbre de réanimations", opacity=0.9, text = [i for i in ratedf.index], hovertemplate = '<b>%{y:.2f}</b> réanimations<br>dépt. <b>%{x} (FR-%{text})</b><extra></extra>'),
-
-                    dep_positive_cases
-                ],
-                layout = CovidFr.layoutoption(margin=dict(l=30, r=10, b=30, t=30), barmode='group', linemode='overlay', legend_orientation="h"),
-            ),
-
-            dict(
-                id = "Top des départements selon le nombre d'hospitalisations pour 100 000 habitants",
-                data = [CovidFr.dataviz(x=tddv_hosp.index, y=tddv_hosp[dep], curve_type='Scatter', name=self.department_base_data.at[dep, "label"], text=[self.department_base_data.at[dep, "label"]+" (FR-"+dep+")"]*len(tddv_hosp.index), hovertemplate='<b>%{y:.2f}</b> '+'hospitalisations'+'<br>'+'dépt. %{text}<extra></extra>') for dep in list(tddv_hosp.columns.unique())],
-                layout = CovidFr.layoutoption(margin=dict(l=30, r=10, b=30, t=30), linemode='overlay', legend_orientation="h"),
-            ),
-
-            dict(
-                id = "Top des départements selon le nombre de réanimations pour 100 000 habitants",
-                data = [CovidFr.dataviz(x=tddv_rea.index, y=tddv_rea[dep], curve_type='Scatter', name=self.department_base_data.at[dep, "label"], text=[self.department_base_data.at[dep, "label"]+" (FR-"+dep+")"]*len(tddv_rea.index), hovertemplate='<b>%{y:.2f}</b> '+'réanimations'+'<br>'+'dépt. %{text}<extra></extra>') for dep in list(tddv_rea.columns.unique())],
-                layout = CovidFr.layoutoption(margin=dict(l=30, r=10, b=30, t=30), linemode='overlay', legend_orientation="h"),
-            ),
-
             dict(
                 id = "Nombre de personnes actuellement hospitalisées",
                 data = [CovidFr.dataviz(x=cdata.index, y=cdata['hosp'], curve_type='line', color='#ff7f00', width=3)],
@@ -638,7 +653,7 @@ class CovidFr():
 
         return overall_dep_data_as_json_dict
 
-    def charts_positive_data(self, data=None, department=None, region=None, top_number=None): 
+    def charts_positive_data(self, data=None, department=None, region=None): 
         if region is None and department is None:
             if data is None:
                 cdata = self.nprate[self.nprate.cl_age90 == 0].groupby(['jour']).sum().copy()
@@ -661,15 +676,7 @@ class CovidFr():
                 cdata = data[(data.reg == region) & (data.cl_age90 == 0)].groupby(['jour']).sum().copy()
                 cpop = self.region_base_data.at[region, 'population']
 
-        tddv_positive = CovidFr.topdepdataviz(data=self.dep_positive_norm_col["P"], top=True, top_number=top_number, threshold=65)
-
         graphs = [
-            dict(
-                id = "Top des départements selon le nombre de cas positifs pour 100 000 habitants",
-                data = [CovidFr.dataviz(x=tddv_positive.index, y=tddv_positive[dep], curve_type='Scatter', name=self.department_base_data.at[dep, "label"], text=[self.department_base_data.at[dep, "label"]+" (FR-"+dep+")"]*len(tddv_positive.index), hovertemplate='<b>%{y:.2f}</b> '+'cas positifs'+'<br>'+'dépt. %{text}<extra></extra>') for dep in list(tddv_positive.columns.unique())],
-                layout = CovidFr.layoutoption(margin=dict(l=30, r=10, b=30, t=30), linemode='overlay', legend_orientation="h"),
-            ),
-
             dict(
                 id = "Nombre de personnes actuellement positives",
                 data = [CovidFr.dataviz(x=cdata.index, y=cdata['P'], curve_type='bar', color='#f84ed3', width=1, opacity=0.8)],
