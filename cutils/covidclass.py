@@ -166,15 +166,12 @@ class CovidFr():
         nat_data = reg_data.copy()
         nat_data = nat_data.groupby("jour").sum()
 
-        regdf = {}
-        dep_data = self.covid[self.covid["sexe"]==0] \
-            .drop(['reg', 'jour', 'sexe'], axis=1) \
-            .groupby('dep') \
-            .max()
-        for i in self.covid["reg"].unique():
-            regdf[i]=dep_data.loc[self.covid[self.covid["reg"]==i]["dep"].unique(),:].sum()
-        reg_data = pd.DataFrame.from_dict(regdf, orient='index')
-        reg_data.reset_index().set_index('index').rename_axis('reg')
+        reg_data = reg_data \
+            .drop(['jour', 'sexe'], axis=1) \
+            .groupby(['reg','dep']) \
+            .max() \
+            .groupby('reg') \
+            .sum()
 
         reg_data = pd.concat([reg_data, self.region_base_data], axis=1)
 
