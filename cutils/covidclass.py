@@ -458,16 +458,20 @@ class CovidFr():
                 cpop = self.department_base_data.at[department, 'population']
         elif not region is None and department is None:
             if data is None:
-                regdep = []
-                for d in self.covid[self.covid.reg==region].dep.unique():
-                    regdep.append(CovidFr.dailycases(data=self.covid[(self.covid.dep == d) & (self.covid.sexe == 0)].groupby(['jour']).sum(), pca=False))
-                cdata = reduce(lambda x, y: x.add(y, fill_value=0), regdep)
+                # regdep = []
+                # for d in self.covid[self.covid.reg==region].dep.unique():
+                #     regdep.append(CovidFr.dailycases(data=self.covid[(self.covid.dep == d) & (self.covid.sexe == 0)].groupby(['jour']).sum(), pca=False))
+                # cdata = reduce(lambda x, y: x.add(y, fill_value=0), regdep)
+                cdata = self.covid[(self.covid.reg == region) & (self.covid.sexe == 0)].groupby(['jour']).sum().copy()
+                cdata = CovidFr.dailycases(data=cdata, pca=False)
                 cpop = self.region_base_data.at[region, 'population']
             else: 
-                regdep = []
-                for d in data[data.reg==region].dep.unique():
-                    regdep.append(CovidFr.dailycases(data=data[(data.dep == d) & (data.sexe == 0)].groupby(['jour']).sum(), pca=False))
-                cdata = reduce(lambda x, y: x.add(y, fill_value=0), regdep)
+                # regdep = []
+                # for d in data[data.reg==region].dep.unique():
+                #     regdep.append(CovidFr.dailycases(data=data[(data.dep == d) & (data.sexe == 0)].groupby(['jour']).sum(), pca=False))
+                # cdata = reduce(lambda x, y: x.add(y, fill_value=0), regdep)
+                cdata = data[(data.reg == region) & (data.sexe == 0)].groupby(['jour']).sum().copy()
+                cdata = CovidFr.dailycases(data=cdata, pca=False)
                 cpop = self.region_base_data.at[region, 'population']
 
         graphs = [
