@@ -93,8 +93,6 @@ def graphs():
         impacted_dep_graphJSON = charts_impact_dep,
         positive_graphJSON = charts_and_parameters_positive_data,
         covid_graphJSON = charts_and_parameters_covid_data,
-        positive_counters = charts_and_parameters_positive_data["counters"],
-        covid_counters = charts_and_parameters_covid_data["counters"],
 
         first_day_fr = first_day_fr,
         last_day_fr = last_day_fr,
@@ -168,8 +166,6 @@ def maps():
         impacted_dep_graphJSON = charts_impact_dep,
         positive_graphJSON = charts_and_parameters_positive_data,
         covid_graphJSON = charts_and_parameters_covid_data,
-        positive_counters = charts_and_parameters_positive_data["counters"],
-        covid_counters = charts_and_parameters_covid_data["counters"],
 
         first_day_fr = first_day_fr,
         last_day_fr = last_day_fr,
@@ -245,8 +241,6 @@ def top_dep_settings():
         impacted_dep_graphJSON = charts_impact_dep,
         positive_graphJSON = charts_and_parameters_positive_data,
         covid_graphJSON = charts_and_parameters_covid_data,
-        positive_counters = charts_and_parameters_positive_data["counters"],
-        covid_counters = charts_and_parameters_covid_data["counters"],
 
         first_day_fr = first_day_fr,
         last_day_fr = last_day_fr,
@@ -328,8 +322,6 @@ def global_monitoring_settings():
         impacted_dep_graphJSON = charts_impact_dep,
         positive_graphJSON = charts_and_parameters_positive_data,
         covid_graphJSON = charts_and_parameters_covid_data,
-        positive_counters = charts_and_parameters_positive_data["counters"],
-        covid_counters = charts_and_parameters_covid_data["counters"],
 
         first_day_fr = first_day_fr,
         last_day_fr = last_day_fr,
@@ -411,8 +403,6 @@ def hosp_monitoring_settings():
         impacted_dep_graphJSON = charts_impact_dep,
         positive_graphJSON = charts_and_parameters_positive_data,
         covid_graphJSON = charts_and_parameters_covid_data,
-        positive_counters = charts_and_parameters_positive_data["counters"],
-        covid_counters = charts_and_parameters_covid_data["counters"],
 
         first_day_fr = first_day_fr,
         last_day_fr = last_day_fr,
@@ -488,8 +478,6 @@ def view_department(department):
         impacted_dep_graphJSON = charts_impact_dep,
         positive_graphJSON = charts_and_parameters_positive_data,
         covid_graphJSON = charts_and_parameters_covid_data,
-        positive_counters = charts_and_parameters_positive_data["counters"],
-        covid_counters = charts_and_parameters_covid_data["counters"],
 
         first_day_fr = first_day_fr,
         last_day_fr = last_day_fr,
@@ -565,8 +553,6 @@ def view_region(region):
         impacted_dep_graphJSON = charts_impact_dep,
         positive_graphJSON = charts_and_parameters_positive_data,
         covid_graphJSON = charts_and_parameters_covid_data,
-        positive_counters = charts_and_parameters_positive_data["counters"],
-        covid_counters = charts_and_parameters_covid_data["counters"],
 
         first_day_fr = first_day_fr,
         last_day_fr = last_day_fr,

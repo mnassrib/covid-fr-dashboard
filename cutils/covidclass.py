@@ -39,7 +39,7 @@ class CovidFr():
         self.last_update = CovidFr.updatechecking(json_url="https://www.data.gouv.fr/datasets/5e7e104ace2080d9162b61d8/rdf.json", data_request_url=CovidFr.synthesis_covid_url)
         #self.last_update = ""
 
-        self.features = ["rad", "dc", "r_dc_rad", "hosp", "rea"]
+        self.features = ["rad", "dc", "hosp", "rea"]
 
         self.positive_last_update = CovidFr.updatechecking(json_url="https://www.data.gouv.fr/datasets/5ed1175ca00bbe1e4941a46a/rdf.json", data_request_url=CovidFr.synthesis_dprate_url)
         #self.positive_last_update = ""
@@ -48,7 +48,7 @@ class CovidFr():
         # required process settings
         ###############################
         self.number_all_dep = list(range(1, self.department_base_data.shape[0]+1))
-        self.global_pc = list(range(1, len(['dc', 'rad', 'hosp', 'rea'])+1))
+        self.global_pc = list(range(1, len(self.features)+1))
         self.normalize_states = [True, False]
         self.alpha_smooth = list(np.arange(0.1, 1, 0.05).round(2))
         self.pc_reg = list(range(1, self.region_base_data.shape[0]+1))
@@ -177,7 +177,9 @@ class CovidFr():
 
         overall_reg_data_as_json_dict = {}
 
-        for feature in self.features:         
+        features = self.features.copy()
+        features.append("r_dc_rad")
+        for feature in features:         
             if feature == "dc" or feature == "rad":
                 ### For death and or rad case maps
                 reg_data[feature+'_par_habitants'] = (reg_data[feature] / reg_data['population']) * 100000
@@ -286,7 +288,9 @@ class CovidFr():
 
         overall_dep_data_as_json_dict = {}
 
-        for feature in self.features:         
+        features = self.features.copy()
+        features.append("r_dc_rad")
+        for feature in features:         
             if feature == "dc" or feature == "rad":
                 ### For death and or rad case maps
                 dep_data[feature+'_par_habitants'] = (dep_data[feature] / dep_data['population']) * 100000
