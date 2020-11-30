@@ -1247,12 +1247,12 @@
 
     <!-- charts pca-->
     <script type="text/javascript">
-        var graphs = {{ graphJSON_pca_global | safe }};
+        var graphs = {{ graphJSON_pca_global["graphJSON"] | safe }};
         var text = "";
         plotGraphs(graphs, text);
     </script>
     <script type="text/javascript">
-        var graphs = {{ graphJSON_pca_hosp_reg | safe }};
+        var graphs = {{ graphJSON_pca_hosp_reg["graphJSON"] | safe }};
         var text = "_reg";
         plotGraphs(graphs, text);
     </script>
