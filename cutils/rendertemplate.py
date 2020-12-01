@@ -13,11 +13,8 @@ class RenderPage(object):
             "graphs.html",
             map_covid_reg = self.map_covid_reg,
             map_covid_dep = self.map_covid_dep,
-            map_positive_reg = self.map_positive_reg,
-            map_positive_dep = self.map_positive_dep,
-            
+
             charts_impacted_dep = self.charts_impacted_dep,
-            charts_and_parameters_positive_data = self.charts_and_parameters_positive_data,
             charts_and_parameters_covid_data = self.charts_and_parameters_covid_data,
 
             charts_pca_global = self.charts_pca_global,

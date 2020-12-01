@@ -66,26 +66,7 @@
                             </div>
                         </div>
                         <div class="col-md-6">
-                            <div class="card mb-4 box-shadow">
-                                <div class="row">
-                                    <div class="col-md-3"></div>
-                                    <div class="col-md-6">
-                                        <button onclick="window.location.href='#cas_positifs';" class="button positive">
-                                            <span class="key-value">{{ charts_and_parameters_positive_data["counters"]['current_positive'] }}</span>
-                                            {% if (charts_and_parameters_positive_data["counters"]['diff_positive'] < 0): %}
-                                                <br /> <font size="2">({{ charts_and_parameters_positive_data["counters"]['diff_positive'] }})</font>
-                                            {% else: %}
-                                                <br /> <font size="2">(+{{ charts_and_parameters_positive_data["counters"]['diff_positive'] }})</font>
-                                            {% endif %}
-                                            {% if (charts_and_parameters_positive_data["counters"]['current_positive']>1): %}
-                                                <br /> cas positifs <font size="2">au {{ charts_and_parameters_positive_data["counters"]['positive_last_day_fr'] }}</font>
-                                            {% else: %}
-                                                <br /> cas positif
-                                            {% endif %}
-                                        </button>
-                                    </div>
-                                    <div class="col-md-3"></div>
-                                </div>       
+                            <div class="card mb-4 box-shadow">     
                                 <div class="card-body">  
                                     <div class=conteneur>
                                         <img usemap="#etats" src="{{ url_for('static', filename='images/transition.png') }}" alt="">
@@ -245,8 +226,7 @@
                                     </div>
                                 </div>
                                 <div class="row">
-                                    <div class="col-md-2">
-                                    </div>
+                                    <div class="col-md-4"></div>
                                     <div class="col-md-4">
                                         <button onclick="window.location.href='#map_view';" class="button">
                                             <span class="key-value">{{ charts_and_parameters_covid_data["counters"]['rates']['r_dc_rad'] }}%</span>
@@ -258,19 +238,7 @@
                                                 <br /> décès/guérisons
                                         </button>
                                     </div>
-                                    <div class="col-md-4">
-                                        <button onclick="window.location.href='#map_view';" class="button positive">
-                                            <span class="key-value">{{ charts_and_parameters_positive_data["counters"]['rates']['positive'] }}</span>
-                                            {% if (charts_and_parameters_positive_data["counters"]['rates']['d_positive'] < 0): %}
-                                                <br /> <font size="2">({{ charts_and_parameters_positive_data["counters"]['rates']['d_positive'] }})</font>
-                                            {% else: %}
-                                                <br /> <font size="2">(+{{ charts_and_parameters_positive_data["counters"]['rates']['d_positive'] }})</font>
-                                            {% endif %}
-                                                <br /> cas positifs <font size="2">au {{ charts_and_parameters_positive_data["counters"]['positive_last_day_fr'] }}</font>
-                                        </button>
-                                    </div>
-                                    <div class="col-md-2">
-                                    </div>
+                                    <div class="col-md-4"></div>
                                 </div>
                             </div>
                         </div>
@@ -587,72 +555,7 @@
                             </div>
                         </div>
                     </div>
-                    {% elif (map_select == "Nombre de cas positifs le " + charts_and_parameters_positive_data["counters"]['positive_last_day_fr']): %}
-                    <div class="col-md-6" id="positive_map_reg">
-                        <div class="card mb-4 box-shadow">
-                            <div class="card-body">
-                                <div class="pictos">
-                                    <a class="picto-item" aria-label="Cliquez sur un département pour afficher le détail">
-                                        <h3>Nombre de cas positifs par région le {{ charts_and_parameters_positive_data["counters"]['positive_last_day_fr'] }} *
-                                    </a>
-                                </div>
-                                <div class="row">
-                                    <div class="col-md-12">
-                                        <div class="map"></div>
-                                    </div>
-                                    <div class="col-md-12">
-                                        <div class="card mb-4 box-shadow">
-                                            <div class="card-body">
-                                                <a class="picto-item" aria-label="Sélectionnez les couleurs que vous souhaitez afficher sur la carte">
-                                                    <p>Légende</p>
-                                                </a>
-                                                <div class="areaLegend"></div>
-                                                <p style="color:red">&#x26A0; Niveau national : {{ charts_and_parameters_positive_data["counters"]["nat_refs"]['nat_positive'] }} cas positifs *</p>
-                                                <p style="color:black"><small>(* : pour 100 000 habitants)</small></p>
-                                            </div>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="col-md-6" id="positive_map_dep">
-                        <div class="card mb-4 box-shadow">
-                            <div class="card-body">
-                                <div class="pictos">
-                                    <a class="picto-item" aria-label="Cliquez sur un département pour afficher le détail">
-                                        <h3>Nombre de cas positifs par département le {{ charts_and_parameters_positive_data["counters"]['positive_last_day_fr'] }} *
-                                    </a>
-                                </div>
-                                <div class="row">
-                                    <div class="col-md-12">
-                                        <div class="map"></div>
-                                    </div>
-                                    <div class="col-md-12">
-                                        <div class="card mb-4 box-shadow">
-                                            <div class="card-body">
-                                                <a class="picto-item" aria-label="Sélectionnez les couleurs que vous souhaitez afficher sur la carte">
-                                                    <p>Légende</p>
-                                                </a>
-                                                <div class="areaLegend"></div>
-                                                <p style="color:red">&#x26A0; Niveau national : {{ charts_and_parameters_positive_data["counters"]["nat_refs"]['nat_positive'] }} cas positifs *</p>
-                                                <p style="color:black"><small>(* : pour 100 000 habitants)</small></p>
-                                            </div>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
                     {% endif %}
-                </div>
-            </div>
-        </div>
-        <div class="col-md-12">
-            <div class="card mb-4 box-shadow">
-                <div class="card-body">
-                    <h3 id="patients_quotidiennement">Nombre de cas sur 100 000 habitants par département au {{ last_day_fr }} (au  {{ charts_and_parameters_positive_data["counters"]['positive_last_day_fr'] }} pour les cas positifs)</h3>
-                    <div id="Dernier nombre de patients pour 100 000 habitants par département"></div>
                 </div>
             </div>
         </div>
@@ -694,16 +597,7 @@
                         </form> 
                     </div>
                 </div>
-                {% if (criterion_select == "Cas positifs au "+charts_and_parameters_positive_data["counters"]['positive_last_day_fr']): %}
-                <div class="col-md-12" id="">
-                    <div class="card mb-4 box-shadow">
-                        <div class="card-body">
-                            <h3 id="patients_quotidiennement">Top {{ top_dep }} des départements selon le nombre de cas positifs pour 100 000 habitants au {{ charts_and_parameters_positive_data["counters"]['positive_last_day_fr'] }}</h3>
-                            <div id="Top des départements selon le nombre de cas positifs pour 100 000 habitants"></div>
-                        </div>
-                    </div>
-                </div>
-                {% elif (criterion_select == "Hospitalisations au "+last_day_fr): %}
+                {% if (criterion_select == "Hospitalisations au "+last_day_fr): %}
                 <div class="col-md-12" id="">
                     <div class="card mb-4 box-shadow">
                         <div class="card-body">
@@ -724,22 +618,6 @@
                 {% endif %}
             </div>
         </div> 
-        <div class="col-md-12">
-            <div class="card mb-4 box-shadow">
-                <div class="card-body">
-                    {% if (label != 'France'): %}
-                        {% if (label['type'] == 'department'): %}
-                            <h3 id="cas_positifs">Nombre quotidien de personnes détectées positives au {{ label['prefix'] }} {{ label['name'] }} (FR-{{ department }})</h3>
-                        {% else : %}
-                            <h3 id="cas_positifs">Nombre quotidien de personnes détectées positives à la {{ label['prefix'] }} {{ label['name'] }} (FR-{{ region }})</h3>
-                        {% endif %}
-                    {% else : %}
-                        <h3 id="cas_positifs">Nombre quotidien de personnes détectées positives en {{ label }}</h3> 
-                    {% endif %}
-                    <div id="Nombre de personnes actuellement positives"></div>
-                </div>
-            </div>
-        </div>
         <div class="col-md-6">
             <div class="card mb-4 box-shadow">
                 <div class="card-body">
@@ -1026,19 +904,6 @@
         });
     </script>
 
-    <!-- positive map regions-->
-    <script type="text/javascript">
-        mapDiv = "#positive_map_reg";
-        regions = {{ map_positive_reg["overall_regions_P_as_json"]['data_P'] | safe }};
-        quantiles = {{ map_positive_reg["overall_regions_P_as_json"]['quantiles_P'] | safe }};
-        current_label = "{{ region }}";
-        text = "cas positifs";
-        feature_par_habitants = "P_par_habitants";
-        feature_name = "P";
-        colors = ["#f2f53a", '#df891a', '#e61919', '#680000', '#1d0303'];
-        fill_slices = "#D6F77F";
-        plotRegMap(mapDiv, regions, quantiles, current_label, text, feature_name, feature_par_habitants, colors, fill_slices);
-    </script>
     <!-- death map regions-->
     <script type="text/javascript">
         mapDiv = "#death_map_reg";
@@ -1105,19 +970,6 @@
         plotRegMap(mapDiv, regions, quantiles, current_label, text, feature_name, feature_par_habitants, colors, fill_slices);
     </script>
 
-    <!-- positive map departments-->
-    <script type="text/javascript">
-        mapDiv = "#positive_map_dep";
-        departments = {{ map_positive_dep["overall_departments_P_as_json"]['data_P'] | safe }};
-        quantiles = {{ map_positive_dep["overall_departments_P_as_json"]['quantiles_P'] | safe }};
-        current_label = "{{ department }}";
-        text = "cas positifs";
-        feature_par_habitants = "P_par_habitants";
-        feature_name = "P";
-        colors = ["#f2f53a", '#df891a', '#e61919', '#680000', '#1d0303'];
-        fill_slices = "#D6F77F";
-        plotDepMap(mapDiv, departments, quantiles, current_label, text, feature_name, feature_par_habitants, colors, fill_slices);
-    </script>
     <!-- death map departments-->
     <script type="text/javascript">
         mapDiv = "#death_map_dep";
@@ -1206,12 +1058,6 @@
         plotGraphs(graphs, text);
     </script>
 
-    <!-- positive data charts-->
-    <script type="text/javascript">
-        var graphs = {{ charts_and_parameters_positive_data["graphJSON0"] | safe }};
-        var text = "";
-        plotGraphs(graphs, text);
-    </script>
 
     <!-- charts rad, dc, rea and hosp -->
     <script type="text/javascript">

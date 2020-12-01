@@ -18,9 +18,6 @@ class CovidFr():
 
     ### URL source for loading covid data
     synthesis_covid_url = 'https://www.data.gouv.fr/fr/datasets/r/63352e38-d353-4b54-bfd1-f1b3ee1cabd7'
-    synthesis_dprate_url = 'https://www.data.gouv.fr/fr/datasets/r/19a91d64-3cd3-42fc-9943-d635491a4d76'
-    synthesis_rprate_url = 'https://www.data.gouv.fr/fr/datasets/r/ad09241e-52fa-4be8-8298-e5760b43cae2'
-    synthesis_nprate_url = 'https://www.data.gouv.fr/fr/datasets/r/57d44bd6-c9fd-424f-9a72-7834454f9e3c'
 
     def __init__(self):
         # Init basic departments data
@@ -40,10 +37,7 @@ class CovidFr():
         #self.last_update = ""
 
         self.features = ["rad", "dc", "hosp", "rea"]
-
-        self.positive_last_update = CovidFr.updatechecking(json_url="https://www.data.gouv.fr/datasets/5ed1175ca00bbe1e4941a46a/rdf.json", data_request_url=CovidFr.synthesis_dprate_url)
-        #self.positive_last_update = ""
-        
+ 
         ###############################
         # required process settings
         ###############################
@@ -52,6 +46,7 @@ class CovidFr():
         self.normalize_states = [True, False]
         self.alpha_smooth = list(np.arange(0.1, 1, 0.05).round(2))
         self.pc_reg = list(range(1, self.region_base_data.shape[0]+1))
+
         ##############################
         # independent default settings
         ##############################
@@ -89,42 +84,12 @@ class CovidFr():
 
         self.last_day = self.covid.jour.max().strftime("%Y-%m-%d")
 
-        return self.covid 
-        
-    def load_positive_df(self):
-        """
-        Loading dataframes
-        """
-        #national df
-        nprate = pd.read_csv(CovidFr.synthesis_nprate_url, sep=';', usecols=['jour', 'P', 'cl_age90']).dropna()
-        nprate['jour'] = pd.to_datetime(nprate['jour'])
-        self.nprate = nprate.drop_duplicates()
-
-        #regional df
-        rprate = pd.read_csv(CovidFr.synthesis_rprate_url, sep=';', dtype={'reg': "string"}, usecols=['reg', 'jour', 'P', 'cl_age90']).dropna()
-        rprate['jour'] = pd.to_datetime(rprate['jour'])
-        rprate = rprate.drop_duplicates()
-        self.rprate = rprate.loc[rprate['reg'].isin(list(self.region_base_data.index))]
-
-        #departmental df
-        dprate = pd.read_csv(CovidFr.synthesis_dprate_url, sep=';', dtype={'dep': "string"}, usecols=['dep', 'jour', 'P', 'cl_age90']).dropna()
-        dprate['jour'] = pd.to_datetime(dprate['jour'])
-        dprate = dprate.drop_duplicates()
-        self.dprate = dprate.loc[dprate['dep'].isin(list(self.department_base_data.index))]
-
-        #other parameters
-        self.positive_last_day = self.dprate.jour.max().strftime("%Y-%m-%d")
-        self.positive_last_day_fr =  self.dprate.jour.max().strftime("%d/%m/%Y")
-        
-        ###############################
-        # required process settings
-        ###############################
-        self.map_choice = ["Nombre de guérisons", "Nombre de décès", "Taux décès / (décès + guérisons)", "Nombre d'hospitalisations le "+self.last_day_fr, "Nombre de réanimations le "+self.last_day_fr, "Nombre de cas positifs le "+self.positive_last_day_fr]
-        self.criterion_choice = ["Cas positifs au "+self.positive_last_day_fr, "Hospitalisations au "+self.last_day_fr, "Réanimations au "+self.last_day_fr]
-        self.default_map_select = self.map_choice[5]
+        self.map_choice = ["Nombre de guérisons", "Nombre de décès", "Taux décès / (décès + guérisons)", "Nombre d'hospitalisations le "+self.last_day_fr, "Nombre de réanimations le "+self.last_day_fr]
+        self.criterion_choice = ["Hospitalisations au "+self.last_day_fr, "Réanimations au "+self.last_day_fr]
+        self.default_map_select = self.map_choice[3]
         self.default_criterion_select = self.criterion_choice[0]
 
-        return self.nprate, self.rprate, self.dprate
+        return self.covid 
 
     def need_covid_data_update(self):
         """Check the last update of the datasets on data.gouv.fr and tells whether we need to refresh the data or not
@@ -136,19 +101,6 @@ class CovidFr():
             for dataset in data['@graph']:
                 if 'accessURL' in dataset.keys() and dataset['accessURL'] == CovidFr.synthesis_covid_url:
                     if self.last_update == "" or self.last_update < dataset['modified']:
-                        return True
-        return False
-
-    def need_positive_data_update(self):
-        """Check the last update of the datasets on data.gouv.fr and tells whether we need to refresh the data or not
-        Returns:
-            True if the data need to be updated, False instead
-        """
-        with urllib.request.urlopen("https://www.data.gouv.fr/datasets/5ed1175ca00bbe1e4941a46a/rdf.json") as url:
-            data = json.loads(url.read().decode())
-            for dataset in data['@graph']:
-                if 'accessURL' in dataset.keys() and dataset['accessURL'] == CovidFr.synthesis_dprate_url:
-                    if self.positive_last_update == "" or self.positive_last_update < dataset['modified']:
                         return True
         return False
 
@@ -389,18 +341,6 @@ class CovidFr():
         tddv_hosp = CovidFr.topdepdataviz(data=dep_data_norm_col["hosp"], top=True, top_number=top_number, threshold=65)
         tddv_rea = CovidFr.topdepdataviz(data=dep_data_norm_col["rea"], top=True, top_number=top_number, threshold=65)
 
-        # start of integration of the positive cases
-        pratedf = self.dprate[(self.dprate.cl_age90 == 0) & (self.dprate.jour == self.positive_last_day)].groupby(['dep']).sum().copy()
-        pratedf = pratedf.drop(['cl_age90'], axis=1)
-        pratedf = (pratedf[['P']].div(self.department_base_data['population'], axis=0) * 100000).round(2)
-        pratedf = pd.concat([pratedf, self.department_base_data], axis=1)
-
-        dep_positive_norm = {department: ((self.dprate[(self.dprate.dep == department) & (self.dprate.cl_age90 == 0)].groupby(['jour']).sum() / self.department_base_data.at[department, 'population']) * 100000).round(2) for department in self.department_base_data.insee}
-        dep_positive_norm_col = CovidFr.normrate(ddn=dep_positive_norm, cdu=list(self.dprate.dep.unique()), featurelist = ['P'])
-
-        tddv_positive = CovidFr.topdepdataviz(data=dep_positive_norm_col["P"], top=True, top_number=top_number, threshold=65)
-        # end integration of the positive cases
-
         graphs = [
             dict(
                 id = "Dernier nombre de patients pour 100 000 habitants par département",
@@ -410,8 +350,6 @@ class CovidFr():
                     CovidFr.dataviz(x=ratedf.label, y=ratedf['dc'], curve_type='bar', color='#730800', width=1.5, name="Nbre de décès", opacity=0.9, text = [i for i in ratedf.index], hovertemplate = '<b>%{y:.2f}</b> décès<br>dépt. <b>%{x} (FR-%{text})</b><extra></extra>'), 
 
                     CovidFr.dataviz(x=ratedf.label, y=ratedf['rea'], curve_type='bar', color='#ff0000', width=1.5, name="Nbre de réanimations", opacity=0.9, text = [i for i in ratedf.index], hovertemplate = '<b>%{y:.2f}</b> réanimations<br>dépt. <b>%{x} (FR-%{text})</b><extra></extra>'),
-
-                    CovidFr.dataviz(x=pratedf.label, y=pratedf['P'], curve_type='bar', color='#f84ed3', width=1.5, name="Nbre de cas positifs", opacity=0.9, text = [i for i in pratedf.index], hovertemplate = '<b>%{y:.2f}</b> cas positifs<br>dépt. <b>%{x} (FR-%{text})</b><extra></extra>'),
                 ],
                 layout = CovidFr.layoutoption(margin=dict(l=30, r=10, b=30, t=30), barmode='group', linemode='overlay', legend_orientation="h"),
             ),
@@ -425,12 +363,6 @@ class CovidFr():
             dict(
                 id = "Top des départements selon le nombre de réanimations pour 100 000 habitants",
                 data = [CovidFr.dataviz(x=tddv_rea.index, y=tddv_rea[dep], curve_type='Scatter', name=self.department_base_data.at[dep, "label"], text=[self.department_base_data.at[dep, "label"]+" (FR-"+dep+")"]*len(tddv_rea.index), hovertemplate='<b>%{y:.2f}</b> '+'réanimations'+'<br>'+'dépt. %{text}<extra></extra>') for dep in list(tddv_rea.columns.unique())],
-                layout = CovidFr.layoutoption(margin=dict(l=30, r=10, b=30, t=30), linemode='overlay', legend_orientation="h"),
-            ),
-
-            dict(
-                id = "Top des départements selon le nombre de cas positifs pour 100 000 habitants",
-                data = [CovidFr.dataviz(x=tddv_positive.index, y=tddv_positive[dep], curve_type='Scatter', name=self.department_base_data.at[dep, "label"], text=[self.department_base_data.at[dep, "label"]+" (FR-"+dep+")"]*len(tddv_positive.index), hovertemplate='<b>%{y:.2f}</b> '+'cas positifs'+'<br>'+'dépt. %{text}<extra></extra>') for dep in list(tddv_positive.columns.unique())],
                 layout = CovidFr.layoutoption(margin=dict(l=30, r=10, b=30, t=30), linemode='overlay', legend_orientation="h"),
             ),
         ]
@@ -564,164 +496,6 @@ class CovidFr():
         gJ.update({'counters': counters})
 
         return gJ
-
-    ##############################
-    # positive case study starting
-    ##############################
-    def overall_regions_positive_data_as_json(self, data=None):
-        """
-        Get data from regions as a JSON string along with quantiles
-        Returns:
-            JSON string of regions overall data
-        """     
-        if data is None:
-            reg_data = self.rprate[(self.rprate['cl_age90'] == 0)].copy()
-        else:
-            reg_data = data[(data['cl_age90'] == 0)]
-
-        overall_reg_data_as_json_dict = {}
-
-        for feature in ["P"]:         
-            ### For positive case map
-            reg_data_j = self.rprate[(self.rprate['cl_age90'] == 0) & (self.rprate['jour'] == self.positive_last_day)]
-            reg_data_j = reg_data_j.drop(["jour", "cl_age90"], axis=1).groupby('reg').max()
-            reg_data_j = pd.concat([reg_data_j, self.region_base_data], axis=1)
-
-            reg_data_j[feature+'_par_habitants'] = (reg_data_j[feature] / reg_data_j['population']) * 100000
-            
-            data_feature = reg_data_j.copy()
-            
-            data_feature = data_feature.set_index("region-" + data_feature.index)
-            
-            data_feature = data_feature.loc[:, ['label', feature, feature+'_par_habitants', 'insee']]
-
-            nat = (reg_data.groupby("jour").sum().at[self.positive_last_day, feature] / self.region_base_data["population"].sum()) * 100000
-
-            q_feature = np.mean(data_feature[feature+'_par_habitants'].to_numpy() <= nat)
-
-            q_feature_list = [0.1, 0.1+(q_feature-0.1)/2, q_feature, q_feature+(.949-q_feature)/2, .949]
-
-            quantiles_feature = data_feature[feature+'_par_habitants'] \
-                .quantile(q_feature_list) \
-                .round(2)
-
-            data_feature[feature+'_par_habitants'] = data_feature[feature+'_par_habitants'].round(2)
-
-            #setattr(self, 'overall_regions_{}'.format(feature)+"_as_json", {"data_"+feature: data_feature.to_json(orient='index'), "quantiles_"+feature: quantiles_feature.to_json(orient='index')})
-
-            overall_reg_data_as_json_dict.update({'overall_regions_{}'.format(feature)+"_as_json": {"data_"+feature: data_feature.to_json(orient='index'), "quantiles_"+feature: quantiles_feature.to_json(orient='index')}})
-
-        return overall_reg_data_as_json_dict
-
-    def overall_departments_positive_data_as_json(self, data=None):
-        """
-        Get data from regions as a JSON string along with quantiles
-        Returns:
-            JSON string of departments overall data
-        """     
-        if data is None:
-            dep_data = self.dprate[(self.dprate['cl_age90'] == 0)].copy()
-        else:
-            dep_data = data[(data['cl_age90'] == 0)]
-
-        overall_dep_data_as_json_dict = {}
-
-        for feature in ["P"]:         
-            ### For positive case map
-            dep_data_j = self.dprate[(self.dprate['cl_age90'] == 0) & (self.dprate['jour'] == self.positive_last_day)]
-            dep_data_j = dep_data_j.drop(["jour", "cl_age90"], axis=1).groupby('dep').max()
-            dep_data_j = pd.concat([dep_data_j, self.department_base_data], axis=1)
-
-            dep_data_j[feature+'_par_habitants'] = (dep_data_j[feature] / dep_data_j['population']) * 100000
-            
-            data_feature = dep_data_j.copy()
-            
-            data_feature = data_feature.set_index("department-" + data_feature.index)
-            
-            data_feature = data_feature.loc[:, ['label', feature, feature+'_par_habitants', 'insee']]
-
-            nat = (dep_data.groupby("jour").sum().at[self.positive_last_day, feature] / self.department_base_data["population"].sum()) * 100000
-
-            q_feature = np.mean(data_feature[feature+'_par_habitants'].to_numpy() <= nat)
-
-            q_feature_list = [0.1, 0.1+(q_feature-0.1)/2, q_feature, q_feature+(.949-q_feature)/2, .949]
-
-            quantiles_feature = data_feature[feature+'_par_habitants'] \
-                .quantile(q_feature_list) \
-                .round(2)
-
-            data_feature[feature+'_par_habitants'] = data_feature[feature+'_par_habitants'].round(2)
-
-            #setattr(self, 'overall_departments_{}'.format(feature)+"_as_json", {"data_"+feature: data_feature.to_json(orient='index'), "quantiles_"+feature: quantiles_feature.to_json(orient='index')})
-
-            overall_dep_data_as_json_dict.update({'overall_departments_{}'.format(feature)+"_as_json": {"data_"+feature: data_feature.to_json(orient='index'), "quantiles_"+feature: quantiles_feature.to_json(orient='index')}})
-
-        return overall_dep_data_as_json_dict
-
-    def charts_positive_data(self, data=None, department=None, region=None): 
-        if region is None and department is None:
-            if data is None:
-                cdata = self.nprate[self.nprate.cl_age90 == 0].groupby(['jour']).sum().copy()
-                cpop = self.department_base_data["population"].sum()
-            else: 
-                cdata = data[data.cl_age90 == 0].groupby(['jour']).sum().copy()
-                cpop = self.department_base_data["population"].sum()
-        elif region is None and not department is None:
-            if data is None:
-                cdata = self.dprate[(self.dprate.dep == department) & (self.dprate.cl_age90 == 0)].groupby(['jour']).sum().copy()
-                cpop = self.department_base_data.at[department, 'population']
-            else: 
-                cdata = data[(data.dep == department) & (data.cl_age90 == 0)].groupby(['jour']).sum().copy()
-                cpop = self.department_base_data.at[department, 'population']
-        elif not region is None and department is None:
-            if data is None:
-                cdata = self.rprate[(self.rprate.reg == region) & (self.rprate.cl_age90 == 0)].groupby(['jour']).sum().copy()
-                cpop = self.region_base_data.at[region, 'population']
-            else: 
-                cdata = data[(data.reg == region) & (data.cl_age90 == 0)].groupby(['jour']).sum().copy()
-                cpop = self.region_base_data.at[region, 'population']
-
-        graphs = [
-            dict(
-                id = "Nombre de personnes actuellement positives",
-                data = [CovidFr.dataviz(x=cdata.index, y=cdata['P'], curve_type='bar', color='#f84ed3', width=1, opacity=0.8)],
-                layout = CovidFr.layoutoption(margin=dict(l=30, r=15, b=30, t=30), barmode='overlay',linemode='overlay', legend_orientation="h"),
-            ),   
-        ]
-        #############################################################
-        gJ = {}
-        for g in range(len(graphs)):
-            gJ.update({'graphJSON{}'.format(g): json.dumps([graphs[g]], cls=plotly.utils.PlotlyJSONEncoder)})
-        #############################################################
-
-        fdata = self.nprate[self.nprate.cl_age90 == 0].groupby(['jour']).sum().copy()
-        popfr = self.department_base_data["population"].sum()
-
-        before_last_day = cdata.index[-2].strftime("%Y-%m-%d")
-
-        counters = {
-                "positive_last_day_fr": self.positive_last_day_fr,
-                "positive_last_update_fr": datetime.strptime(self.positive_last_update, "%Y-%m-%dT%H:%M:%S.%f").strftime("%d/%m/%Y à %Hh%M"),
-                            
-                "current_positive": cdata.at[self.positive_last_day, 'P'],
-                "diff_positive": cdata.at[self.positive_last_day, 'P'] - cdata.at[before_last_day, 'P'],
-
-                "rates": {
-                        "positive": ((cdata.at[self.positive_last_day, 'P'] / cpop) * 100000).round(2),
-                        "d_positive": (((cdata.at[self.positive_last_day, 'P'] - cdata.at[before_last_day, 'P']) / cpop) * 100000).round(2),
-                        },
-            
-                "nat_refs": {
-                            "nat_positive": ((fdata.at[self.positive_last_day, 'P'] / popfr) * 100000).round(2),
-                            },
-                }
-
-        gJ.update({'counters': counters})
-
-        return gJ
-    ##############################
-    # positive case study ending
-    ##############################
 
     def request_label(self, department=None, region=None):
         """Get a department or a region label from its insee code

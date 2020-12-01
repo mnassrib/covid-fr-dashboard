@@ -9,16 +9,12 @@ app = Flask(__name__)
 covfr = CovidFr()
 
 covid = covfr.load_df()
-nprate, rprate, dprate = covfr.load_positive_df()
 
 map_covid_reg = covfr.overall_regions_data_as_json()
 map_covid_dep = covfr.overall_departments_data_as_json()
-map_positive_reg = covfr.overall_regions_positive_data_as_json()
-map_positive_dep = covfr.overall_departments_positive_data_as_json()
 
 charts_impacted_dep = covfr.charts_impacted_dep()
 charts_and_parameters_covid_data = covfr.charts()
-charts_and_parameters_positive_data = covfr.charts_positive_data()
 
 daily = covfr.dailycases(data=covid, pca=True)
 daily_reg = covfr.regiondailycases(data=covid, feature='hosp')
@@ -34,11 +30,8 @@ label = covfr.request_label()
 cv = dict(
     map_covid_reg = map_covid_reg,
     map_covid_dep = map_covid_dep,
-    map_positive_reg = map_positive_reg,
-    map_positive_dep = map_positive_dep,
 
     charts_impacted_dep = charts_impacted_dep,
-    charts_and_parameters_positive_data = charts_and_parameters_positive_data,
     charts_and_parameters_covid_data = charts_and_parameters_covid_data,
 
     charts_pca_global = charts_pca_global,
@@ -121,7 +114,6 @@ def view_department(department):
     rp = RenderPage(**cv)
     rp.department = department
     rp.charts_and_parameters_covid_data = covfr.charts(department=rp.department)
-    rp.charts_and_parameters_positive_data = covfr.charts_positive_data(department=rp.department)
     rp.label = covfr.request_label(department=rp.department)
     return rp.appview()
 
@@ -130,7 +122,6 @@ def view_region(region):
     rp = RenderPage(**cv)
     rp.region = region
     rp.charts_and_parameters_covid_data = covfr.charts(region=rp.region)
-    rp.charts_and_parameters_positive_data = covfr.charts_positive_data(region=rp.region)
     rp.label = covfr.request_label(region=rp.region)
     return rp.appview()
 
