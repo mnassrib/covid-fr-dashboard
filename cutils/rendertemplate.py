@@ -4,7 +4,72 @@ class ViewPage(object):
     """
     docstring
     """
-    def __init__(self, **kwargs):
+    def __init__(self, 
+        overall_regions_data_dc,
+        overall_regions_quantiles_dc,
+        overall_departments_data_dc,
+        overall_departments_quantiles_dc,
+
+        overall_regions_data_r_dc_rad,
+        overall_regions_quantiles_r_dc_rad,
+        overall_departments_data_r_dc_rad,
+        overall_departments_quantiles_r_dc_rad,
+
+        overall_regions_data_rad,
+        overall_regions_quantiles_rad,
+        overall_departments_data_rad,
+        overall_departments_quantiles_rad,
+
+        overall_regions_data_hosp,
+        overall_regions_quantiles_hosp,
+        overall_departments_data_hosp,
+        overall_departments_quantiles_hosp,
+
+        overall_regions_data_rea,
+        overall_regions_quantiles_rea,
+        overall_departments_data_rea,
+        overall_departments_quantiles_rea,
+
+        overall_regions_data_P,
+        overall_regions_quantiles_P,
+        overall_departments_data_P,
+        overall_departments_quantiles_P,
+
+        impacted_dep_graphJSON,
+        positive_graphJSON,
+        covid_graphJSON,
+
+        label,
+        region,
+        department,
+
+        first_day_fr,
+        last_day_fr,
+
+        map_choice,
+        criterion_choice,
+        number_all_dep,
+        global_pc,
+        normalize_states,
+        alpha_smooth,
+        pc_reg,
+        map_select,
+        top_dep,
+        criterion_select,
+        pcdim,
+        normalize,
+        alpha,
+        start_d_learn_fr,
+        end_d_learn_fr,
+        pcdim_reg,
+        normalize_reg,
+        alpha_reg,
+        start_d_learn_fr_reg,
+        end_d_learn_fr_reg,
+
+        graphJSON_pca_global,
+        graphJSON_pca_hosp_reg, 
+        **kwargs):
         self.overall_regions_data_dc = overall_regions_data_dc
         self.overall_regions_quantiles_dc = overall_regions_quantiles_dc
         self.overall_departments_data_dc = overall_departments_data_dc 

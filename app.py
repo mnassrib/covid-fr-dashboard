@@ -7,7 +7,7 @@ class ViewPage(object):
     """
     docstring
     """
-    def __init__(self, **kwargs):
+    def __init__(self):
         self.overall_regions_data_dc = overall_regions_data_dc
         self.overall_regions_quantiles_dc = overall_regions_quantiles_dc
         self.overall_departments_data_dc = overall_departments_data_dc 
@@ -38,9 +38,9 @@ class ViewPage(object):
         self.overall_departments_data_P = overall_departments_data_P
         self.overall_departments_quantiles_P = overall_departments_quantiles_P
 
-        self.impacted_dep_graphJSON = impacted_dep_graphJSON
-        self.positive_graphJSON = positive_graphJSON
-        self.covid_graphJSON = covid_graphJSON
+        self.charts_impacted_dep = charts_impacted_dep
+        self.charts_and_parameters_positive_data = charts_and_parameters_positive_data
+        self.charts_and_parameters_covid_data = charts_and_parameters_covid_data
 
         self.label = label
         self.region = region
@@ -106,9 +106,9 @@ class ViewPage(object):
             overall_departments_data_P = self.overall_departments_data_P,
             overall_departments_quantiles_P = self.overall_departments_quantiles_P,
 
-            impacted_dep_graphJSON = self.impacted_dep_graphJSON,
-            positive_graphJSON = self.positive_graphJSON,
-            covid_graphJSON = self.covid_graphJSON,
+            charts_impacted_dep = self.charts_impacted_dep,
+            charts_and_parameters_positive_data = self.charts_and_parameters_positive_data,
+            charts_and_parameters_covid_data = self.charts_and_parameters_covid_data,
 
             first_day_fr = self.first_day_fr,
             last_day_fr = self.last_day_fr,
@@ -155,7 +155,7 @@ oddaj_dep = covfr.overall_departments_data_as_json()
 orpdaj_reg = covfr.overall_regions_positive_data_as_json()
 odpdaj_dep = covfr.overall_departments_positive_data_as_json()
 
-charts_impact_dep = covfr.charts_impacted_dep()
+charts_impacted_dep = covfr.charts_impacted_dep()
 charts_and_parameters_covid_data = covfr.charts()
 charts_and_parameters_positive_data = covfr.charts_positive_data()
 
@@ -200,9 +200,9 @@ overall_regions_quantiles_P = orpdaj_reg["overall_regions_P_as_json"]['quantiles
 overall_departments_data_P = odpdaj_dep["overall_departments_P_as_json"]['data_P']
 overall_departments_quantiles_P = odpdaj_dep["overall_departments_P_as_json"]['quantiles_P']
 
-impacted_dep_graphJSON = charts_impact_dep
-positive_graphJSON = charts_and_parameters_positive_data
-covid_graphJSON = charts_and_parameters_covid_data
+charts_impacted_dep = charts_impacted_dep
+charts_and_parameters_positive_data = charts_and_parameters_positive_data
+charts_and_parameters_covid_data = charts_and_parameters_covid_data
 
 label = label
 department = covfr.default_department
@@ -239,31 +239,26 @@ graphJSON_pca_hosp_reg = graphJSON_pca_hosp_reg
 
 @app.route('/', methods=['GET', 'POST'])
 def graphs():
-
     vp = ViewPage()
     return vp.appview()
 
 @app.route('/maps', methods=['GET', 'POST'])
 def maps():
-
     vp = ViewPage()
     vp.map_select = request.form.get('map_select')
     return vp.appview()
 
 @app.route("/top_dep_settings", methods=['GET', 'POST'])
 def top_dep_settings():
-
     vp = ViewPage()
     vp.top_dep = int(request.form.getlist('top_dep_settings')[0])
     vp.criterion_select = request.form.getlist('top_dep_settings')[1]
-    vp.impacted_dep_graphJSON = covfr.charts_impacted_dep(top_number=vp.top_dep)
+    vp.charts_impacted_dep = covfr.charts_impacted_dep(top_number=vp.top_dep)
     return vp.appview()
     
 @app.route("/global_monitoring_settings", methods=['GET', 'POST'])
 def global_monitoring_settings():
-
     global_select = request.form.getlist('global_parameters')
-
     vp = ViewPage()
     vp.pcdim = int(global_select[0])
     vp.normalize = eval(global_select[1])
@@ -275,9 +270,7 @@ def global_monitoring_settings():
 
 @app.route("/hosp_monitoring_settings", methods=['GET', 'POST'])
 def hosp_monitoring_settings():
-
     hosp_select = request.form.getlist('hosp_parameters')
-
     vp = ViewPage()
     vp.pcdim_reg = int(hosp_select[0])
     vp.normalize_reg = eval(hosp_select[1])
@@ -289,21 +282,19 @@ def hosp_monitoring_settings():
 
 @app.route('/departement/<string:department>', methods=['GET', 'POST'])
 def view_department(department):
-
     vp = ViewPage()
     vp.department = department
-    vp.covid_graphJSON = covfr.charts(department=vp.department)
-    vp.positive_graphJSON = covfr.charts_positive_data(department=vp.department)
+    vp.charts_and_parameters_covid_data = covfr.charts(department=vp.department)
+    vp.charts_and_parameters_positive_data = covfr.charts_positive_data(department=vp.department)
     vp.label = covfr.request_label(department=vp.department)
     return vp.appview()
 
 @app.route('/region/<string:region>', methods=['GET', 'POST'])
 def view_region(region):
-
     vp = ViewPage()
     vp.region = region
-    vp.covid_graphJSON = covfr.charts(region=vp.region)
-    vp.positive_graphJSON = covfr.charts_positive_data(region=vp.region)
+    vp.charts_and_parameters_covid_data = covfr.charts(region=vp.region)
+    vp.charts_and_parameters_positive_data = covfr.charts_positive_data(region=vp.region)
     vp.label = covfr.request_label(region=vp.region)
     return vp.appview()
 
