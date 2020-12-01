@@ -1029,8 +1029,8 @@
     <!-- positive map regions-->
     <script type="text/javascript">
         mapDiv = "#positive_map_reg";
-        regions = {{ overall_regions_data_P | safe }};
-        quantiles = {{ overall_regions_quantiles_P | safe }};
+        regions = {{ map_positive_reg["overall_regions_P_as_json"]['data_P'] | safe }};
+        quantiles = {{ map_positive_reg["overall_regions_P_as_json"]['quantiles_P'] | safe }};
         current_label = "{{ region }}";
         text = "cas positifs";
         feature_par_habitants = "P_par_habitants";
@@ -1042,8 +1042,8 @@
     <!-- death map regions-->
     <script type="text/javascript">
         mapDiv = "#death_map_reg";
-        regions = {{ overall_regions_data_dc | safe }};
-        quantiles = {{ overall_regions_quantiles_dc | safe }};
+        regions = {{ map_covid_reg["overall_regions_dc_as_json"]['data_dc'] | safe }};
+        quantiles = {{ map_covid_reg["overall_regions_dc_as_json"]['quantiles_dc'] | safe }};
         current_label = "{{ region }}";
         text = "décès";
         feature_par_habitants = "dc_par_habitants";
@@ -1055,8 +1055,8 @@
     <!-- rad map regions-->
     <script type="text/javascript">
         mapDiv = "#rad_map_reg";
-        regions = {{ overall_regions_data_rad | safe }};
-        quantiles = {{ overall_regions_quantiles_rad | safe }};
+        regions = {{ map_covid_reg["overall_regions_rad_as_json"]['data_rad'] | safe }};
+        quantiles = {{ map_covid_reg["overall_regions_rad_as_json"]['quantiles_rad'] | safe }};
         current_label = "{{ region }}";
         text = "guérisons";
         feature_par_habitants = "rad_par_habitants";
@@ -1068,8 +1068,8 @@
     <!-- hosp map regions-->
     <script type="text/javascript">
         mapDiv = "#hosp_map_reg";
-        regions = {{ overall_regions_data_hosp | safe }};
-        quantiles = {{ overall_regions_quantiles_hosp | safe }};
+        regions = {{ map_covid_reg["overall_regions_hosp_as_json"]['data_hosp'] | safe }};
+        quantiles = {{ map_covid_reg["overall_regions_hosp_as_json"]['quantiles_hosp'] | safe }};
         current_label = "{{ region }}";
         text = "hospitalisations";
         feature_par_habitants = "hosp_par_habitants";
@@ -1081,8 +1081,8 @@
     <!-- rea map regions-->
     <script type="text/javascript">
         mapDiv = "#rea_map_reg";
-        regions = {{ overall_regions_data_rea | safe }};
-        quantiles = {{ overall_regions_quantiles_rea | safe }};
+        regions = {{ map_covid_reg["overall_regions_rea_as_json"]['data_rea'] | safe }};
+        quantiles = {{ map_covid_reg["overall_regions_rea_as_json"]['quantiles_rea'] | safe }};
         current_label = "{{ region }}";
         text = "réanimations";
         feature_par_habitants = "rea_par_habitants";
@@ -1094,8 +1094,8 @@
 	<!-- rate dc/rad map regions-->
     <script type="text/javascript">
         mapDiv = "#rate_death_map_reg";
-        regions = {{ overall_regions_data_r_dc_rad | safe }};
-        quantiles = {{ overall_regions_quantiles_r_dc_rad | safe }};
+        regions = {{ map_covid_reg["overall_regions_r_dc_rad_as_json"]['data_r_dc_rad'] | safe }};
+        quantiles = {{ map_covid_reg["overall_regions_r_dc_rad_as_json"]['quantiles_r_dc_rad'] | safe }};
         current_label = "{{ region }}";
         text = null;
         feature_par_habitants = null;
@@ -1108,8 +1108,8 @@
     <!-- positive map departments-->
     <script type="text/javascript">
         mapDiv = "#positive_map_dep";
-        departments = {{ overall_departments_data_P | safe }};
-        quantiles = {{ overall_departments_quantiles_P | safe }};
+        departments = {{ map_positive_dep["overall_departments_P_as_json"]['data_P'] | safe }};
+        quantiles = {{ map_positive_dep["overall_departments_P_as_json"]['quantiles_P'] | safe }};
         current_label = "{{ department }}";
         text = "cas positifs";
         feature_par_habitants = "P_par_habitants";
@@ -1121,8 +1121,8 @@
     <!-- death map departments-->
     <script type="text/javascript">
         mapDiv = "#death_map_dep";
-        departments = {{ overall_departments_data_dc | safe }};
-        quantiles = {{ overall_departments_quantiles_dc | safe }};
+        departments = {{ map_covid_dep["overall_departments_dc_as_json"]['data_dc'] | safe }};
+        quantiles = {{ map_covid_dep["overall_departments_dc_as_json"]['quantiles_dc'] | safe }};
         current_label = "{{ department }}";
         text = "décès";
         feature_par_habitants = "dc_par_habitants";
@@ -1134,8 +1134,8 @@
     <!-- rad map departments-->
     <script type="text/javascript">
         mapDiv = "#rad_map_dep";
-        departments = {{ overall_departments_data_rad | safe }};
-        quantiles = {{ overall_departments_quantiles_rad | safe }};
+        departments = {{ map_covid_dep["overall_departments_rad_as_json"]['data_rad'] | safe }};
+        quantiles = {{ map_covid_dep["overall_departments_rad_as_json"]['quantiles_rad'] | safe }};
         current_label = "{{ department }}";
         text = "guérisons";
         feature_par_habitants = "rad_par_habitants";
@@ -1147,8 +1147,8 @@
     <!-- hosp map departments-->
     <script type="text/javascript">
         mapDiv = "#hosp_map_dep";
-        departments = {{ overall_departments_data_hosp | safe }};
-        quantiles = {{ overall_departments_quantiles_hosp | safe }};
+        departments = {{ map_covid_dep["overall_departments_hosp_as_json"]['data_hosp'] | safe }};
+        quantiles = {{ map_covid_dep["overall_departments_hosp_as_json"]['quantiles_hosp'] | safe }};
         current_label = "{{ department }}";
         text = "hospitalisations";
         feature_par_habitants = "hosp_par_habitants";
@@ -1160,8 +1160,8 @@
     <!-- rea map departments-->
     <script type="text/javascript">
         mapDiv = "#rea_map_dep";
-        departments = {{ overall_departments_data_rea | safe }};
-        quantiles = {{ overall_departments_quantiles_rea | safe }};
+        departments = {{ map_covid_dep["overall_departments_rea_as_json"]['data_rea'] | safe }};
+        quantiles = {{ map_covid_dep["overall_departments_rea_as_json"]['quantiles_rea'] | safe }};
         current_label = "{{ department }}";
         text = "réanimations";
         feature_par_habitants = "rea_par_habitants";
@@ -1173,8 +1173,8 @@
     <!-- rate dc/rad map departments-->
     <script type="text/javascript">
         mapDiv = "#rate_death_map_dep";
-        departments = {{ overall_departments_data_r_dc_rad | safe }};
-        quantiles = {{ overall_departments_quantiles_r_dc_rad | safe }};
+        departments = {{ map_covid_dep["overall_departments_r_dc_rad_as_json"]['data_r_dc_rad'] | safe }};
+        quantiles = {{ map_covid_dep["overall_departments_r_dc_rad_as_json"]['quantiles_r_dc_rad'] | safe }};
         current_label = "{{ department }}";
         text = null;
         feature_par_habitants = null;
@@ -1247,12 +1247,12 @@
 
     <!-- charts pca-->
     <script type="text/javascript">
-        var graphs = {{ graphJSON_pca_global["graphJSON"] | safe }};
+        var graphs = {{ charts_pca_global["graphJSON"] | safe }};
         var text = "";
         plotGraphs(graphs, text);
     </script>
     <script type="text/javascript">
-        var graphs = {{ graphJSON_pca_hosp_reg["graphJSON"] | safe }};
+        var graphs = {{ charts_pca_hosp_reg["graphJSON"] | safe }};
         var text = "_reg";
         plotGraphs(graphs, text);
     </script>

@@ -8,47 +8,24 @@ class ViewPage(object):
     docstring
     """
     def __init__(self):
-        self.overall_regions_data_dc = overall_regions_data_dc
-        self.overall_regions_quantiles_dc = overall_regions_quantiles_dc
-        self.overall_departments_data_dc = overall_departments_data_dc 
-        self.overall_departments_quantiles_dc = overall_departments_quantiles_dc
-
-        self.overall_regions_data_r_dc_rad = overall_regions_data_r_dc_rad
-        self.overall_regions_quantiles_r_dc_rad = overall_regions_quantiles_r_dc_rad
-        self.overall_departments_data_r_dc_rad = overall_departments_data_r_dc_rad
-        self.overall_departments_quantiles_r_dc_rad = overall_departments_quantiles_r_dc_rad
-
-        self.overall_regions_data_rad = overall_regions_data_rad
-        self.overall_regions_quantiles_rad = overall_regions_quantiles_rad
-        self.overall_departments_data_rad = overall_departments_data_rad
-        self.overall_departments_quantiles_rad = overall_departments_quantiles_rad 
-
-        self.overall_regions_data_hosp = overall_regions_data_hosp
-        self.overall_regions_quantiles_hosp = overall_regions_quantiles_hosp
-        self.overall_departments_data_hosp = overall_departments_data_hosp
-        self.overall_departments_quantiles_hosp = overall_departments_quantiles_hosp
-
-        self.overall_regions_data_rea = overall_regions_data_rea
-        self.overall_regions_quantiles_rea = overall_regions_quantiles_rea
-        self.overall_departments_data_rea = overall_departments_data_rea
-        self.overall_departments_quantiles_rea = overall_departments_quantiles_rea
-
-        self.overall_regions_data_P = overall_regions_data_P
-        self.overall_regions_quantiles_P = overall_regions_quantiles_P
-        self.overall_departments_data_P = overall_departments_data_P
-        self.overall_departments_quantiles_P = overall_departments_quantiles_P
+        self.map_covid_reg = map_covid_reg
+        self.map_covid_dep = map_covid_dep
+        self.map_positive_reg = map_positive_reg
+        self.map_positive_dep = map_positive_dep
 
         self.charts_impacted_dep = charts_impacted_dep
         self.charts_and_parameters_positive_data = charts_and_parameters_positive_data
         self.charts_and_parameters_covid_data = charts_and_parameters_covid_data
 
+        self.charts_pca_global = charts_pca_global
+        self.charts_pca_hosp_reg = charts_pca_hosp_reg
+
         self.label = label
+
         self.region = region
         self.department = department
-
         self.first_day_fr = first_day_fr
         self.last_day_fr = last_day_fr
-
         self.map_choice = map_choice
         self.criterion_choice = criterion_choice
         self.number_all_dep = number_all_dep
@@ -70,52 +47,27 @@ class ViewPage(object):
         self.start_d_learn_fr_reg = start_d_learn_fr_reg
         self.end_d_learn_fr_reg = end_d_learn_fr_reg
 
-        self.graphJSON_pca_global = graphJSON_pca_global
-        self.graphJSON_pca_hosp_reg = graphJSON_pca_hosp_reg
-
     def appview(self):
         return render_template(
             "graphs.html",
-            overall_regions_data_dc = self.overall_regions_data_dc,
-            overall_regions_quantiles_dc = self.overall_regions_quantiles_dc,
-            overall_departments_data_dc = self.overall_departments_data_dc,
-            overall_departments_quantiles_dc = self.overall_departments_quantiles_dc,
-
-            overall_regions_data_r_dc_rad = self.overall_regions_data_r_dc_rad,
-            overall_regions_quantiles_r_dc_rad = self.overall_regions_quantiles_r_dc_rad,
-            overall_departments_data_r_dc_rad = self.overall_departments_data_r_dc_rad,
-            overall_departments_quantiles_r_dc_rad = self.overall_departments_quantiles_r_dc_rad,
-
-            overall_regions_data_rad = self.overall_regions_data_rad,
-            overall_regions_quantiles_rad = self.overall_regions_quantiles_rad,
-            overall_departments_data_rad = self.overall_departments_data_rad,
-            overall_departments_quantiles_rad = self.overall_departments_quantiles_rad,
-
-            overall_regions_data_hosp = self.overall_regions_data_hosp,
-            overall_regions_quantiles_hosp = self.overall_regions_quantiles_hosp,
-            overall_departments_data_hosp = self.overall_departments_data_hosp,
-            overall_departments_quantiles_hosp = self.overall_departments_quantiles_hosp,
-
-            overall_regions_data_rea = self.overall_regions_data_rea,
-            overall_regions_quantiles_rea = self.overall_regions_quantiles_rea,
-            overall_departments_data_rea = self.overall_departments_data_rea,
-            overall_departments_quantiles_rea = self.overall_departments_quantiles_rea,
-
-            overall_regions_data_P = self.overall_regions_data_P,
-            overall_regions_quantiles_P = self.overall_regions_quantiles_P,
-            overall_departments_data_P = self.overall_departments_data_P,
-            overall_departments_quantiles_P = self.overall_departments_quantiles_P,
-
+            map_covid_reg = self.map_covid_reg,
+            map_covid_dep = self.map_covid_dep,
+            map_positive_reg = self.map_positive_reg,
+            map_positive_dep = self.map_positive_dep,
+            
             charts_impacted_dep = self.charts_impacted_dep,
             charts_and_parameters_positive_data = self.charts_and_parameters_positive_data,
             charts_and_parameters_covid_data = self.charts_and_parameters_covid_data,
 
+            charts_pca_global = self.charts_pca_global,
+            charts_pca_hosp_reg = self.charts_pca_hosp_reg,
+
+            label = self.label,
+
+            region = self.region,
+            department = self.department,
             first_day_fr = self.first_day_fr,
             last_day_fr = self.last_day_fr,
-            label = self.label,
-            department = self.department,
-            region = self.region,
-
             map_choice = self.map_choice,
             criterion_choice = self.criterion_choice,
             number_all_dep = self.number_all_dep,
@@ -123,7 +75,6 @@ class ViewPage(object):
             normalize_states = self.normalize_states,
             alpha_smooth = self.alpha_smooth,
             pc_reg = self.pc_reg,
-
             map_select = self.map_select,
             top_dep = self.top_dep,
             criterion_select = self.criterion_select,
@@ -137,11 +88,7 @@ class ViewPage(object):
             start_d_learn_fr_reg = self.start_d_learn_fr_reg,
             end_d_learn_fr_reg = self.end_d_learn_fr_reg,
             alpha_reg = self.alpha_reg,
-
-            graphJSON_pca_global = self.graphJSON_pca_global,
-            graphJSON_pca_hosp_reg = self.graphJSON_pca_hosp_reg,
         )
-
 
 app = Flask(__name__)
 
@@ -150,67 +97,44 @@ covfr = CovidFr()
 covid = covfr.load_df()
 nprate, rprate, dprate = covfr.load_positive_df()
 
-ordaj_reg = covfr.overall_regions_data_as_json()
-oddaj_dep = covfr.overall_departments_data_as_json()
-orpdaj_reg = covfr.overall_regions_positive_data_as_json()
-odpdaj_dep = covfr.overall_departments_positive_data_as_json()
+map_covid_reg = covfr.overall_regions_data_as_json()
+map_covid_dep = covfr.overall_departments_data_as_json()
+map_positive_reg = covfr.overall_regions_positive_data_as_json()
+map_positive_dep = covfr.overall_departments_positive_data_as_json()
 
 charts_impacted_dep = covfr.charts_impacted_dep()
 charts_and_parameters_covid_data = covfr.charts()
 charts_and_parameters_positive_data = covfr.charts_positive_data()
 
-label = covfr.request_label()
-
 daily = covfr.dailycases(data=covid, pca=True)
 daily_reg = covfr.regiondailycases(data=covid, feature='hosp')
 
-graphJSON_pca_global = covfr.pca_charts(data=daily, pcdim=covfr.default_pcdim, normalize=covfr.default_normalize, start_d_learn=covfr.default_start_d_learn_fr, end_d_learn=covfr.default_end_d_learn_fr, alpha=covfr.default_alpha)
-graphJSON_pca_hosp_reg = covfr.pca_charts(data=daily_reg, pcdim=covfr.default_pcdim_reg, normalize=covfr.default_normalize_reg, start_d_learn=covfr.default_start_d_learn_fr_reg, end_d_learn=covfr.default_end_d_learn_fr_reg, alpha=covfr.default_alpha_reg)
+charts_pca_global = covfr.pca_charts(data=daily, pcdim=covfr.default_pcdim, normalize=covfr.default_normalize, start_d_learn=covfr.default_start_d_learn_fr, end_d_learn=covfr.default_end_d_learn_fr, alpha=covfr.default_alpha)
+charts_pca_hosp_reg = covfr.pca_charts(data=daily_reg, pcdim=covfr.default_pcdim_reg, normalize=covfr.default_normalize_reg, start_d_learn=covfr.default_start_d_learn_fr_reg, end_d_learn=covfr.default_end_d_learn_fr_reg, alpha=covfr.default_alpha_reg)
+
+label = covfr.request_label()
 
 ##########################################################
 # required html page variables
 ###############################
-overall_regions_data_dc = ordaj_reg["overall_regions_dc_as_json"]['data_dc']
-overall_regions_quantiles_dc = ordaj_reg["overall_regions_dc_as_json"]['quantiles_dc']
-overall_departments_data_dc = oddaj_dep["overall_departments_dc_as_json"]['data_dc']
-overall_departments_quantiles_dc = oddaj_dep["overall_departments_dc_as_json"]['quantiles_dc']
+# map_covid_reg = map_covid_reg
+# map_covid_dep = map_covid_dep
+# map_positive_reg = map_positive_reg
+# map_positive_dep = map_positive_dep
 
-overall_regions_data_r_dc_rad = ordaj_reg["overall_regions_r_dc_rad_as_json"]['data_r_dc_rad']
-overall_regions_quantiles_r_dc_rad = ordaj_reg["overall_regions_r_dc_rad_as_json"]['quantiles_r_dc_rad']
-overall_departments_data_r_dc_rad = oddaj_dep["overall_departments_r_dc_rad_as_json"]['data_r_dc_rad']
-overall_departments_quantiles_r_dc_rad = oddaj_dep["overall_departments_r_dc_rad_as_json"]['quantiles_r_dc_rad']
+# charts_impacted_dep = charts_impacted_dep
+# charts_and_parameters_positive_data = charts_and_parameters_positive_data
+# charts_and_parameters_covid_data = charts_and_parameters_covid_data
 
-overall_regions_data_rad = ordaj_reg["overall_regions_rad_as_json"]['data_rad']
-overall_regions_quantiles_rad = ordaj_reg["overall_regions_rad_as_json"]['quantiles_rad']
-overall_departments_data_rad = oddaj_dep["overall_departments_rad_as_json"]['data_rad']
-overall_departments_quantiles_rad = oddaj_dep["overall_departments_rad_as_json"]['quantiles_rad']
+# charts_pca_global = charts_pca_global
+# charts_pca_hosp_reg = charts_pca_hosp_reg
 
-overall_regions_data_hosp = ordaj_reg["overall_regions_hosp_as_json"]['data_hosp']
-overall_regions_quantiles_hosp = ordaj_reg["overall_regions_hosp_as_json"]['quantiles_hosp']
-overall_departments_data_hosp = oddaj_dep["overall_departments_hosp_as_json"]['data_hosp']
-overall_departments_quantiles_hosp = oddaj_dep["overall_departments_hosp_as_json"]['quantiles_hosp']
+# label = label
 
-overall_regions_data_rea = ordaj_reg["overall_regions_rea_as_json"]['data_rea']
-overall_regions_quantiles_rea = ordaj_reg["overall_regions_rea_as_json"]['quantiles_rea']
-overall_departments_data_rea = oddaj_dep["overall_departments_rea_as_json"]['data_rea']
-overall_departments_quantiles_rea = oddaj_dep["overall_departments_rea_as_json"]['quantiles_rea']
-
-overall_regions_data_P = orpdaj_reg["overall_regions_P_as_json"]['data_P']
-overall_regions_quantiles_P = orpdaj_reg["overall_regions_P_as_json"]['quantiles_P']
-overall_departments_data_P = odpdaj_dep["overall_departments_P_as_json"]['data_P']
-overall_departments_quantiles_P = odpdaj_dep["overall_departments_P_as_json"]['quantiles_P']
-
-charts_impacted_dep = charts_impacted_dep
-charts_and_parameters_positive_data = charts_and_parameters_positive_data
-charts_and_parameters_covid_data = charts_and_parameters_covid_data
-
-label = label
 department = covfr.default_department
 region = covfr.default_region
-
 first_day_fr = covfr.first_day_fr
 last_day_fr = covfr.last_day_fr
-
 map_choice = covfr.map_choice
 criterion_choice = covfr.criterion_choice
 number_all_dep = covfr.number_all_dep
@@ -218,7 +142,6 @@ global_pc = covfr.global_pc
 normalize_states = covfr.normalize_states
 alpha_smooth = covfr.alpha_smooth
 pc_reg = covfr.pc_reg
-
 map_select = covfr.default_map_select
 top_dep = covfr.default_top_dep
 criterion_select = covfr.default_criterion_select
@@ -232,9 +155,6 @@ normalize_reg = covfr.default_normalize_reg
 start_d_learn_fr_reg = covfr.default_start_d_learn_fr_reg
 end_d_learn_fr_reg = covfr.default_end_d_learn_fr_reg
 alpha_reg = covfr.default_alpha_reg
-
-graphJSON_pca_global = graphJSON_pca_global
-graphJSON_pca_hosp_reg = graphJSON_pca_hosp_reg
 ##########################################################
 
 @app.route('/', methods=['GET', 'POST'])
@@ -265,7 +185,7 @@ def global_monitoring_settings():
     vp.start_d_learn_fr = global_select[2].split(" - ")[0]
     vp.end_d_learn_fr = global_select[2].split(" - ")[1]
     vp.alpha = float(global_select[3])
-    vp.graphJSON_pca_global = covfr.pca_charts(data=daily, pcdim=vp.pcdim, normalize=vp.normalize, start_d_learn=vp.start_d_learn_fr, end_d_learn=vp.end_d_learn_fr, alpha=vp.alpha)
+    vp.charts_pca_global = covfr.pca_charts(data=daily, pcdim=vp.pcdim, normalize=vp.normalize, start_d_learn=vp.start_d_learn_fr, end_d_learn=vp.end_d_learn_fr, alpha=vp.alpha)
     return vp.appview()
 
 @app.route("/hosp_monitoring_settings", methods=['GET', 'POST'])
@@ -277,7 +197,7 @@ def hosp_monitoring_settings():
     vp.start_d_learn_fr_reg = hosp_select[2].split(" - ")[0]
     vp.end_d_learn_fr_reg = hosp_select[2].split(" - ")[1]
     vp.alpha_reg = float(hosp_select[3])
-    vp.graphJSON_pca_hosp_reg = covfr.pca_charts(data=daily_reg, pcdim=vp.pcdim_reg, normalize=vp.normalize_reg, start_d_learn=vp.start_d_learn_fr_reg, end_d_learn=vp.end_d_learn_fr_reg, alpha=vp.alpha_reg)
+    vp.charts_pca_hosp_reg = covfr.pca_charts(data=daily_reg, pcdim=vp.pcdim_reg, normalize=vp.normalize_reg, start_d_learn=vp.start_d_learn_fr_reg, end_d_learn=vp.end_d_learn_fr_reg, alpha=vp.alpha_reg)
     return vp.appview()
 
 @app.route('/departement/<string:department>', methods=['GET', 'POST'])
