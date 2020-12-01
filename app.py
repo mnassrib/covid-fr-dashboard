@@ -68,18 +68,18 @@ cv = dict(
 
 @app.route('/', methods=['GET', 'POST'])
 def graphs():
-    rp = RenderPage(**cv)
+    rp = RenderPage("graphs.html", **cv)
     return rp.appview()
 
 @app.route('/maps', methods=['GET', 'POST'])
 def maps():
-    rp = RenderPage(**cv)
+    rp = RenderPage("graphs.html", **cv)
     rp.map_select = request.form.get('map_select')
     return rp.appview()
 
 @app.route("/top_dep_settings", methods=['GET', 'POST'])
 def top_dep_settings():
-    rp = RenderPage(**cv)
+    rp = RenderPage("graphs.html", **cv)
     rp.top_dep = int(request.form.getlist('top_dep_settings')[0])
     rp.criterion_select = request.form.getlist('top_dep_settings')[1]
     rp.charts_impacted_dep = covfr.charts_impacted_dep(top_number=rp.top_dep)
@@ -88,7 +88,7 @@ def top_dep_settings():
 @app.route("/global_monitoring_settings", methods=['GET', 'POST'])
 def global_monitoring_settings():
     global_select = request.form.getlist('global_parameters')
-    rp = RenderPage(**cv)
+    rp = RenderPage("graphs.html", **cv)
     rp.pcdim = int(global_select[0])
     rp.normalize = eval(global_select[1])
     rp.start_d_learn_fr = global_select[2].split(" - ")[0]
@@ -100,7 +100,7 @@ def global_monitoring_settings():
 @app.route("/hosp_monitoring_settings", methods=['GET', 'POST'])
 def hosp_monitoring_settings():
     hosp_select = request.form.getlist('hosp_parameters')
-    rp = RenderPage(**cv)
+    rp = RenderPage("graphs.html", **cv)
     rp.pcdim_reg = int(hosp_select[0])
     rp.normalize_reg = eval(hosp_select[1])
     rp.start_d_learn_fr_reg = hosp_select[2].split(" - ")[0]
@@ -111,7 +111,7 @@ def hosp_monitoring_settings():
 
 @app.route('/departement/<string:department>', methods=['GET', 'POST'])
 def view_department(department):
-    rp = RenderPage(**cv)
+    rp = RenderPage("graphs.html", **cv)
     rp.department = department
     rp.charts_and_parameters_covid_data = covfr.charts(department=rp.department)
     rp.label = covfr.request_label(department=rp.department)
@@ -119,7 +119,7 @@ def view_department(department):
 
 @app.route('/region/<string:region>', methods=['GET', 'POST'])
 def view_region(region):
-    rp = RenderPage(**cv)
+    rp = RenderPage("graphs.html", **cv)
     rp.region = region
     rp.charts_and_parameters_covid_data = covfr.charts(region=rp.region)
     rp.label = covfr.request_label(region=rp.region)
