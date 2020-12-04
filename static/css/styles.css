@@ -25,6 +25,16 @@ footer, .push {
     height: 155px; /* '.push' must be the same height as 'footer' */
 }
 
+.footer > p:first-child {
+    float: left;
+    text-align: left;
+    width: 40%; }
+
+.footer > p:nth-child(2) {
+    float: right;
+	text-align: right;
+	width: 60%; }
+
 .picto-item {
     position: relative;  /*les .picto-item deviennent référents*/
     cursor: help;
@@ -387,4 +397,133 @@ button.button:hover {
 }
 .button.glass:active {
 	text-shadow: rgba(255,255,255,.3) 0 1px 0, rgba(0,0,0,0.15) 0 .18em .15em;
+}
+
+
+
+
+
+.steady-blue {
+    padding: 2px 5px;
+    background-color: #24E0FF;
+    border-radius: 0%;
+    background-image: linear-gradient(180deg, #fff, #ddd 50%, #ccc);
+    box-shadow:  rgba(0, 0, 0, 0.2) 0 -1px 7px 1px, inset #006 0 -1px 5px, #3F8CFF 0 2px 10px;
+}
+
+.yellow-flashing {
+    padding: 2px 5px;
+    background-color: #FF0;
+    border-radius: 0%;
+    background-image: linear-gradient(180deg, #fff, #ddd 80%, #ccc);
+    box-shadow: rgba(0, 0, 0, 0.2) 0 -1px 7px 1px, inset #808002 0 -1px 5px, #FF0 0 2px 10px;
+    -webkit-animation: blinkYellow 1s infinite;
+    -moz-animation: blinkYellow 1s infinite;
+    -ms-animation: blinkYellow 1s infinite;
+    -o-animation: blinkYellow 1s infinite;
+    animation: blinkYellow 1s infinite;
+}
+
+@-webkit-keyframes blinkYellow {
+    from { background-color: #FF0; }
+    50% { background-color: #AA0; box-shadow: rgba(0, 0, 0, 0.2) 0 -1px 7px 1px, inset #808002 0 -1px 5px, #FF0 0 2px 0; }
+    to { background-color: #FF0; }
+}
+@-moz-keyframes blinkYellow {
+    from { background-color: #FF0; }
+    50% { background-color: #AA0; box-shadow: rgba(0, 0, 0, 0.2) 0 -1px 7px 1px, inset #808002 0 -1px 5px, #FF0 0 2px 0; }
+    to { background-color: #FF0; }
+}
+@-ms-keyframes blinkYellow {
+    from { background-color: #FF0; }
+    50% { background-color: #AA0; box-shadow: rgba(0, 0, 0, 0.2) 0 -1px 7px 1px, inset #808002 0 -1px 5px, #FF0 0 2px 0; }
+    to { background-color: #FF0; }
+}
+@-o-keyframes blinkYellow {
+    from { background-color: #FF0; }
+    50% { background-color: #AA0; box-shadow: rgba(0, 0, 0, 0.2) 0 -1px 7px 1px, inset #808002 0 -1px 5px, #FF0 0 2px 0; }
+    to { background-color: #FF0; }
+}
+@keyframes blinkYellow {
+    from { background-color: #FF0; }
+    50% { background-color: #AA0; box-shadow: rgba(0, 0, 0, 0.2) 0 -1px 7px 1px, inset #808002 0 -1px 5px, #FF0 0 2px 0; }
+    to { background-color: #FF0; }
+}
+
+.red-flashing {
+    padding: 2px 5px;
+    background-color: #F00;
+    border-radius: 0%;
+    background-image: linear-gradient(180deg, #fff, #ddd 80%, #ccc);
+    box-shadow: rgba(0, 0, 0, 0.2) 0 -1px 7px 1px, inset #441313 0 -1px 5px, rgba(255, 0, 0, 0.5) 0 2px 10px;
+    -webkit-animation: blinkRed 0.5s infinite;
+    -moz-animation: blinkRed 0.5s infinite;
+    -ms-animation: blinkRed 0.5s infinite;
+    -o-animation: blinkRed 0.5s infinite;
+    animation: blinkRed 0.5s infinite;
+}
+
+@-webkit-keyframes blinkRed {
+    from { background-color: #F00; }
+    50% { background-color: #A00; box-shadow: rgba(0, 0, 0, 0.2) 0 -1px 7px 1px, inset #441313 0 -1px 5px, rgba(255, 0, 0, 0.5) 0 2px 0;}
+    to { background-color: #F00; }
+}
+@-moz-keyframes blinkRed {
+    from { background-color: #F00; }
+    50% { background-color: #A00; box-shadow: rgba(0, 0, 0, 0.2) 0 -1px 7px 1px, inset #441313 0 -1px 5px, rgba(255, 0, 0, 0.5) 0 2px 0;}
+    to { background-color: #F00; }
+}
+@-ms-keyframes blinkRed {
+    from { background-color: #F00; }
+    50% { background-color: #A00; box-shadow: rgba(0, 0, 0, 0.2) 0 -1px 7px 1px, inset #441313 0 -1px 5px, rgba(255, 0, 0, 0.5) 0 2px 0;}
+    to { background-color: #F00; }
+}
+@-o-keyframes blinkRed {
+    from { background-color: #F00; }
+    50% { background-color: #A00; box-shadow: rgba(0, 0, 0, 0.2) 0 -1px 7px 1px, inset #441313 0 -1px 5px, rgba(255, 0, 0, 0.5) 0 2px 0;}
+    to { background-color: #F00; }
+}
+@keyframes blinkRed {
+    from { background-color: #F00; }
+    50% { background-color: #A00; box-shadow: rgba(0, 0, 0, 0.2) 0 -1px 7px 1px, inset #441313 0 -1px 5px, rgba(255, 0, 0, 0.5) 0 2px 0;}
+    to { background-color: #F00; }
+}
+
+.green-flashing {
+    padding: 2px 5px;
+    background-color: #ABFF00;
+    border-radius: 0%;
+    background-image: linear-gradient(180deg, #fff, #ddd 50%, #ccc);
+    box-shadow: rgba(0, 0, 0, 0.2) 0 -1px 7px 1px, inset #304701 0 -1px 5px, #89FF00 0 2px 10px;
+    -webkit-animation: blinkGreen 0.5s infinite;
+    -moz-animation: blinkGreen 0.5s infinite;
+    -ms-animation: blinkGreen 0.5s infinite;
+    -o-animation: blinkGreen 0.5s infinite;
+    animation: blinkGreen 0.5s infinite;
+}
+
+@-webkit-keyframes blinkGreen {
+    from { background-color: #ABFF00; }
+    50% { background-color:  #ABFF00; box-shadow:  rgba(0, 0, 0, 0.2) 0 -1px 7px 1px, inset #304701 0 -1px 5px, #89FF00 0 2px 0;}
+    to { background-color: #ABFF00; }
+}
+@-moz-keyframes blinkGreen {
+    from { background-color: #ABFF00; }
+    50% { background-color:  #ABFF00; box-shadow:  rgba(0, 0, 0, 0.2) 0 -1px 7px 1px, inset #304701 0 -1px 5px, #89FF00 0 2px 0;}
+    to { background-color: #ABFF00; }
+}
+@-ms-keyframes blinkGreen {
+    from { background-color: #ABFF00; }
+    50% { background-color:  #ABFF00; box-shadow:  rgba(0, 0, 0, 0.2) 0 -1px 7px 1px, inset #304701 0 -1px 5px, #89FF00 0 2px 0;}
+    to { background-color: #ABFF00; }
+}
+@-o-keyframes blinkGreen {
+    from { background-color: #ABFF00; }
+    50% { background-color:  #ABFF00; box-shadow: rgba(0, 0, 0, 0.2) 0 -1px 7px 1px, inset #304701 0 -1px 5px, #89FF00 0 2px 0;}
+    to { background-color: #ABFF00; }
+}
+@keyframes blinkGreen {
+    from { background-color: #ABFF00; }
+    50% { background-color:  #ABFF00; box-shadow:  rgba(0, 0, 0, 0.2) 0 -1px 7px 1px, inset #304701 0 -1px 5px, #89FF00 0 2px 0;}
+    to { background-color: #ABFF00; }
 }
