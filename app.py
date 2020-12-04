@@ -101,7 +101,7 @@ def graphs():
             end_d_learn_fr_reg = upcovfr.default_end_d_learn_fr_reg,
             alpha_reg = upcovfr.default_alpha_reg,
 
-            state = False,
+            state = True,
         )
         ##########################################################
         rp = RenderPage("graphs.html", **upcv)
@@ -157,7 +157,7 @@ def maps():
             end_d_learn_fr_reg = upcovfr.default_end_d_learn_fr_reg,
             alpha_reg = upcovfr.default_alpha_reg,
 
-            state = False,
+            state = True,
         )
         ##########################################################
         rp = RenderPage("graphs.html", **upcv)
@@ -215,7 +215,7 @@ def top_dep_settings():
             end_d_learn_fr_reg = upcovfr.default_end_d_learn_fr_reg,
             alpha_reg = upcovfr.default_alpha_reg,
 
-            state = False,
+            state = True,
         )
         ##########################################################
         rp = RenderPage("graphs.html", **upcv)
@@ -277,7 +277,7 @@ def global_monitoring_settings():
             end_d_learn_fr_reg = upcovfr.default_end_d_learn_fr_reg,
             alpha_reg = upcovfr.default_alpha_reg,
 
-            state = False,
+            state = True,
         )
         ##########################################################
         global_select = request.form.getlist('global_parameters')
@@ -347,7 +347,7 @@ def hosp_monitoring_settings():
             end_d_learn_fr_reg = upcovfr.default_end_d_learn_fr_reg,
             alpha_reg = upcovfr.default_alpha_reg,
 
-            state = False,
+            state = True,
         )
         ##########################################################
         hosp_select = request.form.getlist('hosp_parameters')
@@ -417,7 +417,7 @@ def view_department(department):
             end_d_learn_fr_reg = upcovfr.default_end_d_learn_fr_reg,
             alpha_reg = upcovfr.default_alpha_reg,
 
-            state = False,
+            state = True,
         )
         ##########################################################
         rp = RenderPage("graphs.html", **upcv)
@@ -481,7 +481,7 @@ def view_region(region):
             end_d_learn_fr_reg = upcovfr.default_end_d_learn_fr_reg,
             alpha_reg = upcovfr.default_alpha_reg,
 
-            state = False,
+            state = True,
         )
         ##########################################################
         rp = RenderPage("graphs.html", **upcv)
