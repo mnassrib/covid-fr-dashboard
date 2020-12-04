@@ -21,18 +21,18 @@
     <body>
         <header>
             <!-- Fixed navbar -->
-            <nav class="navbar navbar-expand-lg navbar-dark bg-dark fixed-top" id="mainNav">		
-                <a class="navbar-brand" href="/" > 
+            <nav class="mb-1 navbar navbar-expand-lg navbar-dark bg-dark fixed-top" id="mainNav">
+                <a class="navbar-brand" style="font-family:monospace;" href="/"> 
                     <img src="{{ url_for('static', filename='images/logo.png') }}" alt="">
                     Suivi de COVID-19 en France
-                </a>                       
-                <button class="navbar-toggler navbar-toggler-right" type="button" data-toggle="collapse" data-target="#navbarCollapse" aria-controls="navbarCollapse" aria-expanded="false" aria-label="Toggle navigation">
+                </a> 
+                <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent-3" aria-controls="navbarSupportedContent-3" aria-expanded="false" aria-label="Toggle navigation">
                     <span class="navbar-toggler-icon"></span>
-                </button>                             
-                <div class="collapse navbar-collapse" id="navbarCollapse" style="padding-left: 150px;">
+                </button>
+                <div class="collapse navbar-collapse" id="navbarSupportedContent-3">
                     <ul class="navbar-nav mr-auto">
                         <li class="nav-item active">
-                            <a class="nav-link" href="/">
+                            <a class="nav-link waves-effect waves-light" href="/">
                                 <i class="fa fa-fw fa-dashboard"></i>
                                 dashboard - 
                                 {% if (label != 'France'): %}
@@ -48,40 +48,63 @@
                             </a>
                         </li>
                     </ul>
-                    <a class="nav-link disabled" href="#"><i class="fa fa-fw fa-envelope"></i> Contact :</a>                   
-                    <nav class="my-2 my-md-0 mr-md-3">
-                        <a class="p-6 text-white" class="nav-link" href="https://www.linkedin.com/in/baligh-mnassri/" target="_blank"><i class="fa fa-linkedin"></i></a>
-                    </nav>
-                    <nav class="my-2 my-md-0 mr-md-3">
-                        <a class="p-6 text-white" class="nav-link" href="https://github.com/mnassrib" target="_blank"><i class="fa fa-github"></i></a>
-                    </nav>
-                    <nav class="my-2 my-md-0 mr-md-9">
-                        <a class="p-6 text-white" class="nav-link" href="https://twitter.com/balighmnassri" target="_blank"><i class="fa fa-twitter"></i></a>
-                    </nav>
+                    <ul class="navbar-nav ml-auto nav-flex-icons">
+                        <li class="nav-item">
+                            <a class="nav-link waves-effect waves-light" href="https://www.linkedin.com/in/baligh-mnassri/">
+                                <i class="fa fa-linkedin"></i>
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link waves-effect waves-light" href="https://github.com/mnassrib">
+                                <i class="fa fa-github"></i>
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link waves-effect waves-light" href="https://twitter.com/balighmnassri">
+                                <i class="fa fa-twitter"></i>
+                            </a>
+                        </li>
+                        <!-- <li class="nav-item dropdown">
+                            <a class="nav-link dropdown-toggle waves-effect waves-light" id="navbarDropdownMenuLink" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                            <i class="fa fa-user"> Contact :</i>
+                            </a>
+                            <div class="dropdown-menu dropdown-menu-right dropdown-default" aria-labelledby="navbarDropdownMenuLink">                            
+                                <a class="dropdown-item waves-effect waves-light" href="https://www.linkedin.com/in/baligh-mnassri/" target="_blank">
+                                    <i class="fa fa-linkedin"></i>
+                                </a>
+                                <a class="dropdown-item waves-effect waves-light" href="https://github.com/mnassrib" target="_blank">
+                                    <i class="fa fa-github"></i>
+                                </a>
+                                <a class="dropdown-item waves-effect waves-light" href="https://twitter.com/balighmnassri" target="_blank">
+                                    <i class="fa fa-twitter"></i>
+                                </a>
+                            </div>
+                        </li> -->
+                    </ul>
                 </div>
             </nav>
         </header>
         <main role="main" class="container">
             <div class="scroll-pre"></div>
-            <p class="ombres_multiples_diffuses" align="justify">    
-                Les données analysées dans ce site concernent l'épidémie de COVID-19 en France. Elles sont fournies et mises à jour régulièrement par <a href="https://www.data.gouv.fr/fr/organizations/sante-publique-france/" target="_blank"><B>Santé publique France</B></a>. Ces données sont collectées auprès du milieu uniquement hospitalier sans compter les EHPAD et EMS.
-            </p>
+                {% if (state == True): %}
+                    <p class="green-flashing" align="justify"> Les données analysées dans ce site concernent l'épidémie de COVID-19 en France. Elles sont fournies et mises à jour régulièrement par <a href="https://www.data.gouv.fr/fr/organizations/sante-publique-france/" target="_blank"><B>Santé publique France</B></a>. Ces données sont collectées auprès du milieu uniquement hospitalier sans compter les EHPAD et EMS. </p>
+                {% else : %}
+                    <p class="steady-blue" align="justify"> Les données analysées dans ce site concernent l'épidémie de COVID-19 en France. Elles sont fournies et mises à jour régulièrement par <a href="https://www.data.gouv.fr/fr/organizations/sante-publique-france/" target="_blank"><B>Santé publique France</B></a>. Ces données sont collectées auprès du milieu uniquement hospitalier sans compter les EHPAD et EMS. </p>
+                {% endif %} 
             {% block content %}
             
             {% endblock %}
         </main>
         <footer class="sticky-footer" style="width: 100%; height: 60px; line-height: 60px; background-color: #f5f5f5;">
             <div class="container">
-                <!-- Copyright -->
-                <div class="footer-copyright text-left">
-                    &copy; <script>document.write(new Date().getFullYear())</script><a> </a><a href="https://www.linkedin.com/in/baligh-mnassri/?locale=en_US">Baligh Mnassri</a>
-                    <p class="float-right">
-                        <!-- <small> <a href="#">Dernière mise à jour automatique des données : {{ charts_and_parameters_covid_data["counters"]['last_update_fr'] }}</a></small> -->
-                        <a style="font-size: 9px" href="#">Dernières mises à jour des données : {{ charts_and_parameters_covid_data["counters"]['last_update_fr'] }}
-                    </a>
-                    </p>
+                <div class="footer">
+                    <p>&copy; <script>document.write(new Date().getFullYear())</script><a> </a><a href="https://www.linkedin.com/in/baligh-mnassri/?locale=en_US">Baligh Mnassri</a></p>
+                    {% if (state == True): %}
+                        <p><a style="font-size: 10px" href="#"><JavaBlink>Dernières mises à jour des données : {{ charts_and_parameters_covid_data["counters"]['last_update_fr'] }}</JavaBlink></a></p>
+                    {% else : %}
+                        <p><a style="font-size: 10px" href="#">Dernières mises à jour des données : {{ charts_and_parameters_covid_data["counters"]['last_update_fr'] }}</a></p>
+                    {% endif %}                  
                 </div>
-                <!-- Copyright -->
             </div>
         </footer>
         <!-- Isolated Version of Bootstrap, not needed if your site already uses Bootstrap -->
