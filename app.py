@@ -1,9 +1,7 @@
 from flask import Flask, render_template, request, redirect, url_for
 
 from cutils.covidclass import CovidFr
-
-from cutils.cv_create import cv_load
-
+from cutils.cvcreation import CvCreation
 from cutils.rendertemplate import RenderPage
 
 app = Flask(__name__)
@@ -16,7 +14,7 @@ daily_reg = covfr.regiondailycases(data=covid, feature='hosp')
 ##########################################################
 # required html page variables
 ###############################
-cv = cv_load(classinstance=covfr, daily=daily, daily_reg=daily_reg)
+cv = CvCreation(covfr).cv_load(daily=daily, daily_reg=daily_reg, covid_state=covfr.need_covid_data_update(), positive_state=covfr.need_positive_data_update())
 ##########################################################
 
 @app.route('/', methods=['GET', 'POST'])
@@ -30,13 +28,9 @@ def graphs():
         ##########################################################
         # required html page variables
         ###############################
-        upcv = cv_load(classinstance=upcovfr, daily=updaily, daily_reg=updaily_reg)
+        upcv = CvCreation(upcovfr).cv_load(daily=updaily, daily_reg=updaily_reg, covid_state=covfr.need_covid_data_update(), positive_state=covfr.need_positive_data_update())
         ##########################################################
         rp = RenderPage("graphs.html", **upcv)
-        if covfr.need_covid_data_update():
-            rp.covid_state = True
-        if covfr.need_positive_data_update():
-            rp.positive_state = True
         return rp.appview()
 
     rp = RenderPage("graphs.html", **cv)
@@ -53,13 +47,9 @@ def maps():
         ##########################################################
         # required html page variables
         ###############################
-        upcv = cv_load(classinstance=upcovfr, daily=updaily, daily_reg=updaily_reg)
+        upcv = CvCreation(upcovfr).cv_load(daily=updaily, daily_reg=updaily_reg, covid_state=covfr.need_covid_data_update(), positive_state=covfr.need_positive_data_update())
         ##########################################################
         rp = RenderPage("graphs.html", **upcv)
-        if covfr.need_covid_data_update():
-            rp.covid_state = True
-        if covfr.need_positive_data_update():
-            rp.positive_state = True
         rp.map_select = request.form.get('map_select')
         return rp.appview()
 
@@ -78,13 +68,9 @@ def top_dep_settings():
         ##########################################################
         # required html page variables
         ###############################
-        upcv = cv_load(classinstance=upcovfr, daily=updaily, daily_reg=updaily_reg)
+        upcv = CvCreation(upcovfr).cv_load(daily=updaily, daily_reg=updaily_reg, covid_state=covfr.need_covid_data_update(), positive_state=covfr.need_positive_data_update())
         ##########################################################
         rp = RenderPage("graphs.html", **upcv)
-        if covfr.need_covid_data_update():
-            rp.covid_state = True
-        if covfr.need_positive_data_update():
-            rp.positive_state = True
         rp.top_dep = int(request.form.getlist('top_dep_settings')[0])
         rp.criterion_select = request.form.getlist('top_dep_settings')[1]
         rp.charts_impacted_dep = upcovfr.charts_impacted_dep(top_number=rp.top_dep)
@@ -107,14 +93,10 @@ def global_monitoring_settings():
         ##########################################################
         # required html page variables
         ###############################
-        upcv = cv_load(classinstance=upcovfr, daily=updaily, daily_reg=updaily_reg)
+        upcv = CvCreation(upcovfr).cv_load(daily=updaily, daily_reg=updaily_reg, covid_state=covfr.need_covid_data_update(), positive_state=covfr.need_positive_data_update())
         ##########################################################
         global_select = request.form.getlist('global_parameters')
         rp = RenderPage("graphs.html", **upcv)
-        if covfr.need_covid_data_update():
-            rp.covid_state = True
-        if covfr.need_positive_data_update():
-            rp.positive_state = True
         rp.pcdim = int(global_select[0])
         rp.normalize = eval(global_select[1])
         rp.start_d_learn_fr = global_select[2].split(" - ")[0]
@@ -144,14 +126,10 @@ def hosp_monitoring_settings():
         ##########################################################
         # required html page variables
         ###############################
-        upcv = cv_load(classinstance=upcovfr, daily=updaily, daily_reg=updaily_reg)
+        upcv = CvCreation(upcovfr).cv_load(daily=updaily, daily_reg=updaily_reg, covid_state=covfr.need_covid_data_update(), positive_state=covfr.need_positive_data_update())
         ##########################################################
         hosp_select = request.form.getlist('hosp_parameters')
         rp = RenderPage("graphs.html", **upcv)
-        if covfr.need_covid_data_update():
-            rp.covid_state = True
-        if covfr.need_positive_data_update():
-            rp.positive_state = True
         rp.pcdim_reg = int(hosp_select[0])
         rp.normalize_reg = eval(hosp_select[1])
         rp.start_d_learn_fr_reg = hosp_select[2].split(" - ")[0]
@@ -181,13 +159,9 @@ def view_department(department):
         ##########################################################
         # required html page variables
         ###############################
-        upcv = cv_load(classinstance=upcovfr, daily=updaily, daily_reg=updaily_reg)
+        upcv = CvCreation(upcovfr).cv_load(daily=updaily, daily_reg=updaily_reg, covid_state=covfr.need_covid_data_update(), positive_state=covfr.need_positive_data_update())
         ##########################################################
         rp = RenderPage("graphs.html", **upcv)
-        if covfr.need_covid_data_update():
-            rp.covid_state = True
-        if covfr.need_positive_data_update():
-            rp.positive_state = True
         rp.department = department
         rp.charts_and_parameters_covid_data = upcovfr.charts(department=rp.department)
         rp.charts_and_parameters_positive_data = upcovfr.charts_positive_data(department=rp.department)
@@ -212,13 +186,9 @@ def view_region(region):
         ##########################################################
         # required html page variables
         ###############################
-        upcv = cv_load(classinstance=upcovfr, daily=updaily, daily_reg=updaily_reg)
+        upcv = CvCreation(upcovfr).cv_load(daily=updaily, daily_reg=updaily_reg, covid_state=covfr.need_covid_data_update(), positive_state=covfr.need_positive_data_update())
         ##########################################################
         rp = RenderPage("graphs.html", **upcv)
-        if covfr.need_covid_data_update():
-            rp.covid_state = True
-        if covfr.need_positive_data_update():
-            rp.positive_state = True
         rp.region = region
         rp.charts_and_parameters_covid_data = upcovfr.charts(region=rp.region)
         rp.charts_and_parameters_positive_data = upcovfr.charts_positive_data(region=rp.region)

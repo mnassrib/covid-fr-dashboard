@@ -72,8 +72,6 @@ class CovidFr():
         #-- other default settings
         self.default_department = None
         self.default_region = None
-        self.default_covid_state = False
-        self.default_positive_state = False
 
     def load_df(self):
         """
