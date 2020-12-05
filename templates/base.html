@@ -68,17 +68,17 @@
         </header>
         <main role="main" class="container">
             <div class="scroll-pre"></div>
-                {% if (state_covid == True and state_positive == False): %}
+                {% if (covid_state == True and positive_state == False): %}
                     <p class="green-flashing" align="justify"> Les données analysées dans ce site concernent l'épidémie de COVID-19 en France. Elles sont fournies et mises à jour régulièrement par <a href="https://www.data.gouv.fr/fr/organizations/sante-publique-france/" target="_blank"><B>Santé publique France</B></a>. Ces données sont collectées auprès du milieu uniquement hospitalier sans compter les EHPAD et EMS.</p>
-                {% elif (state_covid == False and state_positive == True): %}
+                {% elif (covid_state == False and positive_state == True): %}
                     <p class="pink-flashing" align="justify"> Les données analysées dans ce site concernent l'épidémie de COVID-19 en France. Elles sont fournies et mises à jour régulièrement par <a href="https://www.data.gouv.fr/fr/organizations/sante-publique-france/" target="_blank"><B>Santé publique France</B></a>. Ces données sont collectées auprès du milieu uniquement hospitalier sans compter les EHPAD et EMS.</p>
-                {% elif (state_covid == True and state_positive == True): %}
+                {% elif (covid_state == True and positive_state == True): %}
                     {% if (charts_and_parameters_covid_data["counters"]['last_update_fr'] > charts_and_parameters_positive_data["counters"]['positive_last_update_fr']): %}
                         <p class="green-flashing" align="justify"> Les données analysées dans ce site concernent l'épidémie de COVID-19 en France. Elles sont fournies et mises à jour régulièrement par <a href="https://www.data.gouv.fr/fr/organizations/sante-publique-france/" target="_blank"><B>Santé publique France</B></a>. Ces données sont collectées auprès du milieu uniquement hospitalier sans compter les EHPAD et EMS.</p>
                     {% else : %}
                         <p class="pink-flashing" align="justify"> Les données analysées dans ce site concernent l'épidémie de COVID-19 en France. Elles sont fournies et mises à jour régulièrement par <a href="https://www.data.gouv.fr/fr/organizations/sante-publique-france/" target="_blank"><B>Santé publique France</B></a>. Ces données sont collectées auprès du milieu uniquement hospitalier sans compter les EHPAD et EMS.</p>
                     {% endif %} 
-                {% elif (state_covid == False and state_positive == False): %}
+                {% elif (covid_state == False and positive_state == False): %}
                     <p class="steady-blue" align="justify"> Les données analysées dans ce site concernent l'épidémie de COVID-19 en France. Elles sont fournies et mises à jour régulièrement par <a href="https://www.data.gouv.fr/fr/organizations/sante-publique-france/" target="_blank"><B>Santé publique France</B></a>. Ces données sont collectées auprès du milieu uniquement hospitalier sans compter les EHPAD et EMS.</p>
                 {% endif %} 
             {% block content %}
@@ -89,13 +89,13 @@
             <div class="container">
                 <div class="footer">
                     <p>&copy; <script>document.write(new Date().getFullYear())</script><a> </a><a href="https://www.linkedin.com/in/baligh-mnassri/?locale=en_US">Baligh Mnassri</a></p>
-                    {% if (state_covid == True and state_positive == False): %}
+                    {% if (covid_state == True and positive_state == False): %}
                         <p><a style="font-size: 9px" href="#">Mises à jour des données : {{ charts_and_parameters_positive_data["counters"]['positive_last_update_fr'] }} cas positifs | <JavaBlink>{{ charts_and_parameters_covid_data["counters"]['last_update_fr'] }} les autres cas</JavaBlink></a></p>
-                    {% elif (state_covid == False and state_positive == True): %}
+                    {% elif (covid_state == False and positive_state == True): %}
                         <p><a style="font-size: 9px" href="#">Mises à jour des données : <JavaBlink>{{ charts_and_parameters_positive_data["counters"]['positive_last_update_fr'] }} cas positifs</JavaBlink> | {{ charts_and_parameters_covid_data["counters"]['last_update_fr'] }} les autres cas</a></p>
-                    {% elif (state_covid == True and state_positive == True): %}
+                    {% elif (covid_state == True and positive_state == True): %}
                         <p><a style="font-size: 9px" href="#">Mises à jour des données : <JavaBlink>{{ charts_and_parameters_positive_data["counters"]['positive_last_update_fr'] }} cas positifs</JavaBlink> | <JavaBlink>{{ charts_and_parameters_covid_data["counters"]['last_update_fr'] }} les autres cas</JavaBlink></a></p>
-                    {% elif (state_covid == False and state_positive == False): %}
+                    {% elif (covid_state == False and positive_state == False): %}
                         <p><a style="font-size: 9px" href="#">Mises à jour des données : {{ charts_and_parameters_positive_data["counters"]['positive_last_update_fr'] }} cas positifs | {{ charts_and_parameters_covid_data["counters"]['last_update_fr'] }} les autres cas</a></p>
                     {% endif %}                  
                 </div>
