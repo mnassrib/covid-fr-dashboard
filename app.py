@@ -50,13 +50,22 @@ cv = dict(
     end_d_learn_fr_reg = covfr.default_end_d_learn_fr_reg,
     alpha_reg = covfr.default_alpha_reg,
 
-    state = False,
+    state_covid = False,
+    state_positive = False,
 )
 ##########################################################
 
 @app.route('/', methods=['GET', 'POST'])
 def graphs():
     if covfr.need_covid_data_update() or covfr.need_positive_data_update():
+        if covfr.need_covid_data_update():
+            upstate_covid = True
+        else:
+            upstate_covid = False
+        if covfr.need_positive_data_update():
+            upstate_positive = True
+        else:
+            upstate_positive = False
         upcovfr = CovidFr()
         upcovid = upcovfr.load_df()
         upnprate, uprprate, updprate = upcovfr.load_positive_df()
@@ -101,7 +110,8 @@ def graphs():
             end_d_learn_fr_reg = upcovfr.default_end_d_learn_fr_reg,
             alpha_reg = upcovfr.default_alpha_reg,
 
-            state = True,
+            state_covid = upstate_covid,
+            state_positive = upstate_positive,
         )
         ##########################################################
         rp = RenderPage("graphs.html", **upcv)
@@ -113,6 +123,14 @@ def graphs():
 @app.route('/maps', methods=['GET', 'POST'])
 def maps():
     if covfr.need_covid_data_update() or covfr.need_positive_data_update():
+        if covfr.need_covid_data_update():
+            upstate_covid = True
+        else:
+            upstate_covid = False
+        if covfr.need_positive_data_update():
+            upstate_positive = True
+        else:
+            upstate_positive = False
         upcovfr = CovidFr()
         upcovid = upcovfr.load_df()
         upnprate, uprprate, updprate = upcovfr.load_positive_df()
@@ -157,7 +175,8 @@ def maps():
             end_d_learn_fr_reg = upcovfr.default_end_d_learn_fr_reg,
             alpha_reg = upcovfr.default_alpha_reg,
 
-            state = True,
+            state_covid = upstate_covid,
+            state_positive = upstate_positive,
         )
         ##########################################################
         rp = RenderPage("graphs.html", **upcv)
@@ -171,6 +190,14 @@ def maps():
 @app.route("/top_dep_settings", methods=['GET', 'POST'])
 def top_dep_settings():
     if covfr.need_covid_data_update() or covfr.need_positive_data_update():
+        if covfr.need_covid_data_update():
+            upstate_covid = True
+        else:
+            upstate_covid = False
+        if covfr.need_positive_data_update():
+            upstate_positive = True
+        else:
+            upstate_positive = False
         upcovfr = CovidFr()
         upcovid = upcovfr.load_df()
         upnprate, uprprate, updprate = upcovfr.load_positive_df()
@@ -215,7 +242,8 @@ def top_dep_settings():
             end_d_learn_fr_reg = upcovfr.default_end_d_learn_fr_reg,
             alpha_reg = upcovfr.default_alpha_reg,
 
-            state = True,
+            state_covid = upstate_covid,
+            state_positive = upstate_positive,
         )
         ##########################################################
         rp = RenderPage("graphs.html", **upcv)
@@ -233,6 +261,14 @@ def top_dep_settings():
 @app.route("/global_monitoring_settings", methods=['GET', 'POST'])
 def global_monitoring_settings():
     if covfr.need_covid_data_update() or covfr.need_positive_data_update():
+        if covfr.need_covid_data_update():
+            upstate_covid = True
+        else:
+            upstate_covid = False
+        if covfr.need_positive_data_update():
+            upstate_positive = True
+        else:
+            upstate_positive = False
         upcovfr = CovidFr()
         upcovid = upcovfr.load_df()
         upnprate, uprprate, updprate = upcovfr.load_positive_df()
@@ -277,7 +313,8 @@ def global_monitoring_settings():
             end_d_learn_fr_reg = upcovfr.default_end_d_learn_fr_reg,
             alpha_reg = upcovfr.default_alpha_reg,
 
-            state = True,
+            state_covid = upstate_covid,
+            state_positive = upstate_positive,
         )
         ##########################################################
         global_select = request.form.getlist('global_parameters')
@@ -303,6 +340,14 @@ def global_monitoring_settings():
 @app.route("/hosp_monitoring_settings", methods=['GET', 'POST'])
 def hosp_monitoring_settings():
     if covfr.need_covid_data_update() or covfr.need_positive_data_update():
+        if covfr.need_covid_data_update():
+            upstate_covid = True
+        else:
+            upstate_covid = False
+        if covfr.need_positive_data_update():
+            upstate_positive = True
+        else:
+            upstate_positive = False
         upcovfr = CovidFr()
         upcovid = upcovfr.load_df()
         upnprate, uprprate, updprate = upcovfr.load_positive_df()
@@ -347,7 +392,8 @@ def hosp_monitoring_settings():
             end_d_learn_fr_reg = upcovfr.default_end_d_learn_fr_reg,
             alpha_reg = upcovfr.default_alpha_reg,
 
-            state = True,
+            state_covid = upstate_covid,
+            state_positive = upstate_positive,
         )
         ##########################################################
         hosp_select = request.form.getlist('hosp_parameters')
@@ -373,6 +419,14 @@ def hosp_monitoring_settings():
 @app.route('/departement/<string:department>', methods=['GET', 'POST'])
 def view_department(department):
     if covfr.need_covid_data_update() or covfr.need_positive_data_update():
+        if covfr.need_covid_data_update():
+            upstate_covid = True
+        else:
+            upstate_covid = False
+        if covfr.need_positive_data_update():
+            upstate_positive = True
+        else:
+            upstate_positive = False
         upcovfr = CovidFr()
         upcovid = upcovfr.load_df()
         upnprate, uprprate, updprate = upcovfr.load_positive_df()
@@ -417,7 +471,8 @@ def view_department(department):
             end_d_learn_fr_reg = upcovfr.default_end_d_learn_fr_reg,
             alpha_reg = upcovfr.default_alpha_reg,
 
-            state = True,
+            state_covid = upstate_covid,
+            state_positive = upstate_positive,
         )
         ##########################################################
         rp = RenderPage("graphs.html", **upcv)
@@ -437,6 +492,14 @@ def view_department(department):
 @app.route('/region/<string:region>', methods=['GET', 'POST'])
 def view_region(region):
     if covfr.need_covid_data_update() or covfr.need_positive_data_update():
+        if covfr.need_covid_data_update():
+            upstate_covid = True
+        else:
+            upstate_covid = False
+        if covfr.need_positive_data_update():
+            upstate_positive = True
+        else:
+            upstate_positive = False
         upcovfr = CovidFr()
         upcovid = upcovfr.load_df()
         upnprate, uprprate, updprate = upcovfr.load_positive_df()
@@ -481,7 +544,8 @@ def view_region(region):
             end_d_learn_fr_reg = upcovfr.default_end_d_learn_fr_reg,
             alpha_reg = upcovfr.default_alpha_reg,
 
-            state = True,
+            state_covid = upstate_covid,
+            state_positive = upstate_positive,
         )
         ##########################################################
         rp = RenderPage("graphs.html", **upcv)
