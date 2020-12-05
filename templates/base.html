@@ -34,16 +34,14 @@
                         <li class="nav-item active">
                             <a class="nav-link waves-effect waves-light" href="/">
                                 <i class="fa fa-fw fa-dashboard"></i>
-                                dashboard - 
-                                {% if (label != 'France'): %}
-                                    {% if (label['type'] == 'department'): %}
-                                        {{ label['prefix'] }} {{ label['name'] }} (FR-{{ department }})
-                                    {% else : %}
+                                    dashboard - 
+                                    {% if (label == 'France'): %}
+                                        {{ label }}
+                                    {% elif (label['type'] == 'region'): %}
                                         {{ label['prefix'] }} {{ label['name'] }} (FR-{{ region }})
-                                    {% endif %}
-                                {% else : %}
-                                    {{ label }}
-                                {% endif %} 
+                                    {% elif (label['type'] == 'department'): %}
+                                        {{ label['prefix'] }} {{ label['name'] }} (FR-{{ department }})
+                                    {% endif %} 
                                 <span class="sr-only">(current)</span>
                             </a>
                         </li>
