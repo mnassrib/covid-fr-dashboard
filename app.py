@@ -1,7 +1,7 @@
 from flask import Flask, render_template, request, redirect, url_for
 
 from cutils.covidclass import CovidFr
-
+from cutils.cvcreation import CvCreation
 from cutils.rendertemplate import RenderPage
 
 app = Flask(__name__)
@@ -13,41 +13,7 @@ daily_reg = covfr.regiondailycases(data=covid, feature='hosp')
 ##########################################################
 # required html page variables
 ###############################
-cv = dict(
-    map_covid_reg = covfr.overall_regions_data_as_json(),
-    map_covid_dep = covfr.overall_departments_data_as_json(),
-    charts_impacted_dep = covfr.charts_impacted_dep(),
-    charts_and_parameters_covid_data = covfr.charts(),
-    charts_pca_global = covfr.pca_charts(data=daily, pcdim=covfr.default_pcdim, normalize=covfr.default_normalize, start_d_learn=covfr.default_start_d_learn_fr, end_d_learn=covfr.default_end_d_learn_fr, alpha=covfr.default_alpha),
-    charts_pca_hosp_reg = covfr.pca_charts(data=daily_reg, pcdim=covfr.default_pcdim_reg, normalize=covfr.default_normalize_reg, start_d_learn=covfr.default_start_d_learn_fr_reg, end_d_learn=covfr.default_end_d_learn_fr_reg, alpha=covfr.default_alpha_reg),
-    label = covfr.request_label(),
-    department = covfr.default_department,
-    region = covfr.default_region,
-    first_day_fr = covfr.first_day_fr,
-    last_day_fr = covfr.last_day_fr,
-    map_choice = covfr.map_choice,
-    criterion_choice = covfr.criterion_choice,
-    number_all_dep = covfr.number_all_dep,
-    global_pc = covfr.global_pc,
-    normalize_states = covfr.normalize_states,
-    alpha_smooth = covfr.alpha_smooth,
-    pc_reg = covfr.pc_reg,
-    map_select = covfr.default_map_select,
-    top_dep = covfr.default_top_dep,
-    criterion_select = covfr.default_criterion_select,
-    pcdim = covfr.default_pcdim,
-    normalize = covfr.default_normalize,
-    start_d_learn_fr = covfr.default_start_d_learn_fr,
-    end_d_learn_fr = covfr.default_end_d_learn_fr,
-    alpha = covfr.default_alpha,
-    pcdim_reg = covfr.default_pcdim_reg,
-    normalize_reg = covfr.default_normalize_reg,
-    start_d_learn_fr_reg = covfr.default_start_d_learn_fr_reg,
-    end_d_learn_fr_reg = covfr.default_end_d_learn_fr_reg,
-    alpha_reg = covfr.default_alpha_reg,
-
-    state = False,
-)
+cv = CvCreation(covfr).cv_load(daily=daily, daily_reg=daily_reg, covid_state=covfr.need_covid_data_update())
 ##########################################################
 
 @app.route('/', methods=['GET', 'POST'])
@@ -60,41 +26,7 @@ def graphs():
         ##########################################################
         # required html page variables
         ###############################
-        upcv = dict(
-            map_covid_reg = upcovfr.overall_regions_data_as_json(),
-            map_covid_dep = upcovfr.overall_departments_data_as_json(),
-            charts_impacted_dep = upcovfr.charts_impacted_dep(),
-            charts_and_parameters_covid_data = upcovfr.charts(),
-            charts_pca_global = upcovfr.pca_charts(data=updaily, pcdim=upcovfr.default_pcdim, normalize=upcovfr.default_normalize, start_d_learn=upcovfr.default_start_d_learn_fr, end_d_learn=upcovfr.default_end_d_learn_fr, alpha=upcovfr.default_alpha),
-            charts_pca_hosp_reg = upcovfr.pca_charts(data=updaily_reg, pcdim=upcovfr.default_pcdim_reg, normalize=upcovfr.default_normalize_reg, start_d_learn=upcovfr.default_start_d_learn_fr_reg, end_d_learn=upcovfr.default_end_d_learn_fr_reg, alpha=upcovfr.default_alpha_reg),
-            label = upcovfr.request_label(),
-            department = upcovfr.default_department,
-            region = upcovfr.default_region,
-            first_day_fr = upcovfr.first_day_fr,
-            last_day_fr = upcovfr.last_day_fr,
-            map_choice = upcovfr.map_choice,
-            criterion_choice = upcovfr.criterion_choice,
-            number_all_dep = upcovfr.number_all_dep,
-            global_pc = upcovfr.global_pc,
-            normalize_states = upcovfr.normalize_states,
-            alpha_smooth = upcovfr.alpha_smooth,
-            pc_reg = upcovfr.pc_reg,
-            map_select = upcovfr.default_map_select,
-            top_dep = upcovfr.default_top_dep,
-            criterion_select = upcovfr.default_criterion_select,
-            pcdim = upcovfr.default_pcdim,
-            normalize = upcovfr.default_normalize,
-            start_d_learn_fr = upcovfr.default_start_d_learn_fr,
-            end_d_learn_fr = upcovfr.default_end_d_learn_fr,
-            alpha = upcovfr.default_alpha,
-            pcdim_reg = upcovfr.default_pcdim_reg,
-            normalize_reg = upcovfr.default_normalize_reg,
-            start_d_learn_fr_reg = upcovfr.default_start_d_learn_fr_reg,
-            end_d_learn_fr_reg = upcovfr.default_end_d_learn_fr_reg,
-            alpha_reg = upcovfr.default_alpha_reg,
-
-            state = True,
-        )
+        upcv = CvCreation(upcovfr).cv_load(daily=updaily, daily_reg=updaily_reg, covid_state=covfr.need_covid_data_update())
         ##########################################################
         rp = RenderPage("graphs.html", **upcv)
         return rp.appview()
@@ -112,41 +44,7 @@ def maps():
         ##########################################################
         # required html page variables
         ###############################
-        upcv = dict(
-            map_covid_reg = upcovfr.overall_regions_data_as_json(),
-            map_covid_dep = upcovfr.overall_departments_data_as_json(),
-            charts_impacted_dep = upcovfr.charts_impacted_dep(),
-            charts_and_parameters_covid_data = upcovfr.charts(),
-            charts_pca_global = upcovfr.pca_charts(data=updaily, pcdim=upcovfr.default_pcdim, normalize=upcovfr.default_normalize, start_d_learn=upcovfr.default_start_d_learn_fr, end_d_learn=upcovfr.default_end_d_learn_fr, alpha=upcovfr.default_alpha),
-            charts_pca_hosp_reg = upcovfr.pca_charts(data=updaily_reg, pcdim=upcovfr.default_pcdim_reg, normalize=upcovfr.default_normalize_reg, start_d_learn=upcovfr.default_start_d_learn_fr_reg, end_d_learn=upcovfr.default_end_d_learn_fr_reg, alpha=upcovfr.default_alpha_reg),
-            label = upcovfr.request_label(),
-            department = upcovfr.default_department,
-            region = upcovfr.default_region,
-            first_day_fr = upcovfr.first_day_fr,
-            last_day_fr = upcovfr.last_day_fr,
-            map_choice = upcovfr.map_choice,
-            criterion_choice = upcovfr.criterion_choice,
-            number_all_dep = upcovfr.number_all_dep,
-            global_pc = upcovfr.global_pc,
-            normalize_states = upcovfr.normalize_states,
-            alpha_smooth = upcovfr.alpha_smooth,
-            pc_reg = upcovfr.pc_reg,
-            map_select = upcovfr.default_map_select,
-            top_dep = upcovfr.default_top_dep,
-            criterion_select = upcovfr.default_criterion_select,
-            pcdim = upcovfr.default_pcdim,
-            normalize = upcovfr.default_normalize,
-            start_d_learn_fr = upcovfr.default_start_d_learn_fr,
-            end_d_learn_fr = upcovfr.default_end_d_learn_fr,
-            alpha = upcovfr.default_alpha,
-            pcdim_reg = upcovfr.default_pcdim_reg,
-            normalize_reg = upcovfr.default_normalize_reg,
-            start_d_learn_fr_reg = upcovfr.default_start_d_learn_fr_reg,
-            end_d_learn_fr_reg = upcovfr.default_end_d_learn_fr_reg,
-            alpha_reg = upcovfr.default_alpha_reg,
-
-            state = True,
-        )
+        upcv = CvCreation(upcovfr).cv_load(daily=updaily, daily_reg=updaily_reg, covid_state=covfr.need_covid_data_update())
         ##########################################################
         rp = RenderPage("graphs.html", **upcv)
         rp.map_select = request.form.get('map_select')
@@ -166,41 +64,7 @@ def top_dep_settings():
         ##########################################################
         # required html page variables
         ###############################
-        upcv = dict(
-            map_covid_reg = upcovfr.overall_regions_data_as_json(),
-            map_covid_dep = upcovfr.overall_departments_data_as_json(),
-            charts_impacted_dep = upcovfr.charts_impacted_dep(),
-            charts_and_parameters_covid_data = upcovfr.charts(),
-            charts_pca_global = upcovfr.pca_charts(data=updaily, pcdim=upcovfr.default_pcdim, normalize=upcovfr.default_normalize, start_d_learn=upcovfr.default_start_d_learn_fr, end_d_learn=upcovfr.default_end_d_learn_fr, alpha=upcovfr.default_alpha),
-            charts_pca_hosp_reg = upcovfr.pca_charts(data=updaily_reg, pcdim=upcovfr.default_pcdim_reg, normalize=upcovfr.default_normalize_reg, start_d_learn=upcovfr.default_start_d_learn_fr_reg, end_d_learn=upcovfr.default_end_d_learn_fr_reg, alpha=upcovfr.default_alpha_reg),
-            label = upcovfr.request_label(),
-            department = upcovfr.default_department,
-            region = upcovfr.default_region,
-            first_day_fr = upcovfr.first_day_fr,
-            last_day_fr = upcovfr.last_day_fr,
-            map_choice = upcovfr.map_choice,
-            criterion_choice = upcovfr.criterion_choice,
-            number_all_dep = upcovfr.number_all_dep,
-            global_pc = upcovfr.global_pc,
-            normalize_states = upcovfr.normalize_states,
-            alpha_smooth = upcovfr.alpha_smooth,
-            pc_reg = upcovfr.pc_reg,
-            map_select = upcovfr.default_map_select,
-            top_dep = upcovfr.default_top_dep,
-            criterion_select = upcovfr.default_criterion_select,
-            pcdim = upcovfr.default_pcdim,
-            normalize = upcovfr.default_normalize,
-            start_d_learn_fr = upcovfr.default_start_d_learn_fr,
-            end_d_learn_fr = upcovfr.default_end_d_learn_fr,
-            alpha = upcovfr.default_alpha,
-            pcdim_reg = upcovfr.default_pcdim_reg,
-            normalize_reg = upcovfr.default_normalize_reg,
-            start_d_learn_fr_reg = upcovfr.default_start_d_learn_fr_reg,
-            end_d_learn_fr_reg = upcovfr.default_end_d_learn_fr_reg,
-            alpha_reg = upcovfr.default_alpha_reg,
-
-            state = True,
-        )
+        upcv = CvCreation(upcovfr).cv_load(daily=updaily, daily_reg=updaily_reg, covid_state=covfr.need_covid_data_update())
         ##########################################################
         rp = RenderPage("graphs.html", **upcv)
         rp.top_dep = int(request.form.getlist('top_dep_settings')[0])
@@ -224,41 +88,7 @@ def global_monitoring_settings():
         ##########################################################
         # required html page variables
         ###############################
-        upcv = dict(
-            map_covid_reg = upcovfr.overall_regions_data_as_json(),
-            map_covid_dep = upcovfr.overall_departments_data_as_json(),
-            charts_impacted_dep = upcovfr.charts_impacted_dep(),
-            charts_and_parameters_covid_data = upcovfr.charts(),
-            charts_pca_global = upcovfr.pca_charts(data=updaily, pcdim=upcovfr.default_pcdim, normalize=upcovfr.default_normalize, start_d_learn=upcovfr.default_start_d_learn_fr, end_d_learn=upcovfr.default_end_d_learn_fr, alpha=upcovfr.default_alpha),
-            charts_pca_hosp_reg = upcovfr.pca_charts(data=updaily_reg, pcdim=upcovfr.default_pcdim_reg, normalize=upcovfr.default_normalize_reg, start_d_learn=upcovfr.default_start_d_learn_fr_reg, end_d_learn=upcovfr.default_end_d_learn_fr_reg, alpha=upcovfr.default_alpha_reg),
-            label = upcovfr.request_label(),
-            department = upcovfr.default_department,
-            region = upcovfr.default_region,
-            first_day_fr = upcovfr.first_day_fr,
-            last_day_fr = upcovfr.last_day_fr,
-            map_choice = upcovfr.map_choice,
-            criterion_choice = upcovfr.criterion_choice,
-            number_all_dep = upcovfr.number_all_dep,
-            global_pc = upcovfr.global_pc,
-            normalize_states = upcovfr.normalize_states,
-            alpha_smooth = upcovfr.alpha_smooth,
-            pc_reg = upcovfr.pc_reg,
-            map_select = upcovfr.default_map_select,
-            top_dep = upcovfr.default_top_dep,
-            criterion_select = upcovfr.default_criterion_select,
-            pcdim = upcovfr.default_pcdim,
-            normalize = upcovfr.default_normalize,
-            start_d_learn_fr = upcovfr.default_start_d_learn_fr,
-            end_d_learn_fr = upcovfr.default_end_d_learn_fr,
-            alpha = upcovfr.default_alpha,
-            pcdim_reg = upcovfr.default_pcdim_reg,
-            normalize_reg = upcovfr.default_normalize_reg,
-            start_d_learn_fr_reg = upcovfr.default_start_d_learn_fr_reg,
-            end_d_learn_fr_reg = upcovfr.default_end_d_learn_fr_reg,
-            alpha_reg = upcovfr.default_alpha_reg,
-
-            state = True,
-        )
+        upcv = CvCreation(upcovfr).cv_load(daily=updaily, daily_reg=updaily_reg, covid_state=covfr.need_covid_data_update())
         ##########################################################
         global_select = request.form.getlist('global_parameters')
         rp = RenderPage("graphs.html", **upcv)
@@ -290,41 +120,7 @@ def hosp_monitoring_settings():
         ##########################################################
         # required html page variables
         ###############################
-        upcv = dict(
-            map_covid_reg = upcovfr.overall_regions_data_as_json(),
-            map_covid_dep = upcovfr.overall_departments_data_as_json(),
-            charts_impacted_dep = upcovfr.charts_impacted_dep(),
-            charts_and_parameters_covid_data = upcovfr.charts(),
-            charts_pca_global = upcovfr.pca_charts(data=updaily, pcdim=upcovfr.default_pcdim, normalize=upcovfr.default_normalize, start_d_learn=upcovfr.default_start_d_learn_fr, end_d_learn=upcovfr.default_end_d_learn_fr, alpha=upcovfr.default_alpha),
-            charts_pca_hosp_reg = upcovfr.pca_charts(data=updaily_reg, pcdim=upcovfr.default_pcdim_reg, normalize=upcovfr.default_normalize_reg, start_d_learn=upcovfr.default_start_d_learn_fr_reg, end_d_learn=upcovfr.default_end_d_learn_fr_reg, alpha=upcovfr.default_alpha_reg),
-            label = upcovfr.request_label(),
-            department = upcovfr.default_department,
-            region = upcovfr.default_region,
-            first_day_fr = upcovfr.first_day_fr,
-            last_day_fr = upcovfr.last_day_fr,
-            map_choice = upcovfr.map_choice,
-            criterion_choice = upcovfr.criterion_choice,
-            number_all_dep = upcovfr.number_all_dep,
-            global_pc = upcovfr.global_pc,
-            normalize_states = upcovfr.normalize_states,
-            alpha_smooth = upcovfr.alpha_smooth,
-            pc_reg = upcovfr.pc_reg,
-            map_select = upcovfr.default_map_select,
-            top_dep = upcovfr.default_top_dep,
-            criterion_select = upcovfr.default_criterion_select,
-            pcdim = upcovfr.default_pcdim,
-            normalize = upcovfr.default_normalize,
-            start_d_learn_fr = upcovfr.default_start_d_learn_fr,
-            end_d_learn_fr = upcovfr.default_end_d_learn_fr,
-            alpha = upcovfr.default_alpha,
-            pcdim_reg = upcovfr.default_pcdim_reg,
-            normalize_reg = upcovfr.default_normalize_reg,
-            start_d_learn_fr_reg = upcovfr.default_start_d_learn_fr_reg,
-            end_d_learn_fr_reg = upcovfr.default_end_d_learn_fr_reg,
-            alpha_reg = upcovfr.default_alpha_reg,
-
-            state = True,
-        )
+        upcv = CvCreation(upcovfr).cv_load(daily=updaily, daily_reg=updaily_reg, covid_state=covfr.need_covid_data_update())
         ##########################################################
         hosp_select = request.form.getlist('hosp_parameters')
         rp = RenderPage("graphs.html", **upcv)
@@ -356,41 +152,7 @@ def view_department(department):
         ##########################################################
         # required html page variables
         ###############################
-        upcv = dict(
-            map_covid_reg = upcovfr.overall_regions_data_as_json(),
-            map_covid_dep = upcovfr.overall_departments_data_as_json(),
-            charts_impacted_dep = upcovfr.charts_impacted_dep(),
-            charts_and_parameters_covid_data = upcovfr.charts(),
-            charts_pca_global = upcovfr.pca_charts(data=updaily, pcdim=upcovfr.default_pcdim, normalize=upcovfr.default_normalize, start_d_learn=upcovfr.default_start_d_learn_fr, end_d_learn=upcovfr.default_end_d_learn_fr, alpha=upcovfr.default_alpha),
-            charts_pca_hosp_reg = upcovfr.pca_charts(data=updaily_reg, pcdim=upcovfr.default_pcdim_reg, normalize=upcovfr.default_normalize_reg, start_d_learn=upcovfr.default_start_d_learn_fr_reg, end_d_learn=upcovfr.default_end_d_learn_fr_reg, alpha=upcovfr.default_alpha_reg),
-            label = upcovfr.request_label(),
-            department = upcovfr.default_department,
-            region = upcovfr.default_region,
-            first_day_fr = upcovfr.first_day_fr,
-            last_day_fr = upcovfr.last_day_fr,
-            map_choice = upcovfr.map_choice,
-            criterion_choice = upcovfr.criterion_choice,
-            number_all_dep = upcovfr.number_all_dep,
-            global_pc = upcovfr.global_pc,
-            normalize_states = upcovfr.normalize_states,
-            alpha_smooth = upcovfr.alpha_smooth,
-            pc_reg = upcovfr.pc_reg,
-            map_select = upcovfr.default_map_select,
-            top_dep = upcovfr.default_top_dep,
-            criterion_select = upcovfr.default_criterion_select,
-            pcdim = upcovfr.default_pcdim,
-            normalize = upcovfr.default_normalize,
-            start_d_learn_fr = upcovfr.default_start_d_learn_fr,
-            end_d_learn_fr = upcovfr.default_end_d_learn_fr,
-            alpha = upcovfr.default_alpha,
-            pcdim_reg = upcovfr.default_pcdim_reg,
-            normalize_reg = upcovfr.default_normalize_reg,
-            start_d_learn_fr_reg = upcovfr.default_start_d_learn_fr_reg,
-            end_d_learn_fr_reg = upcovfr.default_end_d_learn_fr_reg,
-            alpha_reg = upcovfr.default_alpha_reg,
-
-            state = True,
-        )
+        upcv = CvCreation(upcovfr).cv_load(daily=updaily, daily_reg=updaily_reg, covid_state=covfr.need_covid_data_update())
         ##########################################################
         rp = RenderPage("graphs.html", **upcv)
         rp.department = department
@@ -414,41 +176,7 @@ def view_region(region):
         ##########################################################
         # required html page variables
         ###############################
-        upcv = dict(
-            map_covid_reg = upcovfr.overall_regions_data_as_json(),
-            map_covid_dep = upcovfr.overall_departments_data_as_json(),
-            charts_impacted_dep = upcovfr.charts_impacted_dep(),
-            charts_and_parameters_covid_data = upcovfr.charts(),
-            charts_pca_global = upcovfr.pca_charts(data=updaily, pcdim=upcovfr.default_pcdim, normalize=upcovfr.default_normalize, start_d_learn=upcovfr.default_start_d_learn_fr, end_d_learn=upcovfr.default_end_d_learn_fr, alpha=upcovfr.default_alpha),
-            charts_pca_hosp_reg = upcovfr.pca_charts(data=updaily_reg, pcdim=upcovfr.default_pcdim_reg, normalize=upcovfr.default_normalize_reg, start_d_learn=upcovfr.default_start_d_learn_fr_reg, end_d_learn=upcovfr.default_end_d_learn_fr_reg, alpha=upcovfr.default_alpha_reg),
-            label = upcovfr.request_label(),
-            department = upcovfr.default_department,
-            region = upcovfr.default_region,
-            first_day_fr = upcovfr.first_day_fr,
-            last_day_fr = upcovfr.last_day_fr,
-            map_choice = upcovfr.map_choice,
-            criterion_choice = upcovfr.criterion_choice,
-            number_all_dep = upcovfr.number_all_dep,
-            global_pc = upcovfr.global_pc,
-            normalize_states = upcovfr.normalize_states,
-            alpha_smooth = upcovfr.alpha_smooth,
-            pc_reg = upcovfr.pc_reg,
-            map_select = upcovfr.default_map_select,
-            top_dep = upcovfr.default_top_dep,
-            criterion_select = upcovfr.default_criterion_select,
-            pcdim = upcovfr.default_pcdim,
-            normalize = upcovfr.default_normalize,
-            start_d_learn_fr = upcovfr.default_start_d_learn_fr,
-            end_d_learn_fr = upcovfr.default_end_d_learn_fr,
-            alpha = upcovfr.default_alpha,
-            pcdim_reg = upcovfr.default_pcdim_reg,
-            normalize_reg = upcovfr.default_normalize_reg,
-            start_d_learn_fr_reg = upcovfr.default_start_d_learn_fr_reg,
-            end_d_learn_fr_reg = upcovfr.default_end_d_learn_fr_reg,
-            alpha_reg = upcovfr.default_alpha_reg,
-
-            state = True,
-        )
+        upcv = CvCreation(upcovfr).cv_load(daily=updaily, daily_reg=updaily_reg, covid_state=covfr.need_covid_data_update())
         ##########################################################
         rp = RenderPage("graphs.html", **upcv)
         rp.region = region

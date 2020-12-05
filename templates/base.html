@@ -62,29 +62,13 @@
                                 <i class="fa fa-twitter"></i>
                             </a>
                         </li>
-                        <!-- <li class="nav-item dropdown">
-                            <a class="nav-link dropdown-toggle waves-effect waves-light" id="navbarDropdownMenuLink" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                            <i class="fa fa-user"> Contact :</i>
-                            </a>
-                            <div class="dropdown-menu dropdown-menu-right dropdown-default" aria-labelledby="navbarDropdownMenuLink">                            
-                                <a class="dropdown-item waves-effect waves-light" href="https://www.linkedin.com/in/baligh-mnassri/" target="_blank">
-                                    <i class="fa fa-linkedin"></i>
-                                </a>
-                                <a class="dropdown-item waves-effect waves-light" href="https://github.com/mnassrib" target="_blank">
-                                    <i class="fa fa-github"></i>
-                                </a>
-                                <a class="dropdown-item waves-effect waves-light" href="https://twitter.com/balighmnassri" target="_blank">
-                                    <i class="fa fa-twitter"></i>
-                                </a>
-                            </div>
-                        </li> -->
                     </ul>
                 </div>
             </nav>
         </header>
         <main role="main" class="container">
             <div class="scroll-pre"></div>
-                {% if (state == True): %}
+                {% if (covid_state == True): %}
                     <p class="green-flashing" align="justify"> Les données analysées dans ce site concernent l'épidémie de COVID-19 en France. Elles sont fournies et mises à jour régulièrement par <a href="https://www.data.gouv.fr/fr/organizations/sante-publique-france/" target="_blank"><B>Santé publique France</B></a>. Ces données sont collectées auprès du milieu uniquement hospitalier sans compter les EHPAD et EMS. </p>
                 {% else : %}
                     <p class="steady-blue" align="justify"> Les données analysées dans ce site concernent l'épidémie de COVID-19 en France. Elles sont fournies et mises à jour régulièrement par <a href="https://www.data.gouv.fr/fr/organizations/sante-publique-france/" target="_blank"><B>Santé publique France</B></a>. Ces données sont collectées auprès du milieu uniquement hospitalier sans compter les EHPAD et EMS. </p>
@@ -97,7 +81,7 @@
             <div class="container">
                 <div class="footer">
                     <p>&copy; <script>document.write(new Date().getFullYear())</script><a> </a><a href="https://www.linkedin.com/in/baligh-mnassri/?locale=en_US">Baligh Mnassri</a></p>
-                    {% if (state == True): %}
+                    {% if (covid_state == True): %}
                         <p><a style="font-size: 10px" href="#"><JavaBlink>Dernières mises à jour des données : {{ charts_and_parameters_covid_data["counters"]['last_update_fr'] }}</JavaBlink></a></p>
                     {% else : %}
                         <p><a style="font-size: 10px" href="#">Dernières mises à jour des données : {{ charts_and_parameters_covid_data["counters"]['last_update_fr'] }}</a></p>
