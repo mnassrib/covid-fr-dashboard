@@ -7,17 +7,14 @@
 {% block content %} 
 <div id="data">
     <h2>
-        {% if (label != 'France'): %}
-            <a href="/#">France</a> &gt; 
-        {% endif %} 
-        {% if (label != 'France'): %}
-            {% if (label['type'] == 'department'): %}
-                {{ label['prefix'] }} : {{ label['name'] }} (FR-{{ department }})
-            {% else : %}
-                {{ label['prefix'] }} : {{ label['name'] }} (FR-{{ region }})
-            {% endif %}
-        {% else : %}
+        {% if (label == 'France'): %}
             {{ label }}
+        {% elif (label['type'] == 'region'): %}
+            <a href="/#">France</a> &gt;
+            {{ label['prefix'] }} : {{ label['name'] }} (FR-{{ region }})
+        {% elif (label['type'] == 'department'): %}
+            <a href="/#">France</a> &gt;
+            {{ label['prefix'] }} : {{ label['name'] }} (FR-{{ department }})
         {% endif %} 
     </h2>
     <div class="row">
