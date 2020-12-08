@@ -620,22 +620,6 @@
                 <div class="card-body">
                     {% if (label != 'France'): %}
                         {% if (label['type'] == 'department'): %}
-                            <h3 id="patients_en_hospitalisation">Nombre de patients actuellement hospitalisés au {{ label['prefix'] }} {{ label['name'] }} (FR-{{ department }})</h3>
-                        {% else : %}
-                            <h3 id="patients_en_hospitalisation">Nombre de patients actuellement hospitalisés à la {{ label['prefix'] }} {{ label['name'] }} (FR-{{ region }})</h3></h3>
-                        {% endif %}
-                    {% else : %}
-                        <h3 id="patients_en_hospitalisation">Nombre de patients actuellement hospitalisés en {{ label }}</h3>
-                    {% endif %}
-                    <div id="Nombre de personnes actuellement hospitalisées"></div>
-                </div>
-            </div>
-        </div>
-        <div class="col-md-6">
-            <div class="card mb-4 box-shadow">
-                <div class="card-body">
-                    {% if (label != 'France'): %}
-                        {% if (label['type'] == 'department'): %}
                             <h3 id="patients_en_réanimation">Nombre de patients actuellement en réanimation au {{ label['prefix'] }} {{ label['name'] }} (FR-{{ department }})</h3>
                         {% else : %}
                             <h3 id="patients_en_réanimation">Nombre de patients actuellement en réanimation à la {{ label['prefix'] }} {{ label['name'] }} (FR-{{ region }})</h3>
@@ -644,6 +628,22 @@
                         <h3 id="patients_en_réanimation">Nombre de patients actuellement en réanimation en {{ label }}</h3>
                     {% endif %}
                     <div id="Nombre de personnes actuellement en réanimation"></div>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-6">
+            <div class="card mb-4 box-shadow">
+                <div class="card-body">
+                    {% if (label != 'France'): %}
+                        {% if (label['type'] == 'department'): %}
+                            <h3 id="patients_en_hospitalisation">Nombre de patients actuellement hospitalisés au {{ label['prefix'] }} {{ label['name'] }} (FR-{{ department }})</h3>
+                        {% else : %}
+                            <h3 id="patients_en_hospitalisation">Nombre de patients actuellement hospitalisés à la {{ label['prefix'] }} {{ label['name'] }} (FR-{{ region }})</h3></h3>
+                        {% endif %}
+                    {% else : %}
+                        <h3 id="patients_en_hospitalisation">Nombre de patients actuellement hospitalisés en {{ label }}</h3>
+                    {% endif %}
+                    <div id="Nombre de personnes actuellement hospitalisées"></div>
                 </div>
             </div>
         </div>
