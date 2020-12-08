@@ -126,7 +126,7 @@ class CovidFr():
 
         return self.nprate, self.rprate, self.dprate
 
-    def need_covid_data_update(self):
+    def covid_need_update(self):
         """Check the last update of the datasets on data.gouv.fr and tells whether we need to refresh the data or not
         Returns:
             True if the data need to be updated, False instead
@@ -139,7 +139,7 @@ class CovidFr():
                         return True
         return False
 
-    def need_positive_data_update(self):
+    def positive_need_update(self):
         """Check the last update of the datasets on data.gouv.fr and tells whether we need to refresh the data or not
         Returns:
             True if the data need to be updated, False instead
@@ -1072,13 +1072,13 @@ class CovidFr():
                 if 'accessURL' in dataset.keys() and dataset['accessURL'] == data_request_url:
                     return dataset['modified']
     
-    def cv_load(self, daily, daily_reg):
+    def cv_load(self, covid_state, positive_state, daily, daily_reg):
         """
         Returns required html page contexte variables
         """
         return dict(
-            covid_state = self.need_covid_data_update(),
-            positive_state = self.need_positive_data_update(),
+            covid_state = covid_state,
+            positive_state = positive_state,
             map_covid_reg = self.map_covid_reg(),
             map_covid_dep = self.map_covid_dep(),
             map_positive_reg = self.map_positive_reg(),

@@ -11,19 +11,19 @@ covid = covfr.load_df()
 nprate, rprate, dprate = covfr.load_positive_df()
 daily = covfr.dailycases(data=covid, pca=True)
 daily_reg = covfr.regiondailycases(data=covid, feature='hosp')
-cv = covfr.cv_load(daily=daily, daily_reg=daily_reg)
+cv = covfr.cv_load(covid_state=covfr.covid_need_update(), positive_state=covfr.positive_need_update(), daily=daily, daily_reg=daily_reg)
 ##########################################################
 
 @app.route('/', methods=['GET', 'POST'])
 def graphs():
-    if covfr.need_covid_data_update() or covfr.need_positive_data_update():
+    if covfr.covid_need_update() or covfr.positive_need_update():
         ##########################################################
         upcovfr = CovidFr()
         upcovid = upcovfr.load_df()
         upnprate, uprprate, updprate = upcovfr.load_positive_df()
         updaily = upcovfr.dailycases(data=upcovid, pca=True)
         updaily_reg = upcovfr.regiondailycases(data=upcovid, feature='hosp')
-        upcv = upcovfr.cv_load(daily=updaily, daily_reg=updaily_reg)
+        upcv = upcovfr.cv_load(covid_state=covfr.covid_need_update(), positive_state=covfr.positive_need_update(),daily=updaily, daily_reg=updaily_reg)
         ##########################################################
         rp = RenderPage("graphs.html", **upcv)
         return rp.appview()
@@ -33,14 +33,14 @@ def graphs():
 
 @app.route('/maps', methods=['GET', 'POST'])
 def maps():
-    if covfr.need_covid_data_update() or covfr.need_positive_data_update():
+    if covfr.covid_need_update() or covfr.positive_need_update():
         ##########################################################
         upcovfr = CovidFr()
         upcovid = upcovfr.load_df()
         upnprate, uprprate, updprate = upcovfr.load_positive_df()
         updaily = upcovfr.dailycases(data=upcovid, pca=True)
         updaily_reg = upcovfr.regiondailycases(data=upcovid, feature='hosp')
-        upcv = upcovfr.cv_load(daily=updaily, daily_reg=updaily_reg)
+        upcv = upcovfr.cv_load(covid_state=covfr.covid_need_update(), positive_state=covfr.positive_need_update(),daily=updaily, daily_reg=updaily_reg)
         ##########################################################
         rp = RenderPage("graphs.html", **upcv)
         rp.map_select = request.form.get('map_select')
@@ -52,14 +52,14 @@ def maps():
 
 @app.route("/top_dep_settings", methods=['GET', 'POST'])
 def top_dep_settings():
-    if covfr.need_covid_data_update() or covfr.need_positive_data_update():
+    if covfr.covid_need_update() or covfr.positive_need_update():
         ##########################################################
         upcovfr = CovidFr()
         upcovid = upcovfr.load_df()
         upnprate, uprprate, updprate = upcovfr.load_positive_df()
         updaily = upcovfr.dailycases(data=upcovid, pca=True)
         updaily_reg = upcovfr.regiondailycases(data=upcovid, feature='hosp')
-        upcv = upcovfr.cv_load(daily=updaily, daily_reg=updaily_reg)
+        upcv = upcovfr.cv_load(covid_state=covfr.covid_need_update(), positive_state=covfr.positive_need_update(),daily=updaily, daily_reg=updaily_reg)
         ##########################################################
         rp = RenderPage("graphs.html", **upcv)
         rp.top_dep = int(request.form.getlist('top_dep_settings')[0])
@@ -75,14 +75,14 @@ def top_dep_settings():
     
 @app.route("/global_monitoring_settings", methods=['GET', 'POST'])
 def global_monitoring_settings():
-    if covfr.need_covid_data_update() or covfr.need_positive_data_update():
+    if covfr.covid_need_update() or covfr.positive_need_update():
         ##########################################################
         upcovfr = CovidFr()
         upcovid = upcovfr.load_df()
         upnprate, uprprate, updprate = upcovfr.load_positive_df()
         updaily = upcovfr.dailycases(data=upcovid, pca=True)
         updaily_reg = upcovfr.regiondailycases(data=upcovid, feature='hosp')
-        upcv = upcovfr.cv_load(daily=updaily, daily_reg=updaily_reg)
+        upcv = upcovfr.cv_load(covid_state=covfr.covid_need_update(), positive_state=covfr.positive_need_update(),daily=updaily, daily_reg=updaily_reg)
         ##########################################################
         global_select = request.form.getlist('global_parameters')
         rp = RenderPage("graphs.html", **upcv)
@@ -106,14 +106,14 @@ def global_monitoring_settings():
 
 @app.route("/hosp_monitoring_settings", methods=['GET', 'POST'])
 def hosp_monitoring_settings():
-    if covfr.need_covid_data_update() or covfr.need_positive_data_update():
+    if covfr.covid_need_update() or covfr.positive_need_update():
         ##########################################################
         upcovfr = CovidFr()
         upcovid = upcovfr.load_df()
         upnprate, uprprate, updprate = upcovfr.load_positive_df()
         updaily = upcovfr.dailycases(data=upcovid, pca=True)
         updaily_reg = upcovfr.regiondailycases(data=upcovid, feature='hosp')
-        upcv = upcovfr.cv_load(daily=updaily, daily_reg=updaily_reg)
+        upcv = upcovfr.cv_load(covid_state=covfr.covid_need_update(), positive_state=covfr.positive_need_update(),daily=updaily, daily_reg=updaily_reg)
         ##########################################################
         hosp_select = request.form.getlist('hosp_parameters')
         rp = RenderPage("graphs.html", **upcv)
@@ -137,14 +137,14 @@ def hosp_monitoring_settings():
 
 @app.route('/departement/<string:department>', methods=['GET', 'POST'])
 def view_department(department):
-    if covfr.need_covid_data_update() or covfr.need_positive_data_update():
+    if covfr.covid_need_update() or covfr.positive_need_update():
         ##########################################################
         upcovfr = CovidFr()
         upcovid = upcovfr.load_df()
         upnprate, uprprate, updprate = upcovfr.load_positive_df()
         updaily = upcovfr.dailycases(data=upcovid, pca=True)
         updaily_reg = upcovfr.regiondailycases(data=upcovid, feature='hosp')
-        upcv = upcovfr.cv_load(daily=updaily, daily_reg=updaily_reg)
+        upcv = upcovfr.cv_load(covid_state=covfr.covid_need_update(), positive_state=covfr.positive_need_update(),daily=updaily, daily_reg=updaily_reg)
         ##########################################################
         rp = RenderPage("graphs.html", **upcv)
         rp.department = department
@@ -162,14 +162,14 @@ def view_department(department):
 
 @app.route('/region/<string:region>', methods=['GET', 'POST'])
 def view_region(region):
-    if covfr.need_covid_data_update() or covfr.need_positive_data_update():
+    if covfr.covid_need_update() or covfr.positive_need_update():
         ##########################################################
         upcovfr = CovidFr()
         upcovid = upcovfr.load_df()
         upnprate, uprprate, updprate = upcovfr.load_positive_df()
         updaily = upcovfr.dailycases(data=upcovid, pca=True)
         updaily_reg = upcovfr.regiondailycases(data=upcovid, feature='hosp')
-        upcv = upcovfr.cv_load(daily=updaily, daily_reg=updaily_reg)
+        upcv = upcovfr.cv_load(covid_state=covfr.covid_need_update(), positive_state=covfr.positive_need_update(),daily=updaily, daily_reg=updaily_reg)
         ##########################################################
         rp = RenderPage("graphs.html", **upcv)
         rp.region = region
