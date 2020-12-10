@@ -1,28 +1,16 @@
 from flask import Flask, render_template, request, redirect, url_for
 
-from cutils.covidclass import CovidFr
+from cutils.cvcreation import CvCreation
 from cutils.rendertemplate import RenderPage
 
 app = Flask(__name__)
 
-##########################################################
-covfr = CovidFr()
-covid = covfr.load_df()
-daily = covfr.dailycases(data=covid, pca=True)
-daily_reg = covfr.regiondailycases(data=covid, feature='hosp')
-cv = covfr.cv_load(covid_state=covfr.covid_need_update(), daily=daily, daily_reg=daily_reg)
-##########################################################
+covfr, daily, daily_reg, cv = CvCreation().cv_load()
 
 @app.route('/', methods=['GET', 'POST'])
 def graphs():
     if covfr.covid_need_update():
-        ##########################################################
-        upcovfr = CovidFr()
-        upcovid = upcovfr.load_df()
-        updaily = upcovfr.dailycases(data=upcovid, pca=True)
-        updaily_reg = upcovfr.regiondailycases(data=upcovid, feature='hosp')
-        upcv = upcovfr.cv_load(covid_state=covfr.covid_need_update(), daily=updaily, daily_reg=updaily_reg)
-        ##########################################################
+        upcovfr, updaily, updaily_reg, upcv = CvCreation().cv_load(covid_state=covfr.covid_need_update())
         rp = RenderPage("graphs.html", **upcv)
         return rp.appview()
 
@@ -32,13 +20,7 @@ def graphs():
 @app.route('/maps', methods=['GET', 'POST'])
 def maps():
     if covfr.covid_need_update():
-        ##########################################################
-        upcovfr = CovidFr()
-        upcovid = upcovfr.load_df()
-        updaily = upcovfr.dailycases(data=upcovid, pca=True)
-        updaily_reg = upcovfr.regiondailycases(data=upcovid, feature='hosp')
-        upcv = upcovfr.cv_load(covid_state=covfr.covid_need_update(), daily=updaily, daily_reg=updaily_reg)
-        ##########################################################
+        upcovfr, updaily, updaily_reg, upcv = CvCreation().cv_load(covid_state=covfr.covid_need_update())
         rp = RenderPage("graphs.html", **upcv)
         rp.map_select = request.form.get('map_select')
         return rp.appview()
@@ -50,13 +32,7 @@ def maps():
 @app.route("/top_dep_settings", methods=['GET', 'POST'])
 def top_dep_settings():
     if covfr.covid_need_update():
-        ##########################################################
-        upcovfr = CovidFr()
-        upcovid = upcovfr.load_df()
-        updaily = upcovfr.dailycases(data=upcovid, pca=True)
-        updaily_reg = upcovfr.regiondailycases(data=upcovid, feature='hosp')
-        upcv = upcovfr.cv_load(covid_state=covfr.covid_need_update(), daily=updaily, daily_reg=updaily_reg)
-        ##########################################################
+        upcovfr, updaily, updaily_reg, upcv = CvCreation().cv_load(covid_state=covfr.covid_need_update())
         rp = RenderPage("graphs.html", **upcv)
         rp.top_dep = int(request.form.getlist('top_dep_settings')[0])
         rp.criterion_select = request.form.getlist('top_dep_settings')[1]
@@ -72,13 +48,7 @@ def top_dep_settings():
 @app.route("/global_monitoring_settings", methods=['GET', 'POST'])
 def global_monitoring_settings():
     if covfr.covid_need_update():
-        ##########################################################
-        upcovfr = CovidFr()
-        upcovid = upcovfr.load_df()
-        updaily = upcovfr.dailycases(data=upcovid, pca=True)
-        updaily_reg = upcovfr.regiondailycases(data=upcovid, feature='hosp')
-        upcv = upcovfr.cv_load(covid_state=covfr.covid_need_update(), daily=updaily, daily_reg=updaily_reg)
-        ##########################################################
+        upcovfr, updaily, updaily_reg, upcv = CvCreation().cv_load(covid_state=covfr.covid_need_update())
         global_select = request.form.getlist('global_parameters')
         rp = RenderPage("graphs.html", **upcv)
         rp.pcdim = int(global_select[0])
@@ -102,13 +72,7 @@ def global_monitoring_settings():
 @app.route("/hosp_monitoring_settings", methods=['GET', 'POST'])
 def hosp_monitoring_settings():
     if covfr.covid_need_update():
-        ##########################################################
-        upcovfr = CovidFr()
-        upcovid = upcovfr.load_df()
-        updaily = upcovfr.dailycases(data=upcovid, pca=True)
-        updaily_reg = upcovfr.regiondailycases(data=upcovid, feature='hosp')
-        upcv = upcovfr.cv_load(covid_state=covfr.covid_need_update(), daily=updaily, daily_reg=updaily_reg)
-        ##########################################################
+        upcovfr, updaily, updaily_reg, upcv = CvCreation().cv_load(covid_state=covfr.covid_need_update())
         hosp_select = request.form.getlist('hosp_parameters')
         rp = RenderPage("graphs.html", **upcv)
         rp.pcdim_reg = int(hosp_select[0])
@@ -132,13 +96,7 @@ def hosp_monitoring_settings():
 @app.route('/departement/<string:department>', methods=['GET', 'POST'])
 def view_department(department):
     if covfr.covid_need_update():
-        ##########################################################
-        upcovfr = CovidFr()
-        upcovid = upcovfr.load_df()
-        updaily = upcovfr.dailycases(data=upcovid, pca=True)
-        updaily_reg = upcovfr.regiondailycases(data=upcovid, feature='hosp')
-        upcv = upcovfr.cv_load(covid_state=covfr.covid_need_update(), daily=updaily, daily_reg=updaily_reg)
-        ##########################################################
+        upcovfr, updaily, updaily_reg, upcv = CvCreation().cv_load(covid_state=covfr.covid_need_update())
         rp = RenderPage("graphs.html", **upcv)
         rp.department = department
         rp.charts_and_parameters_covid_data = upcovfr.charts_and_parameters_covid_data(department=rp.department)
@@ -154,13 +112,7 @@ def view_department(department):
 @app.route('/region/<string:region>', methods=['GET', 'POST'])
 def view_region(region):
     if covfr.covid_need_update():
-        ##########################################################
-        upcovfr = CovidFr()
-        upcovid = upcovfr.load_df()
-        updaily = upcovfr.dailycases(data=upcovid, pca=True)
-        updaily_reg = upcovfr.regiondailycases(data=upcovid, feature='hosp')
-        upcv = upcovfr.cv_load(covid_state=covfr.covid_need_update(), daily=updaily, daily_reg=updaily_reg)
-        ##########################################################
+        upcovfr, updaily, updaily_reg, upcv = CvCreation().cv_load(covid_state=covfr.covid_need_update())
         rp = RenderPage("graphs.html", **upcv)
         rp.region = region
         rp.charts_and_parameters_covid_data = upcovfr.charts_and_parameters_covid_data(region=rp.region)
