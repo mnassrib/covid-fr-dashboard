@@ -17,8 +17,8 @@ class CvCreation():
         Returns required html page contexte variables
         """
         cv = dict(
-            covid_state = kwargs.get('covid_state', CvCreation.covobject.covid_need_update()),
-            positive_state = kwargs.get('positive_state', CvCreation.covobject.positive_need_update()),
+            covid_state = kwargs.get('covid_state', False),
+            positive_state = kwargs.get('positive_state', False),
             map_covid_reg = CvCreation.covobject.map_covid_reg(),
             map_covid_dep = CvCreation.covobject.map_covid_dep(),
             map_positive_reg = CvCreation.covobject.map_positive_reg(),
