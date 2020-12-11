@@ -14,8 +14,9 @@ import plotly.graph_objs as go
 from functools import reduce
 
 class CovidFr():
-    """docstring for CovidFr"""
-
+    """
+    docstring for CovidFr
+    """
     ### URL source for loading covid data
     synthesis_covid_url = 'https://www.data.gouv.fr/fr/datasets/r/63352e38-d353-4b54-bfd1-f1b3ee1cabd7'
     synthesis_dprate_url = 'https://www.data.gouv.fr/fr/datasets/r/19a91d64-3cd3-42fc-9943-d635491a4d76'
