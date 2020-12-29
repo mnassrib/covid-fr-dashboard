@@ -994,12 +994,8 @@ class CovidFr():
         elif feature in ["hosp", "rea"]:
             data_reg = pd.DataFrame()
             for r in data.reg.unique():
-                dep_reg = []
-                for d in data[data.reg==r].dep.unique():
-                    dep_reg.append(data[(data.sexe == 0) & (data.dep == d)][feature].reset_index(drop=True))
-                data_reg['reg-{}'.format(r)] = reduce(lambda x, y: x.add(y, fill_value=0), dep_reg)
-            data_reg["jour"] = pd.unique(data.jour)
-            return data_reg.groupby("jour").max()
+                data_reg['reg-{}'.format(r)] = data[(data.sexe == 0) & (data.reg == r)].groupby("jour").sum()[feature]
+            return data_reg
     
     @staticmethod
     def topdepdataviz(data, **kwargs):
