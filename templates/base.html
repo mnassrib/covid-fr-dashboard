@@ -82,9 +82,9 @@
                 <div class="footer">
                     <p>&copy; <script>document.write(new Date().getFullYear())</script><a> </a><a href="https://www.linkedin.com/in/baligh-mnassri/?locale=en_US">Baligh Mnassri</a></p>
                     {% if (covid_state == True): %}
-                        <p><a style="font-size: 10px" href="#"><JavaBlink>Dernières mises à jour des données : {{ charts_and_parameters_covid_data["counters"]['last_update_fr'] }}</JavaBlink></a></p>
+                        <p><a style="font-size: 10px" href="#"><JavaBlink>Dernière mise à jour des données : {{ charts_and_parameters_covid_data["counters"]['last_update_fr'] }}</JavaBlink></a></p>
                     {% else : %}
-                        <p><a style="font-size: 10px" href="#">Dernières mises à jour des données : {{ charts_and_parameters_covid_data["counters"]['last_update_fr'] }}</a></p>
+                        <p><a style="font-size: 10px" href="#">Dernière mise à jour des données : {{ charts_and_parameters_covid_data["counters"]['last_update_fr'] }}</a></p>
                     {% endif %}                  
                 </div>
             </div>
