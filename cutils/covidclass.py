@@ -72,7 +72,8 @@ class CovidFr():
         """
         Loading dataframes
         """
-        covid = pd.read_csv(CovidFr.synthesis_covid_url, sep=';').dropna()
+        usecols = ["dep", "sexe", "jour", "hosp", "rea", "rad", "dc"]
+        covid = pd.read_csv(CovidFr.synthesis_covid_url, sep=';', usecols=usecols).dropna()
         covid['jour'] = pd.to_datetime(covid['jour'])
         covid = covid.drop_duplicates()
 
