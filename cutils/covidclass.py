@@ -83,6 +83,8 @@ class CovidFr():
         covid['jour'] = pd.to_datetime(covid['jour'])
         covid = covid.drop_duplicates()
 
+        covid = covid.loc[covid['dep'].isin(self.department_base_data.insee.values)]
+
         self.covid = CovidFr.regionadd(data=covid)
 
         self.first_day_fr = self.covid.jour.min().strftime("%d/%m/%Y")
@@ -135,7 +137,7 @@ class CovidFr():
         """
         with urllib.request.urlopen("https://www.data.gouv.fr/datasets/5e7e104ace2080d9162b61d8/rdf.json") as url:
             data = json.loads(url.read().decode())
-            data = json.loads(data)
+            #data = json.loads(data)
             for dataset in data['@graph']:
                 if 'accessURL' in dataset.keys() and dataset['accessURL'] == CovidFr.synthesis_covid_url:
                     if self.last_update == "" or self.last_update < dataset['modified']:
@@ -149,7 +151,7 @@ class CovidFr():
         """
         with urllib.request.urlopen("https://www.data.gouv.fr/datasets/5ed1175ca00bbe1e4941a46a/rdf.json") as url:
             data = json.loads(url.read().decode())
-            data = json.loads(data)
+            #data = json.loads(data)
             for dataset in data['@graph']:
                 if 'accessURL' in dataset.keys() and dataset['accessURL'] == CovidFr.synthesis_dprate_url:
                     if self.positive_last_update == "" or self.positive_last_update < dataset['modified']:
@@ -1068,7 +1070,7 @@ class CovidFr():
     def updatechecking(json_url, data_request_url):
         with urllib.request.urlopen(json_url) as url:
             data = json.loads(url.read().decode())
-            data = json.loads(data)
+            #data = json.loads(data)
             for dataset in data['@graph']:
                 if 'accessURL' in dataset.keys() and dataset['accessURL'] == data_request_url:
                     return dataset['modified']
