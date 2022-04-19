@@ -3,5 +3,5 @@ This application allows users to visualize some KPIs for the evolution of Covid-
 The application is accessible on the following links.
 
 * GitHub committer-based deployment: https://covid-fr-dashboard.herokuapp.com/
-* Docker-based deployment: https://covid-fr-data.herokuapp.com/
+* Container registry-based deployment: https://covid-fr-data.herokuapp.com/
 
