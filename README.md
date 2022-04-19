@@ -5,3 +5,5 @@ The application is accessible on the following links.
 * GitHub committer-based deployment: https://covid-fr-dashboard.herokuapp.com/
 * Container registry-based deployment: https://covid-fr-data.herokuapp.com/
 
+[covid-fr-dashboard.herokuapp.com](https://covid-fr-dashboard.herokuapp.com/)
+[covid-fr-data.herokuapp.com](https://covid-fr-data.herokuapp.com/)
